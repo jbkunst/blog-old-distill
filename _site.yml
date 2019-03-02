@@ -1,0 +1,49 @@
+name: "blog"
+
+title: "Data, Code and Visualization"
+
+description: |
+  Data, Code and Visualization
+
+output_dir: "docs"
+
+base_url: http://jkunst.com/blog/
+
+repository_url: https://github.com/jbkunst/blog
+
+creative_commons: CC BY
+
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - icon: fab fa-linkedin-in
+      href: https://www.linkedin.com/in/joshuakunst
+    - icon: fab fa-twitter
+      href: https://twitter.com/jbkunst
+    - icon: fab fa-github-alt
+      href: https://github.com/jbkunst/blog
+    - icon: fa fa-rss
+      href: index.xml   
+
+output: distill::distill_article
+
+citation_url: http://jkunst.com/blog/
+
+google_analytics: "UA-17670833-5"
+
+collections:
+  posts:
+    disqus:
+      shortname: jkunst
+      hidden: false
+    share: [twitter, linkedin]
+    citations: true
+
+twitter:
+  site: "@jbkunst"
+  creator: "@jbkunst"
+  
+exclude: ["data", "*.csv"]
+
+include: ["images"]

@@ -1,0 +1,137 @@
+---
+title: "Using tooltips in unexpected ways"
+description: |
+  Highcharts tooltips are one of most underated features. In the tooltips you
+  can easily render html, that means we can put images, tables even charts. 
+  So the possibilities are almost limitless.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 02-04-2019
+output:
+  distill::distill_article:
+    self_contained: true
+categories: 
+  - data-visualization
+  - highcharts    
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(highcharter)
+options(highcharter.theme = hc_theme_smpl())
+```
+
+In highcharter R package there is tooltip_chart helper function to put charts 
+in the tooltip. Sadly te function is not that easy to use but is not 
+impossible :).
+
+The example in the documentation is:
+
+```{r, layout="l-page"}
+library(tidyverse)
+library(gapminder)
+data(gapminder, package = "gapminder")
+
+gp <- gapminder %>%
+  arrange(desc(year)) %>%
+  distinct(country, .keep_all = TRUE)
+
+gp2 <- gapminder %>%
+  select(country, year, pop) %>% 
+  nest(-country) %>%
+  mutate(
+    data = map(data, mutate_mapping, hcaes(x = year, y = pop), drop = TRUE),
+    data = map(data, list_parse)
+    ) %>%
+  rename(ttdata = data)
+
+gptot <- left_join(gp, gp2, by = "country")
+
+hchart(
+  gptot,
+  "point",
+  hcaes(lifeExp, gdpPercap, name = country, size = pop, group = continent)
+  ) %>%
+  hc_yAxis(type = "logarithmic") %>% 
+  # here is the magic (inside the function)
+  hc_tooltip(useHTML = TRUE, pointFormatter = tooltip_chart(accesor = "ttdata"))
+```
+
+Now we'll use a donut chart and try to place the tooltip inside to give it 
+importance:
+
+```{r, layout="l-page"}
+donutdata <- gp %>% 
+  group_by(continent) %>% 
+  summarise(pop = sum(pop/1e6)*1e6)
+
+hchart(donutdata, "pie", hcaes(name = continent, y = pop), innerSize = 300)
+```
+
+> Just according to keikaku.
+
+The donut is ready. So now we need a detailed data from each continent to
+show in the tooltip.
+
+```{r, layout="l-page"}
+donutdata2 <- gp %>% 
+  select(continent, lifeExp, gdpPercap) %>% 
+  nest(-continent) %>% 
+  mutate(
+    data = map(data, mutate_mapping, hcaes(x = lifeExp, y = gdpPercap), drop = TRUE),
+    data = map(data, list_parse)
+    ) %>%
+  rename(ttdata = data) %>% 
+  left_join(donutdata)
+
+hc <- hchart(
+  donutdata2,
+  "pie",
+  hcaes(name = continent, y = pop),
+  innerSize = 375
+  )
+
+hc %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    headerFormat = "<b>{point.key}</b>",
+    pointFormatter = tooltip_chart(
+      accesor = "ttdata",
+      hc_opts = list(
+        chart = list(type = "scatter"),
+        plotOptions = list(scatter = list(marker = list(radius = 2)))
+        ),
+      height = 225
+      ),
+    positioner = JS(
+      "function () {
+      
+        /* one of the most important parts! */
+        xp =  this.chart.chartWidth/2 - this.label.width/2
+        yp =  this.chart.chartHeight/2 - this.label.height/2
+      
+        return { x: xp, y: yp };
+      
+      }"),
+    shadow = FALSE,
+    borderWidth = 0,
+    backgroundColor = "transparent",
+    hideDelay = 1000
+    )
+```
+
+What do you think? Maybe it's a kind of overkill, but hey, it's up to you 
+to (ab)use it or not! Another more subtle alternative can be put text, i.e,
+the normal tooltip but with a bigger size, like a knob chart.
+
+
+
+
+
+
+
+
