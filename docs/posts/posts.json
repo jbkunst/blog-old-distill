@@ -37,9 +37,28 @@
     "last_modified": "2019-02-28T23:53:09-03:00"
   },
   {
+    "path": "posts/2017-01-05-thematic-interactive-map/",
+    "title": "Thematic Interactive Map",
+    "description": "Last week all the _rstatsosphere_ see the beautiful swiss map from \n[Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using \nggplot2. Now is the turn of highcharter.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2017-01-20",
+    "categories": [
+      "maps",
+      "data-visualization",
+      "highcharts"
+    ],
+    "preview": {},
+    "last_modified": "2019-03-05T01:27:42-03:00"
+  },
+  {
     "path": "posts/2015-10-07-rchess-a-chess-package-for-r/",
     "title": "rchess a Chess Package for R",
-    "description": "A short description of the post.",
+    "description": "Finally R have a chess package!",
     "author": [
       {
         "name": "Joshua Kunst",
@@ -52,6 +71,6 @@
       "htmlwidgets"
     ],
     "preview": {},
-    "last_modified": "2019-02-28T23:52:26-03:00"
+    "last_modified": "2019-03-05T00:48:11-03:00"
   }
 ]

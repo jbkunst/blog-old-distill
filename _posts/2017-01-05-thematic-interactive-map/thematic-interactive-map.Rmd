@@ -1,7 +1,9 @@
 ---
 title: "Thematic Interactive Map"
 description: |
-  A short description of the post.
+  Last week all the _rstatsosphere_ see the beautiful swiss map from 
+  [Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using 
+  ggplot2. Now is the turn of highcharter.
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
@@ -20,10 +22,6 @@ categories:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-Last week all the _rstatsosphere_ see the beautiful 
-[Timo Grossenbacher](https://timogrossenbacher.ch)
-[work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/).
 
 The last month, yep, the past year I've working on create maps
 easily with [highcharter](http://jkunst.com/highcharter/).
@@ -59,7 +57,7 @@ was slightly modified:
 
 
 ```{r}
-map <- readShapeSpatial("data/thematicmap/gde-1-1-15.shp")
+map <- readShapeSpatial("data/thematic-interactive-map/gde-1-1-15.shp")
 map <- ms_simplify(map, keep = 1) # because ms_simplify fix the ü's
 map <- geojson_list(map)
 
@@ -72,7 +70,7 @@ map$features <- map(map$features, function(x) {
   x
 })
 
-data <- read_csv("data/thematicmap/avg_age_15.csv")
+data <- read_csv("data/thematic-interactive-map/avg_age_15.csv")
 data <- select(data, -X1)
 data <- rename(data, value = avg_age_15)
 

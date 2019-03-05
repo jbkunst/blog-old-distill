@@ -28,10 +28,20 @@ So the possibilities are almost limitless.</description>
       <pubDate>vie., 03 mar. 2017 00:00:00 +0000</pubDate>
     </item>
     <item>
+      <title>Thematic Interactive Map</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map</link>
+      <description>Last week all the _rstatsosphere_ see the beautiful swiss map from 
+[Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using 
+ggplot2. Now is the turn of highcharter.</description>
+      <guid>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map</guid>
+      <pubDate>vie., 20 ene. 2017 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>rchess a Chess Package for R</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</link>
-      <description>A short description of the post.</description>
+      <description>Finally R have a chess package!</description>
       <guid>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</guid>
       <pubDate>mié., 07 oct. 2015 00:00:00 +0000</pubDate>
     </item>

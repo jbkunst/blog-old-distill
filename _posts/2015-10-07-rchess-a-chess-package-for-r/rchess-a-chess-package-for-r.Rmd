@@ -1,7 +1,7 @@
 ---
 title: "rchess a Chess Package for R"
 description: |
-  A short description of the post.
+  Finally R have a chess package!
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
