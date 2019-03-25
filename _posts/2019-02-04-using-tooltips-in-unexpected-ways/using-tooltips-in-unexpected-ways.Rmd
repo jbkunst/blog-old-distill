@@ -16,13 +16,12 @@ categories:
   - highcharts    
 editor_options: 
   chunk_output_type: console
-preview: images/preview.png  
+preview: images/preview.gif
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(highcharter)
-options(highcharter.theme = hc_theme_smpl())
+source(here::here("_R/blog_setup.R"))
 ```
 
 In highcharter R package there is tooltip_chart helper function to put charts 
@@ -103,6 +102,7 @@ hc %>%
       accesor = "ttdata",
       hc_opts = list(
         chart = list(type = "scatter"),
+        credits = list(enabled = FALSE),
         plotOptions = list(scatter = list(marker = list(radius = 2)))
         ),
       height = 225

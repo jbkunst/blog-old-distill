@@ -13,10 +13,12 @@ editor_options:
   chunk_output_type: console
 categories: 
   - data-visualization
+preview: images/preview.png  
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source(here::here("_R/blog_setup.R"))
 ```
 
 ## Preliminars

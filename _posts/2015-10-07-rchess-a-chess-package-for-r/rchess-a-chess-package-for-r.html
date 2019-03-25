@@ -21,7 +21,8 @@
   <!--radix_placeholder_meta_tags-->
   <title>rchess a Chess Package for R</title>
   
-  <meta property="description" itemprop="description" content="Finally R have a chess package!" />
+  <meta property="description" itemprop="description" content="Finally R have a chess package! Let&#39;s see what
+can it do." />
   
   
   <!--  https://schema.org/Article -->
@@ -32,19 +33,21 @@
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
   <meta property="og:title" content="rchess a Chess Package for R" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="Finally R have a chess package!" />
+  <meta property="og:description" content="Finally R have a chess package! Let&#39;s see what
+can it do." />
   <meta property="og:locale" content="en_US" />
   
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary" />
   <meta property="twitter:title" content="rchess a Chess Package for R" />
-  <meta property="twitter:description" content="Finally R have a chess package!" />
+  <meta property="twitter:description" content="Finally R have a chess package! Let&#39;s see what
+can it do." />
   
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options","categories"]}},"value":[{"type":"character","attributes":{},"value":["rchess a Chess Package for R"]},{"type":"character","attributes":{},"value":["Finally R have a chess package!\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Kunst"]},{"type":"character","attributes":{},"value":["http://jkunst.com/"]}]}]},{"type":"character","attributes":{},"value":["10-07-2015"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["package","htmlwidgets"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","editor_options","categories","preview"]}},"value":[{"type":"character","attributes":{},"value":["rchess a Chess Package for R"]},{"type":"character","attributes":{},"value":["Finally R have a chess package! Let's see what\ncan it do.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Kunst"]},{"type":"character","attributes":{},"value":["http://jkunst.com/"]}]}]},{"type":"character","attributes":{},"value":["10-07-2015"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]},{"type":"character","attributes":{},"value":["package","htmlwidgets"]},{"type":"character","attributes":{},"value":["images/preview.png"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -2938,7 +2941,7 @@ distill-header .nav a {
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"rchess a Chess Package for R","description":"Finally R have a chess package!","authors":[{"author":"Joshua Kunst","authorURL":"http://jkunst.com/","affiliation":"&nbsp;","affiliationURL":"#"}],"publishedDate":"2015-10-07T00:00:00.000-03:00","citationText":"Kunst, 2015"}
+{"title":"rchess a Chess Package for R","description":"Finally R have a chess package! Let's see what\ncan it do.","authors":[{"author":"Joshua Kunst","authorURL":"http://jkunst.com/","affiliation":"&nbsp;","affiliationURL":"#"}],"publishedDate":"2015-10-07T00:00:00.000-03:00","citationText":"Kunst, 2015"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2949,7 +2952,7 @@ distill-header .nav a {
 
 <div class="d-title">
 <h1>rchess a Chess Package for R</h1>
-<p>Finally R have a chess package!</p>
+<p>Finally R have a chess package! Let’s see what can it do.</p>
 </div>
 
 <div class="d-byline">
@@ -2976,8 +2979,8 @@ library(rchess)
 chss &lt;- Chess$new()
 
 plot(chss)</code></pre>
-<div id="htmlwidget-a6daf5a75ce047068ed7" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a6daf5a75ce047068ed7">{"x":{"fen":"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-0eed9831bef52f6f8e50" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0eed9831bef52f6f8e50">{"x":{"fen":"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p>WHOA chessboardjs have a nice look. Right?</p>
 <p>The basic usage is the same as the <a href="https://github.com/jhlywa/chess.js">chessjs</a> api. I’m just implemented only the calls to this api. Anyway, to see the possibles moves you can use the <em>moves</em> method and if you make a move use the <em>move</em> function.</p>
@@ -3022,8 +3025,8 @@ chss$move(&quot;a3&quot;)</code></pre>
 chss$move(&quot;e5&quot;)$move(&quot;f4&quot;)$move(&quot;Qe7&quot;)$move(&quot;fxe5&quot;)
 
 plot(chss)</code></pre>
-<div id="htmlwidget-b2d6de4a7af079a63db3" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b2d6de4a7af079a63db3">{"x":{"fen":"rnb1kbnr/ppppqppp/8/4P3/8/P7/1PPPP1PP/RNBQKBNR b KQkq - 0 3"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-0f8d2fb6e06b44053f7d" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0f8d2fb6e06b44053f7d">{"x":{"fen":"rnb1kbnr/ppppqppp/8/4P3/8/P7/1PPPP1PP/RNBQKBNR b KQkq - 0 3"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -3129,8 +3132,8 @@ head(chsspgn$history(verbose = TRUE), 20)</code></pre>
 20 b     e7    e5    b     p     e5    &lt;NA&gt;              20</code></pre>
 <pre class="r"><code>
 plot(chsspgn)</code></pre>
-<div id="htmlwidget-451901cd284f3947d09f" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
-<script type="application/json" data-for="htmlwidget-451901cd284f3947d09f">{"x":{"fen":"8/Q6p/6p1/5p2/5P2/2p3P1/3r3P/2K1k3 b - - 3 44"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-85424ef8c941873f23d8" style="width:300px;height:300px;" class="chessboardjs html-widget"></div>
+<script type="application/json" data-for="htmlwidget-85424ef8c941873f23d8">{"x":{"fen":"8/Q6p/6p1/5p2/5P2/2p3P1/3r3P/2K1k3 b - - 3 44"},"evals":[],"jsHooks":[]}</script>
 </div>
 <p>And that’s it. If you want to check more funcionalities check the <a href="https://github.com/jbkunst/rchess">github repository</a> or <a href="http://rpubs.com/jbkunst/rchess2">this</a> document.</p>
 <p>Bye mate!</p>

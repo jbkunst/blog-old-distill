@@ -17,7 +17,7 @@ can easily render html, that means we can put images, tables even charts.
 So the possibilities are almost limitless.</description>
       <guid>http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways</guid>
       <pubDate>lun., 04 feb. 2019 00:00:00 +0000</pubDate>
-      <media:content url="http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.png" medium="image" type="image/png" width="322" height="267"/>
+      <media:content url="http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.gif" medium="image" type="image/gif"/>
     </item>
     <item>
       <title>Giving a Thematic Touch to your Interactive Chart</title>
@@ -26,24 +26,54 @@ So the possibilities are almost limitless.</description>
       <description>A short description of the post.</description>
       <guid>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart</guid>
       <pubDate>vie., 03 mar. 2017 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png" medium="image" type="image/png" width="949" height="500"/>
     </item>
     <item>
       <title>Thematic Interactive Map</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map</link>
-      <description>Last week all the _rstatsosphere_ see the beautiful swiss map from 
-[Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using 
-ggplot2. Now is the turn of highcharter.</description>
+      <description>Last week all the #rstatsosphere see a beautiful swiss map from 
+Timo Grossenbacher using just ggplot2. Now is the turn of highcharter 
+because all can be better with a bit of interactivity.</description>
       <guid>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map</guid>
       <pubDate>vie., 20 ene. 2017 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map/images/preview.gif" medium="image" type="image/gif"/>
+    </item>
+    <item>
+      <title>Interactive and Styled Middle Earth Map</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map</link>
+      <description>Just for fun and because we can.</description>
+      <guid>http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map</guid>
+      <pubDate>jue., 15 dic. 2016 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png" medium="image" type="image/png" width="379" height="191"/>
+    </item>
+    <item>
+      <title>Adding motion to choropleths</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths</link>
+      <description>We will use the highchart motion plugin with a map.</description>
+      <guid>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths</guid>
+      <pubDate>mar., 12 abr. 2016 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths/images/preview.gif" medium="image" type="image/gif"/>
+    </item>
+    <item>
+      <title>Visualizing Chess Data With ggplot</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot</link>
+      <description>A short description of the post.</description>
+      <guid>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot</guid>
+      <pubDate>vie., 30 oct. 2015 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>rchess a Chess Package for R</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</link>
-      <description>Finally R have a chess package!</description>
+      <description>Finally R have a chess package! Let's see what
+can it do.</description>
       <guid>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</guid>
       <pubDate>mié., 07 oct. 2015 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png" medium="image" type="image/png" width="301" height="302"/>
     </item>
   </channel>
 </rss>

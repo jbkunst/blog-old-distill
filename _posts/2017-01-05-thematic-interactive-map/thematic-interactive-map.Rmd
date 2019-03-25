@@ -1,9 +1,9 @@
 ---
 title: "Thematic Interactive Map"
 description: |
-  Last week all the _rstatsosphere_ see the beautiful swiss map from 
-  [Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using 
-  ggplot2. Now is the turn of highcharter.
+  Last week all the #rstatsosphere see a beautiful swiss map from 
+  Timo Grossenbacher using just ggplot2. Now is the turn of highcharter 
+  because all can be better with a bit of interactivity.
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
@@ -16,39 +16,29 @@ editor_options:
 categories: 
   - maps
   - data-visualization
-  - highcharts    
+  - highcharts 
+preview: images/preview.gif   
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source(here::here("_R/blog_setup.R"))
 ```
 
 The last month, yep, the past year I've working on create maps
-easily with [highcharter](http://jkunst.com/highcharter/).
-When I saw this chart I took as  challege to replicate this nice
- map in using highcharter:
+easily with [highcharter](http://jkunst.com/highcharter/), so when I saw [this chart](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) 
+I took as challege!
 
 ```{r echo=FALSE, fig.cap="Figure from https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/", out.extra="class=external"}
 knitr::include_graphics("https://timogrossenbacher.ch/wp-content/uploads/2016/12/tm-final-map-1-1.png")
 ```
 
-So...
-
 > Challenge accepted. it's gonna be legen...
 > -- <cite>Me.</cite>
 
-```{r}
-library(tidyverse)
-library(rmapshaper)
-library(maptools)
-library(highcharter)
-library(geojsonio)
-library(viridis)
-```
+## Packages and Data
 
-## Data
-
-The data used fhor this chart is the same using by Timo. But the workflow
+The data used for this chart is the same using by Timo. But the workflow
 was slightly modified:
 
 1. Read the shapefile with `maptools::readShapeSpatial`.
@@ -57,12 +47,17 @@ was slightly modified:
 
 
 ```{r}
-map <- readShapeSpatial("data/thematic-interactive-map/gde-1-1-15.shp")
+library(tidyverse)
+library(rmapshaper)
+library(maptools)
+library(highcharter)
+library(geojsonio)
+library(viridis)
+
+shape <- here::here("data", "thematic-interactive-map", "gde-1-1-15.shp")
+map <- readShapeSpatial(shape)
 map <- ms_simplify(map, keep = 1) # because ms_simplify fix the ü's
 map <- geojson_list(map)
-
-str(map, max.level = 1)
-str(map$features[[7]], max.level = 5)
 
 # this was to put the name on the tooltip
 map$features <- map(map$features, function(x) {
@@ -110,28 +105,40 @@ urlimage <- "https://raw.githubusercontent.com/jbkunst/r-posts/master/061-beauti
 
 hc <- highchart(type = "map") %>% 
   # data part
-  hc_add_series(mapData = map, data = data, type = "map",
-                joinBy = c("BFS_ID", "bfs_id"), value = "value",
-                borderWidth = 0) %>% 
+  hc_add_series(
+    mapData = map, data = data, type = "map",
+    joinBy = c("BFS_ID", "bfs_id"), value = "value",
+    borderWidth = 0
+    ) %>% 
   hc_colorAxis(dataClasses = color_classes(brks, colors)) %>% 
   # functionality
-  hc_tooltip(headerFormat = "",
-             pointFormat = "{point.name}: {point.value}",
-             valueDecimals = 2) %>% 
-  hc_legend(align = "right", verticalAlign = "bottom", layout = "vertical",
-            floating = TRUE) %>%
+  hc_tooltip(
+    headerFormat = "",
+    pointFormat = "{point.name}: {point.value}",
+    valueDecimals = 2
+    ) %>% 
+  hc_legend(
+    align = "right",
+    verticalAlign = "bottom",
+    layout = "vertical",
+    floating = TRUE
+    ) %>%
   hc_mapNavigation(enabled = FALSE) %>% # if TRUE to zoom the relief image dont zoom.
   # info
   hc_title(text = "Switzerland's regional demographics") %>% 
   hc_subtitle(text = "Average age in Swiss municipalities, 2015") %>% 
-  hc_credits(enabled = TRUE,
-             text = "Map CC-BY-SA; Author: Joshua Kunst (@jbkunst) based mostly on Timo Grossenbacher (@grssnbchr) work, Geometries: ThemaKart, BFS; Data: BFS, 2016; Relief: swisstopo, 2016") %>% 
+  hc_credits(
+    enabled = TRUE,
+    text = "Map CC-BY-SA; Author: Joshua Kunst (@jbkunst) based mostly on Timo Grossenbacher (@grssnbchr) work, Geometries: ThemaKart, BFS; Data: BFS, 2016; Relief: swisstopo, 2016"
+    ) %>% 
   # style
-  hc_chart(plotBackgroundImage = urlimage,
-           backgroundColor = "transparent",
-           events = list(
-             load = JS("function(){ $(\"image\")[0].setAttribute('preserveAspectRatio', 'xMidYMid') }")
-           ))
+  hc_chart(
+    plotBackgroundImage = urlimage,
+    backgroundColor = "transparent",
+    events = list(
+      load = JS("function(){ $(\"image\")[0].setAttribute('preserveAspectRatio', 'xMidYMid') }")
+      )
+    )
 
 hc
 ```

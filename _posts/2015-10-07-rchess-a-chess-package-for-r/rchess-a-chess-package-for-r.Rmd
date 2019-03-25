@@ -1,7 +1,8 @@
 ---
 title: "rchess a Chess Package for R"
 description: |
-  Finally R have a chess package!
+  Finally R have a chess package! Let's see what
+  can it do.
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
@@ -14,6 +15,7 @@ editor_options:
 categories: 
   - package
   - htmlwidgets
+preview: images/preview.png  
 ---
 
 ```{r setup, include=FALSE}

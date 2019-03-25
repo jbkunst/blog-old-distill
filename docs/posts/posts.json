@@ -14,10 +14,8 @@
       "data-visualization",
       "highcharts"
     ],
-    "preview": "posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.png",
-    "last_modified": "2019-03-01T00:05:06-03:00",
-    "preview_width": 322,
-    "preview_height": 267
+    "preview": "posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.gif",
+    "last_modified": "2019-03-24T17:54:50-03:00"
   },
   {
     "path": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/",
@@ -33,13 +31,15 @@
     "categories": [
       "data-visualization"
     ],
-    "preview": {},
-    "last_modified": "2019-02-28T23:53:09-03:00"
+    "preview": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png",
+    "last_modified": "2019-03-24T17:56:24-03:00",
+    "preview_width": 949,
+    "preview_height": 500
   },
   {
     "path": "posts/2017-01-05-thematic-interactive-map/",
     "title": "Thematic Interactive Map",
-    "description": "Last week all the _rstatsosphere_ see the beautiful swiss map from \n[Timo Grossenbacher](https://timogrossenbacher.ch)  [work](https://timogrossenbacher.ch/2016/12/beautiful-thematic-maps-with-ggplot2-only/) using \nggplot2. Now is the turn of highcharter.",
+    "description": "Last week all the #rstatsosphere see a beautiful swiss map from \nTimo Grossenbacher using just ggplot2. Now is the turn of highcharter \nbecause all can be better with a bit of interactivity.",
     "author": [
       {
         "name": "Joshua Kunst",
@@ -52,13 +52,68 @@
       "data-visualization",
       "highcharts"
     ],
+    "preview": "posts/2017-01-05-thematic-interactive-map/images/preview.gif",
+    "last_modified": "2019-03-24T17:55:53-03:00"
+  },
+  {
+    "path": "posts/2016-12-15-interactive-and-styled-middle-earth-map/",
+    "title": "Interactive and Styled Middle Earth Map",
+    "description": "Just for fun and because we can.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2016-12-15",
+    "categories": [
+      "maps",
+      "highcharts"
+    ],
+    "preview": "posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png",
+    "last_modified": "2019-03-24T17:58:10-03:00",
+    "preview_width": 379,
+    "preview_height": 191
+  },
+  {
+    "path": "posts/2016-04-12-adding-motion-to-choropleths/",
+    "title": "Adding motion to choropleths",
+    "description": "We will use the highchart motion plugin with a map.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2016-04-12",
+    "categories": [
+      "maps",
+      "highcharts"
+    ],
+    "preview": "posts/2016-04-12-adding-motion-to-choropleths/images/preview.gif",
+    "last_modified": "2019-03-24T17:58:52-03:00"
+  },
+  {
+    "path": "posts/2015-10-30-visualizing-chess-data-with-ggplot/",
+    "title": "Visualizing Chess Data With ggplot",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2015-10-30",
+    "categories": [
+      "data-visualization"
+    ],
     "preview": {},
-    "last_modified": "2019-03-05T01:27:42-03:00"
+    "last_modified": "2019-03-24T22:48:24-03:00"
   },
   {
     "path": "posts/2015-10-07-rchess-a-chess-package-for-r/",
     "title": "rchess a Chess Package for R",
-    "description": "Finally R have a chess package!",
+    "description": "Finally R have a chess package! Let's see what\ncan it do.",
     "author": [
       {
         "name": "Joshua Kunst",
@@ -70,7 +125,9 @@
       "package",
       "htmlwidgets"
     ],
-    "preview": {},
-    "last_modified": "2019-03-05T00:48:11-03:00"
+    "preview": "posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png",
+    "last_modified": "2019-03-24T19:12:34-03:00",
+    "preview_width": 301,
+    "preview_height": 302
   }
 ]
