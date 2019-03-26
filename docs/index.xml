@@ -49,6 +49,17 @@ because all can be better with a bit of interactivity.</description>
       <media:content url="http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png" medium="image" type="image/png" width="379" height="191"/>
     </item>
     <item>
+      <title>Replicating NYT Weather App</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app</link>
+      <description>So much time since my last post so I want to post 
+something, no matter  what it is, but I hope this will
+be somehow helpful.</description>
+      <guid>http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app</guid>
+      <pubDate>vie., 02 dic. 2016 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app/images/preview.png" medium="image" type="image/png" width="671" height="505"/>
+    </item>
+    <item>
       <title>Adding motion to choropleths</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths</link>
@@ -61,9 +72,11 @@ because all can be better with a bit of interactivity.</description>
       <title>Visualizing Chess Data With ggplot</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot</link>
-      <description>A short description of the post.</description>
+      <description>A collection of chess visualization using
+only... yeah, you know! only ggplot2.</description>
       <guid>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot</guid>
       <pubDate>vie., 30 oct. 2015 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot/images/preview.png" medium="image" type="image/png" width="333" height="331"/>
     </item>
     <item>
       <title>rchess a Chess Package for R</title>

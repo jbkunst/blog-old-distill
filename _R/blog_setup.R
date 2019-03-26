@@ -5,16 +5,12 @@ knitr::opts_chunk$set(
 )
 
 # ggplot2 -----------------------------------------------------------------
-library(showtext) 
-showtext_auto()
+library(ggplot2)
+library(extrafont)
+# extrafont::font_import()
+suppressMessages(suppressWarnings(loadfonts()))
 
-knitr::opts_chunk$set(fig.showtext = TRUE, dpi = 200)
-
-font_add_google("Open Sans", "myfont")
-
-ggplot2::theme_set(ggplot2::theme_minimal())
-
-
+theme_set(theme_minimal(base_family = "Segoe UI"))
 
 # highcharter -------------------------------------------------------------
 library(highcharter)
