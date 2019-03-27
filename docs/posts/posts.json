@@ -20,7 +20,7 @@
   {
     "path": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/",
     "title": "Giving a Thematic Touch to your Interactive Chart",
-    "description": "A short description of the post.",
+    "description": "Sometimes you need to express yourself.",
     "author": [
       {
         "name": "Joshua Kunst",
@@ -32,7 +32,7 @@
       "data-visualization"
     ],
     "preview": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png",
-    "last_modified": "2019-03-24T17:56:27-03:00",
+    "last_modified": "2019-03-27T00:16:38-03:00",
     "preview_width": 949,
     "preview_height": 500
   },
@@ -90,7 +90,7 @@
       "data-visualization"
     ],
     "preview": "posts/2016-12-02-replicating-nyt-weather-app/images/preview.png",
-    "last_modified": "2019-03-26T02:53:52-03:00",
+    "last_modified": "2019-03-26T02:53:56-03:00",
     "preview_width": 671,
     "preview_height": 505
   },
@@ -147,7 +147,7 @@
       "htmlwidgets"
     ],
     "preview": "posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png",
-    "last_modified": "2019-03-24T19:12:35-03:00",
+    "last_modified": "2019-03-27T00:18:31-03:00",
     "preview_width": 301,
     "preview_height": 302
   }

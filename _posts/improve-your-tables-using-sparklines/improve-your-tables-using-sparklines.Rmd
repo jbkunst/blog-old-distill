@@ -1,0 +1,56 @@
+---
+title: "Improve your tables using sparklines"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 03-27-2019
+output:
+  distill::distill_article:
+    self_contained: true
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web.
+
+Learn more about using Distill at <https://rstudio.github.io/distill>.
+
+```{r}
+library(highcharter)
+library(tidyverse)
+library(gapminder)
+
+data("gapminder")
+
+gapminder
+```
+
+Nesting:
+
+```{r}
+gapminder <- gapminder %>% 
+  nest(-country) %>% 
+  mutate(chart = map(data, ~ hchart(., "line", hcaes(year, pop))))
+```
+
+Now:
+
+```{r}
+gapminder %>% 
+  sample_n(10) %>% 
+  select(country, chart) %>% 
+  # mutate(chart = map(chart, htmltools::browsable)) %>% 
+  mutate(chart = map(chart, htmltools::HTML, text = "")) %>% 
+  DT::datatable()
+```
+
+
+
+

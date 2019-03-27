@@ -23,7 +23,7 @@ So the possibilities are almost limitless.</description>
       <title>Giving a Thematic Touch to your Interactive Chart</title>
       <dc:creator>Joshua Kunst</dc:creator>
       <link>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart</link>
-      <description>A short description of the post.</description>
+      <description>Sometimes you need to express yourself.</description>
       <guid>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart</guid>
       <pubDate>vie., 03 mar. 2017 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png" medium="image" type="image/png" width="949" height="500"/>
@@ -77,16 +77,6 @@ only... yeah, you know! only ggplot2.</description>
       <guid>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot</guid>
       <pubDate>vie., 30 oct. 2015 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot/images/preview.png" medium="image" type="image/png" width="333" height="331"/>
-    </item>
-    <item>
-      <title>rchess a Chess Package for R</title>
-      <dc:creator>Joshua Kunst</dc:creator>
-      <link>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</link>
-      <description>Finally R have a chess package! Let's see what
-can it do.</description>
-      <guid>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r</guid>
-      <pubDate>mié., 07 oct. 2015 00:00:00 +0000</pubDate>
-      <media:content url="http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png" medium="image" type="image/png" width="301" height="302"/>
     </item>
   </channel>
 </rss>

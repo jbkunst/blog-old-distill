@@ -34,6 +34,7 @@ google_analytics: "UA-17670833-5"
 
 collections:
   posts:
+    feed_items_max: 7
     disqus:
       shortname: jkunst
       hidden: false

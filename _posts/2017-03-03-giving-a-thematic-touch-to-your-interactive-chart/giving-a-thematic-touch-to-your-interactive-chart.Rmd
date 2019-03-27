@@ -1,7 +1,7 @@
 ---
 title: "Giving a Thematic Touch to your Interactive Chart"
 description: |
-  A short description of the post.
+  Sometimes you need to express yourself.
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
@@ -9,6 +9,7 @@ date: 03-03-2017
 output:
   distill::distill_article:
     self_contained: true
+    toc: true
 editor_options: 
   chunk_output_type: console
 categories: 
@@ -23,7 +24,7 @@ source(here::here("_R/blog_setup.R"))
 
 ## Preliminars
 
-Usually (mainly at work) I made a chart and when I  present it nobody cares
+Usually (mainly at work) I made a chart and when I present it nobody cares
 about the style, if the chart comes from an excel spreadsheet, paint or
 intercative chart, or colors, labels, font, or things I like to care.
 That's sad for me but it's fine: the data/history behind and how you present
@@ -286,7 +287,7 @@ hcgames2 <- hchart(dgames, "areaspline", hcaes(year, nations, name = host), name
 hcgames2
 ```
 
-## My Favorite Bonus
+## Example III: My Favorite Bonus
 
 ```{r}
 library(rwars)
