@@ -306,7 +306,7 @@ ggplot(dfmov_players) +
 Now, with the same data and using the `piece_number_move` and `number_move` we can obtain
 the distribution for the first movement for each piece.
 
-```{r, layout="l-body-outset", fig.height=4}
+```{r, fig.height=4}
 piece_lvls <- rchess:::.chesspiecedata() %>%
   mutate(col = str_extract(start_position, "\\w{1}"),
          row = str_extract(start_position, "\\d{1}")) %>%
@@ -376,7 +376,7 @@ dfedges <- as_data_frame(g, "edges") %>%
 To plot the the network I prefer use ggplot2 instead igraph just you get more control in the style
 and colors.
 
-```{r, fig.height=5, layout="l-body-outset"}
+```{r, fig.height=5}
 ggplot() +
   geom_curve(data = dfedges %>%
                filter((str_extract(from, "\\d+") %in% c(1, 2) |

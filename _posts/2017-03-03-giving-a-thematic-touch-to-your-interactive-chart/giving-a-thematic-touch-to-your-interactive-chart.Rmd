@@ -149,7 +149,7 @@ hcspills2 <- hcspills %>%
 ```
 
 
-```{r, layout="l-page"}
+```{r}
 hcspills2
 ```
 
@@ -283,7 +283,7 @@ hcgames2 <- hchart(dgames, "areaspline", hcaes(year, nations, name = host), name
 ```
 
 
-```{r, layout="l-page"}
+```{r}
 hcgames2
 ```
 
@@ -313,7 +313,7 @@ glimpse(swdata)
 
 Data is ready!
 
-```{r, layout="l-page"}
+```{r}
 hchart(swdata, "line", hcaes(x = movie, y = number, group = key),
        color = c("#e5b13a", "#4bd5ee", "#4AA942", "#FAFAFA")) %>% 
   hc_title(

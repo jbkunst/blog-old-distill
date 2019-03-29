@@ -15,7 +15,7 @@
       "highcharts"
     ],
     "preview": "posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.gif",
-    "last_modified": "2019-03-24T17:54:51-03:00"
+    "last_modified": "2019-03-28T11:10:44-03:00"
   },
   {
     "path": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/",
@@ -32,7 +32,7 @@
       "data-visualization"
     ],
     "preview": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png",
-    "last_modified": "2019-03-27T00:16:38-03:00",
+    "last_modified": "2019-03-28T12:54:55-03:00",
     "preview_width": 949,
     "preview_height": 500
   },
@@ -53,7 +53,7 @@
       "highcharts"
     ],
     "preview": "posts/2017-01-05-thematic-interactive-map/images/preview.gif",
-    "last_modified": "2019-03-24T17:55:58-03:00"
+    "last_modified": "2019-03-28T11:10:44-03:00"
   },
   {
     "path": "posts/2016-12-15-interactive-and-styled-middle-earth-map/",
@@ -71,7 +71,7 @@
       "highcharts"
     ],
     "preview": "posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png",
-    "last_modified": "2019-03-24T17:58:15-03:00",
+    "last_modified": "2019-03-28T11:10:44-03:00",
     "preview_width": 379,
     "preview_height": 191
   },
@@ -90,7 +90,7 @@
       "data-visualization"
     ],
     "preview": "posts/2016-12-02-replicating-nyt-weather-app/images/preview.png",
-    "last_modified": "2019-03-26T02:53:56-03:00",
+    "last_modified": "2019-03-28T12:17:35-03:00",
     "preview_width": 671,
     "preview_height": 505
   },
@@ -110,7 +110,25 @@
       "highcharts"
     ],
     "preview": "posts/2016-04-12-adding-motion-to-choropleths/images/preview.gif",
-    "last_modified": "2019-03-24T17:58:56-03:00"
+    "last_modified": "2019-03-28T11:10:44-03:00"
+  },
+  {
+    "path": "posts/2016-03-24-how-to-weather-radials/",
+    "title": "How to: Weather Radials",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2016-03-24",
+    "categories": [
+      "data-visualization",
+      "highcharts"
+    ],
+    "preview": {},
+    "last_modified": "2019-03-28T16:16:21-03:00"
   },
   {
     "path": "posts/2015-10-30-visualizing-chess-data-with-ggplot/",
@@ -127,7 +145,7 @@
       "data-visualization"
     ],
     "preview": "posts/2015-10-30-visualizing-chess-data-with-ggplot/images/preview.png",
-    "last_modified": "2019-03-26T02:45:20-03:00",
+    "last_modified": "2019-03-28T11:10:44-03:00",
     "preview_width": 333,
     "preview_height": 331
   },
@@ -147,7 +165,7 @@
       "htmlwidgets"
     ],
     "preview": "posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png",
-    "last_modified": "2019-03-27T21:58:32-03:00",
+    "last_modified": "2019-03-28T11:10:44-03:00",
     "preview_width": 301,
     "preview_height": 302
   }

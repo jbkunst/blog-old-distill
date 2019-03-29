@@ -19,7 +19,6 @@ categories:
 preview: images/preview.png    
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source(here::here("_R/blog_setup.R"))
@@ -80,7 +79,7 @@ data
 
 Due the data is ready we'll start to create the chart (a highchart object):
 
-```{r, layout="l-page"}
+```{r}
 hc <- highchart() %>%
   hc_xAxis(
     type = "datetime",
@@ -92,8 +91,7 @@ hc <- highchart() %>%
     useHTML = TRUE,
     headerFormat = as.character(tags$small("{point.x: %b %d}", tags$br()))
   ) %>%
-  hc_plotOptions(series = list(borderWidth = 0, pointWidth = 4)) %>%
-  hc_add_theme(hc_theme_smpl())
+  hc_plotOptions(series = list(borderWidth = 0, pointWidth = 4))
 
 hc
 ```
@@ -134,9 +132,8 @@ temps
 
 Now whe can add this data to the _highchart_ object using `hc_add_series`:
 
-```{r, layout="l-page"}
-hc <-
-  hc %>%
+```{r}
+hc <- hc %>%
   hc_add_series(
     temps,
     type = "columnrange",
@@ -155,7 +152,7 @@ we need to filter the days with temperature records using the columns
 set some options to show the points, like use fill color and some longer
 radius.
 
-```{r, layout="l-page"}
+```{r}
 records <- data %>%
   select(dt, temp_rec_high, temp_rec_low) %>%
   filter(temp_rec_high != "NULL" | temp_rec_low != "NULL") %>%
@@ -204,7 +201,7 @@ axis <- create_yaxis(
 
 Manually add titles (I know this can be more elegant) and options.
 
-```{r, layout="l-page"}
+```{r}
 axis[[1]]$title <- list(text = "Temperature")
 axis[[1]]$labels <- list(format = "{value}ºF")
 
@@ -269,7 +266,7 @@ hc <- hc %>%
 
 Curious how the chart looks? Me too! Nah, I saw the chart before this post.
 
-```{r, layout="l-page"}
+```{r}
 hc
 ```
 

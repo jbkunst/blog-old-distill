@@ -1,5 +1,6 @@
 # general knitr option ----------------------------------------------------
 knitr::opts_chunk$set(
+  layout = "l-page",
   fig.path = "images/",
   cache.path = ".cache/"
 )

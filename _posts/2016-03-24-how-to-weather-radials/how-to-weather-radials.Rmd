@@ -1,0 +1,180 @@
+---
+title: "How to: Weather Radials"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 03-24-2016
+output:
+  distill::distill_article:
+    self_contained: true
+categories: 
+  - data-visualization
+  - highcharts
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.gif    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source(here::here("_R/blog_setup.R"))
+```
+
+TLDR: Creating weather radials with [highcharter](http://jkunst.com/highcharter/) and 
+[ggplot2](http://docs.ggplot2.org/current/).
+
+I was surfing by the deep seas of the web and I found the *Brice Pierre de la Briere*'s 
+[blocks](http://bl.ocks.org/bricedev) and I saw the *weather radials* which originally are a
+[poster collection](http://weather-radials.com/). Brice uses D3 and he used D3 very well
+and I love D3 but I'm in a rookie level to do something like him. **D3 is not for everybody**
+and surely not for me, I would love to lear more but family, work and R has priority over D3 so
+how can I do something like that. Well... We have R & highcharter. So let's try. 
+
+We'll use the same data as Brice [https://www.wunderground.com/].
+
+```{r}
+library(tidyverse)
+library(highcharter)
+library(lubridate)
+
+df <- read_csv("http://bl.ocks.org/bricedev/raw/458a01917183d98dff3c/sf.csv")
+
+df
+
+df <- df %>%
+  rename_all(str_to_lower) %>% 
+  rename_all(str_replace, "\\s+", "_") %>% 
+  mutate(
+    id = seq(nrow(df)),
+    date2 = as.Date(ymd(date)),
+    tmstmp = datetime_to_timestamp(date2),
+    month = month(ymd(date))
+  )
+
+dsmax <- df %>%
+  select(tmstmp, max_temperaturec)
+ 
+dsmin <- df %>% 
+  select(tmstmp, min_temperaturec)
+```
+
+
+## First try
+
+Here we test and chart the data in the most simple way. A line time.
+ 
+```{r}
+hc <- highchart() %>% 
+  hc_chart(
+    type = "line"
+    ) %>%
+  hc_xAxis(
+    type = "datetime",
+    tickInterval = 30 * 24 * 3600 * 1000,
+    labels = list(format = "{value: %b}")
+  ) %>% 
+  hc_yAxis(
+    min = 0,
+    labels = list(format = "{value} C")
+  ) %>% 
+  hc_add_series(dsmax, type = "line", hcaes(tmstmp, max_temperaturec), name = "max") %>% 
+  hc_add_series(dsmin, type = "line",  hcaes(tmstmp, min_temperaturec), name = "min")
+
+hc
+```
+
+Everything seems fine. We now a little bit about the data 
+
+## To polar coordinates and columnrange!
+
+Now, we need to change to polar cordinates to get the "radial" part, this is
+get using the `polar = TRUE`  argument in the `hc_chart` function. Then add
+the data in the `columnrange` type.
+  
+```{r}
+# Some tooltips to make it a little *intercative*
+x <- c("Min", "Mean", "Max")
+y <- sprintf("{point.%s}", tolower(x))
+tltip <- tooltip_table(x, y)
+
+hc <- hchart(
+  df,
+  type = "columnrange",
+  hcaes(x = date2, low = min_temperaturec, high = max_temperaturec, color = mean_temperaturec),
+  showInLegend = FALSE
+  ) %>% 
+  hc_chart(
+    polar = TRUE
+  ) %>%  
+  hc_xAxis(
+    gridLineWidth = 0.5,
+    type = "datetime",
+    tickInterval = 30 * 24 * 3600 * 1000,
+    labels = list(format = "{value: %b}")
+  ) %>% 
+  hc_yAxis(
+    max = 30,
+    min = -10,
+    labels = list(format = "{value} C"),
+    showFirstLabel = FALSE
+    ) %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    headerFormat = as.character(tags$small("{point.x:%d %B, %Y}")),
+    pointFormat = tltip
+  )
+
+hc
+```
+
+Yay :D! A beautiful chart same as the d3 version and only using R. So sweet!
+I'm happy with the result. This is not a standar chart but is
+a king of *artistic*. What do you think? Any other examples to test
+this type of chart?
+
+## Bonus Track: ggplot2 version
+
+It's *really really* easy to do this type of chart in ggplot2 using
+`geom_linerange` and `geom_polar`:
+
+```{r}
+library(scales)
+
+ggplot(
+  df,
+  aes(
+    date2,
+    ymin = min_temperaturec,
+    ymax = max_temperaturec,
+    color = mean_temperaturec
+  )
+) +
+  geom_linerange(size = 1.3, alpha = 0.75) +
+  scale_color_viridis_c(NULL, option = "A") +
+  scale_x_date(labels = date_format("%b"), breaks = date_breaks("month")) +
+  ylim(-10, 35) +
+  labs(
+    title = "San Francisco Wather Radial",
+    subtitle = "It would be nice if someone do this with the animation package",
+    caption = "Other example for ggplot2 vs base #boring but #fun",
+    x = NULL,
+    y = NULL
+  ) +
+  coord_polar() +
+  theme(legend.position = "bottom")
+```
+
+Nice!
+
+Searching I found someone do 
+[this](https://www.quora.com/R-programming-language/What-is-the-most-elegant-plot-you-have-made-using-ggplot2):
+
+> Always exist someone who did what you did before you.
+
+At least I share the code! :D.
+
+```{r, echo=FALSE}
+# knitr::include_graphics("http://giphy.com/gifs/how-i-met-your-mother-barney-stinson-high-five-13IGxUKu7ucp68")
+```

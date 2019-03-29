@@ -2,38 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
   <url>
     <loc>http://jkunst.com/blog/</loc>
-    <lastmod>2019-03-27T21:59:45-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:45-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/</loc>
-    <lastmod>2019-03-24T17:54:51-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/</loc>
-    <lastmod>2019-03-27T00:16:38-03:00</lastmod>
+    <lastmod>2019-03-28T12:54:55-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map/</loc>
-    <lastmod>2019-03-24T17:55:58-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map/</loc>
-    <lastmod>2019-03-24T17:58:15-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app/</loc>
-    <lastmod>2019-03-26T02:53:56-03:00</lastmod>
+    <lastmod>2019-03-28T12:17:35-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths/</loc>
-    <lastmod>2019-03-24T17:58:56-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
+  </url>
+  <url>
+    <loc>http://jkunst.com/blog/posts/2016-03-24-how-to-weather-radials/</loc>
+    <lastmod>2019-03-28T16:16:21-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2015-10-30-visualizing-chess-data-with-ggplot/</loc>
-    <lastmod>2019-03-26T02:45:20-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r/</loc>
-    <lastmod>2019-03-27T21:58:32-03:00</lastmod>
+    <lastmod>2019-03-28T11:10:44-03:00</lastmod>
   </url>
 </urlset>
