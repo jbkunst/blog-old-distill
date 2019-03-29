@@ -1,7 +1,7 @@
 ---
 title: "How to: Weather Radials"
 description: |
-  A short description of the post.
+  TLDR: Creating weather radials withh highcharter and ggplot2
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
@@ -12,9 +12,10 @@ output:
 categories: 
   - data-visualization
   - highcharts
+  - ggplot2
 editor_options: 
   chunk_output_type: console
-preview: images/preview.gif    
+preview: images/preview.png    
 ---
 
 ```{r setup, include=FALSE}
@@ -22,8 +23,6 @@ knitr::opts_chunk$set(echo = TRUE)
 source(here::here("_R/blog_setup.R"))
 ```
 
-TLDR: Creating weather radials with [highcharter](http://jkunst.com/highcharter/) and 
-[ggplot2](http://docs.ggplot2.org/current/).
 
 I was surfing by the deep seas of the web and I found the *Brice Pierre de la Briere*'s 
 [blocks](http://bl.ocks.org/bricedev) and I saw the *weather radials* which originally are a
@@ -32,7 +31,7 @@ and I love D3 but I'm in a rookie level to do something like him. **D3 is not fo
 and surely not for me, I would love to lear more but family, work and R has priority over D3 so
 how can I do something like that. Well... We have R & highcharter. So let's try. 
 
-We'll use the same data as Brice [https://www.wunderground.com/].
+We'll use the same data as Brice https://www.wunderground.com/.
 
 ```{r}
 library(tidyverse)
@@ -41,7 +40,7 @@ library(lubridate)
 
 df <- read_csv("http://bl.ocks.org/bricedev/raw/458a01917183d98dff3c/sf.csv")
 
-df
+glimpse(df)
 
 df <- df %>%
   rename_all(str_to_lower) %>% 
@@ -66,23 +65,24 @@ dsmin <- df %>%
 Here we test and chart the data in the most simple way. A line time.
  
 ```{r}
-hc <- highchart() %>% 
-  hc_chart(
-    type = "line"
-    ) %>%
+highchart() %>%
+  hc_chart(type = "line") %>%
   hc_xAxis(
     type = "datetime",
     tickInterval = 30 * 24 * 3600 * 1000,
     labels = list(format = "{value: %b}")
-  ) %>% 
-  hc_yAxis(
-    min = 0,
-    labels = list(format = "{value} C")
-  ) %>% 
-  hc_add_series(dsmax, type = "line", hcaes(tmstmp, max_temperaturec), name = "max") %>% 
-  hc_add_series(dsmin, type = "line",  hcaes(tmstmp, min_temperaturec), name = "min")
+  ) %>%
+  hc_yAxis(min = 0,
+           labels = list(format = "{value} C")) %>%
+  hc_add_series(dsmax,
+                type = "line",
+                hcaes(tmstmp, max_temperaturec),
+                name = "max") %>%
+  hc_add_series(dsmin,
+                type = "line",
+                hcaes(tmstmp, min_temperaturec),
+                name = "min")
 
-hc
 ```
 
 Everything seems fine. We now a little bit about the data 
@@ -96,10 +96,10 @@ the data in the `columnrange` type.
 ```{r}
 # Some tooltips to make it a little *intercative*
 x <- c("Min", "Mean", "Max")
-y <- sprintf("{point.%s}", tolower(x))
+y <- sprintf("{point.%s} ºC", c("min_temperaturec", "mean_temperaturec", "max_temperaturec"))
 tltip <- tooltip_table(x, y)
 
-hc <- hchart(
+hchart(
   df,
   type = "columnrange",
   hcaes(x = date2, low = min_temperaturec, high = max_temperaturec, color = mean_temperaturec),
@@ -117,7 +117,7 @@ hc <- hchart(
   hc_yAxis(
     max = 30,
     min = -10,
-    labels = list(format = "{value} C"),
+    labels = list(format = "{value} ºC"),
     showFirstLabel = FALSE
     ) %>% 
   hc_tooltip(
@@ -125,8 +125,6 @@ hc <- hchart(
     headerFormat = as.character(tags$small("{point.x:%d %B, %Y}")),
     pointFormat = tltip
   )
-
-hc
 ```
 
 Yay :D! A beautiful chart same as the d3 version and only using R. So sweet!
@@ -173,8 +171,6 @@ Searching I found someone do
 
 > Always exist someone who did what you did before you.
 
-At least I share the code! :D.
-
-```{r, echo=FALSE}
-# knitr::include_graphics("http://giphy.com/gifs/how-i-met-your-mother-barney-stinson-high-five-13IGxUKu7ucp68")
+```{r, echo=FALSE, layout="l-body"}
+knitr::include_graphics("https://66.media.tumblr.com/8a0abe5231f08a76f8198e6cbfd8950e/tumblr_n0l6vpTQDu1rdf0p9o3_400.gif")
 ```

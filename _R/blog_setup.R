@@ -2,7 +2,9 @@
 knitr::opts_chunk$set(
   layout = "l-page",
   fig.path = "images/",
-  cache.path = ".cache/"
+  cache.path = ".cache/",
+  dpi = 72*2,
+  fig.align = "center"
 )
 
 # ggplot2 -----------------------------------------------------------------
@@ -11,7 +13,7 @@ library(extrafont)
 # extrafont::font_import()
 suppressMessages(suppressWarnings(loadfonts()))
 
-theme_set(theme_minimal(base_family = "Segoe UI"))
+theme_set(theme_minimal(base_family = "Segoe UI", base_size = 7))
 
 # highcharter -------------------------------------------------------------
 library(highcharter)

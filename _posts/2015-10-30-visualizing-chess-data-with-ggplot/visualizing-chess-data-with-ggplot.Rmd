@@ -16,6 +16,7 @@ editor_options:
   chunk_output_type: console
 categories: 
   - data-visualization
+  - ggplot2
 preview: images/preview.png  
 ---
 
@@ -152,16 +153,43 @@ to represent the piece's path and some `jitter` to make this more artistic. Let'
 plot the f1 Bishop's movements.
 
 ```{r}
+pieces <- "f1 Bishop"
+
+dfpaths_piece <- dfpaths %>% 
+  filter(piece == pieces)
+
 ggplot() +
   geom_tile(data = dfboard, aes(x, y, fill = cc)) +
-  geom_curve(data = dfpaths %>% filter(piece == "f1 Bishop", x_gt_y_equal_xy_sign),
-             aes(x = x.from, y = y.from, xend = x.to, yend = y.to),
-             position = position_jitter(width = 0.2, height = 0.2),
-             curvature = 0.50, angle = -45, alpha = 0.02, color = "white", size = 1.05) +
-  geom_curve(data = dfpaths %>% filter(piece == "f1 Bishop", !x_gt_y_equal_xy_sign),
-             aes(x = x.from, y = y.from, xend = x.to, yend = y.to),
-             position = position_jitter(width = 0.2, height = 0.2),
-             curvature = -0.50, angle = 45, alpha = 0.02, color = "white", size = 1.05) +
+  geom_curve(
+    data = dfpaths_piece %>% filter(x_gt_y_equal_xy_sign),
+    aes(
+      x = x.from,
+      y = y.from,
+      xend = x.to,
+      yend = y.to
+    ),
+    position = position_jitter(width = 0.2, height = 0.2),
+    curvature = 0.50,
+    angle = -45,
+    alpha = 0.02,
+    color = "white",
+    size = 1.05
+  ) +
+  geom_curve(
+    data = dfpaths_piece %>% filter(!x_gt_y_equal_xy_sign),
+    aes(
+      x = x.from,
+      y = y.from,
+      xend = x.to,
+      yend = y.to
+    ),
+    position = position_jitter(width = 0.2, height = 0.2),
+    curvature = -0.50,
+    angle = 45,
+    alpha = 0.02,
+    color = "white",
+    size = 1.05
+  ) +
   scale_fill_manual(values =  c("gray10", "gray20")) +
   ggtitle("f1 Bishop") +
   coord_equal()
@@ -170,22 +198,54 @@ ggplot() +
 In the same way we can plot every piece.
 
 ```{r}
+pieces <- c("White Queen",
+            "h1 Rook",
+            "b8 Knight",
+            "g2 Pawn",
+            "c1 Bishop",
+            "f7 Pawn")
+
+dfpaths_pieces <- dfpaths %>% 
+  filter(piece %in% pieces)
+
 ggplot() +
   geom_tile(data = dfboard, aes(x, y, fill = cc)) +
-  geom_curve(data = dfpaths %>% filter(piece == "g8 Knight", x_gt_y_equal_xy_sign),
-             aes(x = x.from, y = y.from, xend = x.to, yend = y.to),
-             position = position_jitter(width = 0.2, height = 0.2),
-             curvature = 0.50, angle = -45, alpha = 0.02, color = "black", size = 1.05) +
-  geom_curve(data = dfpaths %>% filter(piece == "g8 Knight", !x_gt_y_equal_xy_sign),
-             aes(x = x.from, y = y.from, xend = x.to, yend = y.to),
-             position = position_jitter(width = 0.2, height = 0.2),
-             curvature = -0.50, angle = 45, alpha = 0.02, color = "black", size = 1.05) +
-  scale_fill_manual(values =  c("gray80", "gray90")) +
-  ggtitle("g8 Knight") +
-  coord_equal() 
+  geom_curve(
+    data = dfpaths_pieces %>% filter(x_gt_y_equal_xy_sign),
+    aes(
+      x = x.from,
+      y = y.from,
+      xend = x.to,
+      yend = y.to
+    ),
+    position = position_jitter(width = 0.2, height = 0.2),
+    curvature = 0.50,
+    angle = -45,
+    alpha = 0.02,
+    color = "white",
+    size = 1.05
+  ) +
+  geom_curve(
+    data = dfpaths_pieces %>% filter(!x_gt_y_equal_xy_sign),
+    aes(
+      x = x.from,
+      y = y.from,
+      xend = x.to,
+      yend = y.to
+    ),
+    position = position_jitter(width = 0.2, height = 0.2),
+    curvature = -0.50,
+    angle = 45,
+    alpha = 0.02,
+    color = "white",
+    size = 1.05
+  ) +
+  scale_fill_manual(values =  c("gray10", "gray20")) +
+  coord_equal() +
+  facet_wrap(vars(piece), ncol = 3)
 ```
 
-I think it's look very similar to the original work made by [Steve Tung](https://twitter.com/_tungs_).
+I think it's look very nice and similar to the original work made by [Steve Tung](https://twitter.com/_tungs_).
 
 
 ## Survival Rates 
@@ -376,7 +436,7 @@ dfedges <- as_data_frame(g, "edges") %>%
 To plot the the network I prefer use ggplot2 instead igraph just you get more control in the style
 and colors.
 
-```{r, fig.height=5}
+```{r, fig.height=6}
 ggplot() +
   geom_curve(data = dfedges %>%
                filter((str_extract(from, "\\d+") %in% c(1, 2) |
@@ -390,12 +450,12 @@ ggplot() +
              curvature = 0.1, color = "blue") +
   scale_alpha(range = c(0.01, 0.5)) +
   scale_size(range = c(0.01, 2)) +
-  geom_point(data = dfvertices, aes(x, y, color = color), size = 15, alpha = 0.9) +
+  geom_point(data = dfvertices, aes(x, y, color = color), size = 13, alpha = 0.9) +
   scale_color_manual(values = c("gray10", "gray90")) +
   geom_text(data = dfvertices %>% filter(str_length(name2) != 1),
             aes(x, y, label = name2), size = 5, color = "gray50") +
   geom_text(data = dfvertices %>% filter(str_length(name2) == 1),
-            aes(x, y, label = name2), size = 9, color = "gray50") +
+            aes(x, y, label = name2), size = 5, color = "gray50") +
   ggtitle("Red: white captures black | Blue: black captures white") +
   theme(legend.position = "none")
 ```
