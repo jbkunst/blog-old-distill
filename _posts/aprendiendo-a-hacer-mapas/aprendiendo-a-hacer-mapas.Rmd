@@ -1,0 +1,193 @@
+---
+title: "Aprendiendo a hacer mapas"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 03-30-2019
+output:
+  distill::distill_article:
+    self_contained: true
+    toc: true
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source(here::here("_R/blog_setup.R"))
+library(tidyverse)
+```
+
+La motivación de este post es un tweet de Juan Correa (Juanizio_C en twitter) en donde
+nos muestra un gif. 
+
+<blockquote class="twitter-tweet" data-lang="es"><p lang="es" dir="ltr">Una de las mayores expresiones de la desigualdad y segregación en Santiago ha sido el acceso a la educación<br><br>Entendiendo su rol como activo y movilizador social, es clave entender el gran retroceso de politicas como <a href="https://twitter.com/hashtag/AdmisionJusta?src=hash&amp;ref_src=twsrc%5Etfw">#AdmisionJusta</a> y el retorno de la selección escolar <a href="https://t.co/d87dMRqlGK">pic.twitter.com/d87dMRqlGK</a></p>&mdash; Juan Correa (@Juanizio_C) <a href="https://twitter.com/Juanizio_C/status/1091462602738286594?ref_src=twsrc%5Etfw">1 de febrero de 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+En las respuestas algunos usuarios, aparte de felicitarlo :), solicitan las imágenes 
+por separado para mirarlas con más detalles. Estes es un problema usual de la animación
+en donde uno debe recordar lo que ve para comparar con lo que esta actualmente viendo.
+
+Por lo anterior intentaremos y aprenderemos acá:
+
+- Aprender a graficar mapas
+- Intentar replicar el output de Juanizio 
+- Ver alternativas que no sean animadas pero igualmente atractivas
+- Intentar hacerlo interactivo
+
+## Mapa
+
+Para graficar el mapa de Santiago tomaremos los geojson del repositorio de 
+Roberto Salas (Robsalsa en twitter), y los pasaremos a Simple Feature.  
+
+```{r, cache=TRUE}
+library(tidyverse)
+
+geourl <- "https://raw.githubusercontent.com/robsalasco/precenso_2016_geojson_chile/master/Zonas/R13.geojson"
+
+zonas <- jsonlite::fromJSON(geourl, simplifyVector = FALSE)
+zonas <- geojsonio::as.json(zonas)
+zonas <- geojsonsf::geojson_sf(zonas)
+
+glimpse(zonas)
+```
+
+Todo bien hasta ahora. Grafiquemos y exploremos el contenido del geojson.
+
+```{r, cache=TRUE}
+ggplot(zonas) +
+  geom_sf(size = .2, fill = NA, colour = "gray80")
+```
+
+Vemos que hay zonas que estás dispersas. La verdad, al no ser experto en 
+SIGs no se me ocurre otra forma mejor que obtener los centroides y filtrar
+a mano.
+
+
+```{r, cache=TRUE}
+zonas <- zonas %>% 
+  mutate(centro = sf::st_centroid(geometry))
+
+centros_coords <- zonas %>% 
+  pull(centro) %>% 
+  sf::st_coordinates() 
+
+zonas <- zonas %>% 
+  mutate(
+    x = centros_coords[, 1],
+    y = centros_coords[, 2]
+  )
+
+zonas <- zonas %>% 
+  filter(y <= -33.30) %>%
+  filter(y >= -33.70) %>%
+  filter(x >= -70.85) %>%
+  filter(x <= -70.40)
+
+ggplot(zonas) +
+  geom_sf(size = .2, fill = NA, colour = "gray80")
+```
+
+Muy bien, a mano pudimos filtrar y mostrar las zonas que nos interesan para
+replicar lo que queremos.
+
+## Datos
+
+Acá debo enfatizar que no cacho mucho de representaciones geográficas y todas 
+esas artes, ni menos el origen de datos y transformaciones se realizaron, así que
+con todo el empeño intentaré obtener algo similar para que sigamos con el post
+
+Leeremos la información desde un servidor que, nuevamente, Don Rob me ayudó a
+levantar con los datos del CENSO, usaremos obviamente la tabla `personas`
+pues contiene las respuesta de la pregunta sobre el grado alcanzado.
+
+```{r}
+con <- DBI::dbConnect(
+  RMySQL::MySQL(),
+  dbname = "censo2017",
+  host = "142.93.20.188", 
+  port = 3306,
+  user = "test",
+  password = "HFW9KYZBnEYr!"
+)
+
+glimpse(tbl(con, "personas"))
+```
+
+A la tabla filtraremos por `P07 = 1` que corresponden a los jefes de hogares,
+y luego por la region metropolitana (`13`) y obtendremos los conteos de
+cada respuesta segun región, provincia, comuna, dc, area, zc_loc.
+
+<aside>
+Por favor si alguien conoce una forma más limpia y sana, dígamelo!
+</aside>
+
+```{r, cache=TRUE}
+dta_jefe_educ <- tbl(con, "personas") %>% 
+  filter(P07 == 1) %>% 
+  filter(REGION == 13) %>% 
+  group_by(REGION, PROVINCIA, COMUNA, DC, AREA, ZC_LOC, ID_ZONA_LOC) %>% 
+  count(P15) %>% 
+  collect()
+
+dta_jefe_educ %>% 
+  group_by(P15) %>% 
+  summarise(n = sum(n)) %>% 
+  mutate(p = 100 * n/sum(n)) 
+```
+
+
+##### test
+
+```{r, eval=FALSE}
+
+
+
+
+
+geojsonsf::geojson_sf()
+
+
+
+
+archivo_shape <- "~/../Downloads/official_chile_2017_census_boundary_shapefile-master/R13/Distritos_Censales.dbf"
+
+st_layers(archivo_shape)
+
+dcapa <- read_sf(archivo_shape, layer = "Distritos_Censales")
+dcapa <- st_transform(dcapa, 32719)
+
+dcapa <- dcapa %>% 
+  left_join(escolaridad_comuna_dc %>% mutate(COMUNA = as.character(COMUNA)), by = c("COMUNA", "COD_DISTRI" = "DC"))
+
+ggplot() +
+  geom_sf(data = dcapa, size = .2, fill = NA, colour = "gray80")
+
+
+# data --------------------------------------------------------------------
+
+library(tidyverse)
+library(sf)
+library(dplyr)
+library(DBI)
+
+# https://github.com/justinelliotmeyers/official_chile_2017_census_boundary_shapefile
+
+# 
+# URL:      http://142.93.20.188/phpmyadmin
+# Username: admin
+# Password: 2623360fe6582dccff16ab38d509253389444f4e6237a6d8
+# 
+# CREATE DATABASE matpuc;
+# CREATE USER 'test'@'%' IDENTIFIED BY 'HFW9KYZBnEYr!';
+# GRANT ALL PRIVILEGES ON matpuc.* TO 'test'@'%';
+# FLUSH PRIVILEGES;
+# 
+
+```
+
+
+

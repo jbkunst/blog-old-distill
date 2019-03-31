@@ -1,0 +1,12 @@
+base
+ggplot2
+extrafont
+highcharter
+tidyverse
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
