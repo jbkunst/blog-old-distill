@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(
   layout = "l-page",
   fig.path = "images/",
-  cache.path = ".cache/",
+  cache.path = "cache/",
   dpi = 72*2,
   fig.align = "center"
 )

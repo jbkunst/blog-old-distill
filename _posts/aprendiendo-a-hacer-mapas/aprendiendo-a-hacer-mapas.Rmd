@@ -140,7 +140,7 @@ dta_jefe_educ %>%
 ```
 
 
-##### test
+##### tests
 
 ```{r, eval=FALSE}
 
