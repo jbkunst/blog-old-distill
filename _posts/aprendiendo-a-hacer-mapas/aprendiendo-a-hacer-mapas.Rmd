@@ -21,6 +21,7 @@ source(here::here("_R/blog_setup.R"))
 library(tidyverse)
 ```
 
+<!--
 La motivación de este post es un tweet de Juan Correa (Juanizio_C en twitter) en donde
 nos muestra un gif. 
 
@@ -38,17 +39,19 @@ Por lo anterior intentaremos y aprenderemos acá:
 - Ver alternativas que no sean animadas pero igualmente atractivas
 - Intentar hacerlo interactivo
 
+-->
+
 ## Mapa
 
-Para graficar el mapa de Santiago tomaremos los geojson del repositorio de 
-Roberto Salas (Robsalsa en twitter), y los pasaremos a Simple Feature.  
+Para graficar el mapa de Santiago tomaremos los geojson  y los pasaremos
+a Simple Feature.  
 
 ```{r, cache=TRUE}
 library(tidyverse)
 
 geourl <- "https://raw.githubusercontent.com/robsalasco/precenso_2016_geojson_chile/master/Zonas/R13.geojson"
 
-zonas <- jsonlite::fromJSON(geourl, simplifyVector = FALSE)
+zonas <- jsonlite::fromJSON(geourl)
 zonas <- geojsonio::as.json(zonas)
 zonas <- geojsonsf::geojson_sf(zonas)
 
@@ -88,15 +91,16 @@ zonas <- zonas %>%
   filter(x <= -70.40)
 
 ggplot(zonas) +
-  geom_sf(size = .2, fill = NA, colour = "gray80")
+  geom_sf(size = .2, fill = "gray95", colour = "gray80") +
+  coord_sf(ndiscr = 0) # https://stackoverflow.com/a/52426976/829971
 ```
 
-Muy bien, a mano pudimos filtrar y mostrar las zonas que nos interesan para
-replicar lo que queremos.
+No quedaron las mismas zonas que la versión original pero servirá
+para nuestros propósitos.
 
 ## Datos
 
-Acá debo enfatizar que no cacho mucho de representaciones geográficas y todas 
+Acá debo enfatizar que no se mucho de representaciones geográficas y todas 
 esas artes, ni menos el origen de datos y transformaciones se realizaron, así que
 con todo el empeño intentaré obtener algo similar para que sigamos con el post
 
@@ -114,7 +118,15 @@ con <- DBI::dbConnect(
   password = "HFW9KYZBnEYr!"
 )
 
-glimpse(tbl(con, "personas"))
+DBI::dbListTables(con)
+
+tbl(con, "idgeo") %>% 
+  collect(n = 10) %>% 
+  rmarkdown::paged_table()
+
+tbl(con, "personas") %>% 
+  collect(n = 10) %>% 
+  rmarkdown::paged_table()
 ```
 
 A la tabla filtraremos por `P07 = 1` que corresponden a los jefes de hogares,
@@ -122,72 +134,102 @@ y luego por la region metropolitana (`13`) y obtendremos los conteos de
 cada respuesta segun región, provincia, comuna, dc, area, zc_loc.
 
 <aside>
-Por favor si alguien conoce una forma más limpia y sana, dígamelo!
+Mas detalles sobre los datos; https://redatam-ine.ine.cl/manuales/Manual-Usuario.pdf
 </aside>
 
 ```{r, cache=TRUE}
 dta_jefe_educ <- tbl(con, "personas") %>% 
   filter(P07 == 1) %>% 
   filter(REGION == 13) %>% 
-  group_by(REGION, PROVINCIA, COMUNA, DC, AREA, ZC_LOC, ID_ZONA_LOC) %>% 
-  count(P15) %>% 
+  group_by(COMUNA, DC, AREA, ID_ZONA_LOC, ZC_LOC) %>% 
+  count(P15, P15A) %>% 
   collect()
 
+dta_jefe_educ <- dta_jefe_educ %>% 
+  ungroup() %>% 
+  mutate(
+    P15_label = case_when(
+      P15 %in% c(5, 6) & P15A == 1 ~ "Ed. Básica Completa",
+      P15 %in% c(7:10) & P15A == 2 ~ "Ed. Media Incompleta",
+      P15 %in% c(7:10) & P15A == 1 ~ "Ed. Media Completa",
+      P15 == 11 ~ "Ed. Técnico Superior",
+      P15 == 12 ~ "Ed. Superior",
+      P15 %in% c(13, 14) ~ "Ed. Posgrado",
+      TRUE ~ "Otra/Missing"
+    )
+  ) %>% 
+  arrange(P15, P15A) %>% 
+  mutate(P15_label = fct_inorder(P15_label))
+```
+
+
+```{r, layout="l-body"}
 dta_jefe_educ %>% 
-  group_by(P15) %>% 
-  summarise(n = sum(n)) %>% 
-  mutate(p = 100 * n/sum(n)) 
+  count(P15_label) %>% 
+  knitr::kable()
 ```
 
 
-##### tests
-
-```{r, eval=FALSE}
-
-
-
-
-
-geojsonsf::geojson_sf()
-
-
-
-
-archivo_shape <- "~/../Downloads/official_chile_2017_census_boundary_shapefile-master/R13/Distritos_Censales.dbf"
-
-st_layers(archivo_shape)
-
-dcapa <- read_sf(archivo_shape, layer = "Distritos_Censales")
-dcapa <- st_transform(dcapa, 32719)
-
-dcapa <- dcapa %>% 
-  left_join(escolaridad_comuna_dc %>% mutate(COMUNA = as.character(COMUNA)), by = c("COMUNA", "COD_DISTRI" = "DC"))
-
-ggplot() +
-  geom_sf(data = dcapa, size = .2, fill = NA, colour = "gray80")
-
-
-# data --------------------------------------------------------------------
-
-library(tidyverse)
-library(sf)
-library(dplyr)
-library(DBI)
-
-# https://github.com/justinelliotmeyers/official_chile_2017_census_boundary_shapefile
-
-# 
-# URL:      http://142.93.20.188/phpmyadmin
-# Username: admin
-# Password: 2623360fe6582dccff16ab38d509253389444f4e6237a6d8
-# 
-# CREATE DATABASE matpuc;
-# CREATE USER 'test'@'%' IDENTIFIED BY 'HFW9KYZBnEYr!';
-# GRANT ALL PRIVILEGES ON matpuc.* TO 'test'@'%';
-# FLUSH PRIVILEGES;
-# 
-
+```{r}
+dta_jefe_educ <- dta_jefe_educ %>% 
+  group_by(COMUNA, DC, AREA, ID_ZONA_LOC, ZC_LOC) %>% 
+  count(P15_label) %>% 
+  mutate(porcentaje = n/sum(n)) %>% 
+  ungroup()
 ```
 
+
+## Graficando los datos:
+
+```{r, cache=TRUE}
+dta_jefe_educ <- dta_jefe_educ %>%
+  mutate(id = paste(
+    COMUNA,
+    sprintf("%02d", DC),
+    AREA,
+    sprintf("%03d", ZC_LOC),
+    sep = ""
+  ))
+
+zonas <- zonas %>%
+  mutate(
+    AREA = 1, 
+    id = paste(
+    COMUNA,
+    sprintf("%02d", COD_DIS),
+    AREA,
+    sprintf("%03d", COD_ZONA),
+    sep = ""
+  ))
+
+dta_jefe_educ %>% count(nchar(id))
+zonas         %>% count(nchar(id))
+
+
+dta_jefe_educ %>% count(nchar(COMUNA))
+zonas         %>% count(nchar(COMUNA))
+
+dta_jefe_educ %>% count(nchar(DC))
+zonas         %>% count(nchar(COD_DIS))
+
+# dta_jefe_educ %>% count(nchar(ID_ZONA_LOC))
+dta_jefe_educ %>% count(nchar(ZC_LOC))
+zonas         %>% count(nchar(COD_ZONA))
+
+
+zonas %>% 
+  left_join(dta_jefe_educ %>% select(P15_label , porcentaje, id), by = "id") %>% 
+  filter(!is.na(porcentaje)) %>%
+  # filter(P15_label != "Otra/Missing") %>%
+  # filter(P15_label == "Ed. Posgrado") %>%
+  # filter(P15_label == "Ed. Básica Completa") %>%
+  filter(porcentaje != 0) %>%
+  mutate(porcentaje = cut(100*porcentaje, breaks = c(-Inf, 0, 20, 40, 60, Inf))) %>% 
+  ggplot() +
+  geom_sf(data = zonas, size = .2, fill = "gray95", colour = "gray80") +
+  geom_sf(aes(fill = porcentaje), color = NA) +
+  scale_fill_viridis_d(option = "B") +
+  facet_wrap(vars(P15_label))
+```
 
 
