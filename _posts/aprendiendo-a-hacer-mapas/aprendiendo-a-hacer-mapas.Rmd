@@ -228,7 +228,7 @@ zonas %>%
   ggplot() +
   geom_sf(data = zonas, size = .2, fill = "gray95", colour = "gray80") +
   geom_sf(aes(fill = porcentaje), color = NA) +
-  scale_fill_viridis_d(option = "B") +
+  # scale_fill_viridis_d(option = "B") +
   facet_wrap(vars(P15_label))
 ```
 

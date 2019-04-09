@@ -4,8 +4,14 @@ knitr::opts_chunk$set(
   fig.path = "images/",
   cache.path = "cache/",
   dpi = 72*2,
-  fig.align = "center"
+  fig.align = "center",
+  echo = TRUE
 )
+
+
+# copy rss ----------------------------------------------------------------
+try(fs::file_copy("docs/index.xml", "docs/category/r/rss/index.xml", overwrite = TRUE))
+
 
 # ggplot2 -----------------------------------------------------------------
 library(ggplot2)
@@ -21,7 +27,11 @@ library(highcharter)
 options(
   highcharter.theme = 
     hc_theme_smpl(
-      chart = list(style = list(fontFamily = "Roboto")),
+      chart = list(
+        style = list(
+          fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+          )
+        ),
       title = list(style = list(fontFamily = "Roboto")),
       subtitle = list(style = list(fontFamily = "Roboto"))
       )
