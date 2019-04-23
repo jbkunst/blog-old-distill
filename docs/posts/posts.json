@@ -1,5 +1,24 @@
 [
   {
+    "path": "posts/2019-04-23-got-animating-the-shifting-of-affiliations/",
+    "title": "#GOT Animating the Shifting of Affiliations",
+    "description": "My first steps using the gganimate package using Game of Thrones \ndata!",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2019-04-23",
+    "categories": [
+      "data-visualization",
+      "ggplot2",
+      "animation"
+    ],
+    "preview": "posts/2019-04-23-got-animating-the-shifting-of-affiliations/images/preview.gif",
+    "last_modified": "2019-04-23T04:16:03-03:00"
+  },
+  {
     "path": "posts/2019-04-08-when-charts-are-integrated-in-the-web-page/",
     "title": "When charts are integrated in the web page",
     "description": "I saw a chart yesterday, a chart without frame, without title\nor captions just a very hidden chart at bottom of the web page.\nIt will be a nice time to get the most interesting visual features\nof it.",

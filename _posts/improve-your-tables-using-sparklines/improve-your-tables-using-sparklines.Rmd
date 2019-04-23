@@ -27,30 +27,18 @@ library(highcharter)
 library(tidyverse)
 library(gapminder)
 
-data("gapminder")
 
-gapminder
 ```
 
-Nesting:
+
 
 ```{r}
-gapminder <- gapminder %>% 
-  nest(-country) %>% 
-  mutate(chart = map(data, ~ hchart(., "line", hcaes(year, pop))))
+htmltools::browsable(
+  htmltools::tagList(
+    shinydashboard::valueBox(10, subtitle = "hey", color = "red")
+  )
+)
 ```
-
-Now:
-
-```{r}
-gapminder %>% 
-  sample_n(10) %>% 
-  select(country, chart) %>% 
-  # mutate(chart = map(chart, htmltools::browsable)) %>% 
-  mutate(chart = map(chart, htmltools::HTML, text = "")) %>% 
-  DT::datatable()
-```
-
 
 
 

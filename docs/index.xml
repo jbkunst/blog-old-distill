@@ -7,7 +7,17 @@
     <description>Data, Code and Visualization
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>lun., 08 abr. 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>mar., 23 abr. 2019 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>#GOT Animating the Shifting of Affiliations</title>
+      <dc:creator>Joshua Kunst</dc:creator>
+      <link>http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations</link>
+      <description>My first steps using the gganimate package using Game of Thrones 
+data!</description>
+      <guid>http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations</guid>
+      <pubDate>mar., 23 abr. 2019 00:00:00 +0000</pubDate>
+      <media:content url="http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations/images/preview.gif" medium="image" type="image/gif"/>
+    </item>
     <item>
       <title>When charts are integrated in the web page</title>
       <dc:creator>Joshua Kunst</dc:creator>
@@ -70,15 +80,6 @@ be somehow helpful.</description>
       <guid>http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app</guid>
       <pubDate>vie., 02 dic. 2016 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app/images/preview.png" medium="image" type="image/png" width="671" height="505"/>
-    </item>
-    <item>
-      <title>Adding motion to choropleths</title>
-      <dc:creator>Joshua Kunst</dc:creator>
-      <link>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths</link>
-      <description>We will use the highchart motion plugin with a map.</description>
-      <guid>http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths</guid>
-      <pubDate>mar., 12 abr. 2016 00:00:00 +0000</pubDate>
-      <media:content url="http://jkunst.com/blog/posts/2016-04-12-adding-motion-to-choropleths/images/preview.gif" medium="image" type="image/gif"/>
     </item>
   </channel>
 </rss>

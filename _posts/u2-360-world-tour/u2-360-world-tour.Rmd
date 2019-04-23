@@ -1,0 +1,257 @@
+---
+title: "U2 360º World Tour"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 04-10-2019
+output:
+  distill::distill_article:
+    self_contained: true
+categories: 
+  - data-visualization
+  - highcharts    
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+draft: true
+---
+
+```{r setup, include=FALSE}
+source(here::here("_R/blog_setup.R"))
+```
+
+Distill is a publication format for scientific and technical writing, native to the web.
+
+Learn more about using Distill at <https://rstudio.github.io/distill>.
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(lubridate)
+Sys.setlocale("LC_TIME","English")
+
+
+# DATA --------------------------------------------------------------------
+html <- read_html("https://en.wikipedia.org/wiki/U2_360%C2%B0_Tour")
+
+data <- html_table(html, fill = TRUE)[[2]] 
+
+data <- data %>% 
+  tbl_df() %>% 
+  rename_all(str_to_lower) %>% 
+  rename_all(str_replace_all, "\\s+", "_")
+
+glimpse(data)
+
+# remove intermediate leg 
+data <- data %>% 
+  mutate(leg = ifelse(str_detect(date, "Leg "), date, NA)) %>% 
+  fill(leg) %>% 
+  filter(!str_detect(date, "Leg "), date != "TOTAL")
+
+
+data <- data %>% 
+  mutate(
+    attendance2 = str_extract(attendance, ".* "),
+    attendance2 = str_replace_all(attendance2, ",| |/", ""),
+    attendance2 = as.numeric(attendance2),
+    revenue2 =  str_replace_all(revenue, ",|\\$", ""),
+    revenue2 = as.numeric(revenue2),
+    revenue2 = coalesce(revenue2, 0),
+    date2 = as.Date(date, format = "%d %B %Y"),
+    ym = date2 - day(date2) + days(1),
+    leg = str_replace(leg, "\\[\\d+\\]\\[\\d+\\]", "")
+    )
+
+glimpse(data)
+
+data <- data %>% 
+  select(
+    leg, date = date2, city, country, venue, 
+    opening_act, attendance = attendance2,
+    revenue = revenue2, ym
+    )
+
+dfym <- data %>% 
+  group_by(leg, ym, country, city, venue) %>% 
+  summarise(
+    concerts = n(),
+    attendance = sum(attendance),
+    revenue = sum(revenue)
+    ) %>% 
+  mutate(
+    location = paste0(country, ", ", city),
+    z = revenue
+    ) %>% 
+  ungroup()
+```
+
+
+```{r, cache=TRUE}
+gcodes <- dfym %>% 
+  pull(location) %>% 
+  map_df(function(x = "United States, Minneapolis"){
+    
+    response <- httr::GET(
+      "http://www.datasciencetoolkit.org/maps/api/geocode/json",
+      query = list(sensor = "false", address = x)
+      ) %>% 
+      httr::content()
+    
+    loc <- response$results[[1]]$geometry$location
+    
+    tibble(lat = loc[[1]], lon = loc[[2]])
+    
+    
+  }) 
+
+gcodes
+```
+
+
+```{r}
+dfym <- bind_cols(dfym, gcodes)
+
+glimpse(dfym)
+```
+
+
+## chart
+
+
+```{r}
+library(highcharter)
+
+world <- hcmap(nullColor = "#424242", borderColor = "gray") %>% 
+  hc_chart(backgroundColor = "#161C20") %>% 
+  hc_plotOptions(series = list(showInLegend = FALSE))
+```
+
+add data
+
+```{r, layout="l-screen"}
+world %>% 
+  hc_add_series(
+    data = dfym,
+    type = "mapbubble",
+    mapping = hcaes(x = lon, y = lat, z = z, name = location),
+    name = "Concerts",
+    minSize = "1%",
+    maxSize = "5%",
+    color = "white",
+    tooltip = list(
+      valueDecimals = 0,
+      valuePrefix = "$",
+      valueSuffix = " USD"
+      )
+  )
+```
+
+
+motion
+http://jsfiddle.net/gh/get/jquery/1.9.1/larsac07/Motion-Highcharts-Plugin/tree/master/demos/map-australia-bubbles-demo/
+
+```{r}
+dfym <- dfym %>% 
+  head(2)
+
+dateseq <- seq(min(dfym$ym), max(dfym$ym), by = "month")
+
+sequences <- map2(dfym$ym, dfym$z, function(x, y){ 
+  
+  ifelse(x > dateseq, 0, y)
+  
+  })
+
+sequences  <- list(
+  
+  list(list(lat =  0, lon = 0, z = 10), list(lat = 0, lon = 0, z = 20)),
+  list(list(lat = 30, lon = 30, z = 10), list(lat = 30, lon = 30, z = 20))
+  
+)
+
+sequences  <- list(
+  
+  list(20, 10),
+  list(10, 20)
+  
+)
+
+
+# cols <- viridis::inferno(12, begin = 0.2)
+# scales::show_col(cols)
+# 
+dfym <- mutate(dfym, sequence = sequences, color = colorize(revenue, cols))
+
+dateslabels <- format(dateseq, "%Y/%m")
+
+world %>% 
+  hc_add_series(
+    data = list(
+      list(sequence = list(list(lat = 10, lon = 10, z = 10), list(lat = 20, lon = 20, z = 20), list(lat = 30, lon = 30, z = 30)))
+    ),
+    type = "mapbubble"
+    ) %>% 
+  hc_add_series(
+    data = list(
+      list(sequence = list(list(lat = -10, lon = -10, z = 10), list(lat = -20, lon = -20, z = 20), list(lat = -30, lon = -30, z = 30)))
+    ),
+    type = "mapbubble"
+    ) %>% 
+    hc_add_series(
+    data = list(
+      list(
+        sequence = list(list(lat = -2000, lon = -2000, z = 10), list(lat = -2000, lon = -2000, z = 20), list(lat = -50, lon = -30, z = 30))
+        )
+    ),
+    type = "mapbubble"
+    ) %>% 
+  hc_motion(
+    enabled = TRUE, series = 1:100, labels = LETTERS[1:3],
+    loop = TRUE, autoPlay = TRUE, 
+    updateInterval = 1000,
+    magnet = list(step = 0.9)
+    )
+
+world %>% 
+  hc_add_series(
+    data = list(
+      list(
+        lon = 0,
+        lat = 0,
+        sequence = list(1, 2, 3)
+      )
+    ),
+    type = "mapbubble"
+    ) %>% 
+  hc_motion(
+    enabled = TRUE, series = 1:100, labels = LETTERS[1:3],
+    loop = TRUE, autoPlay = TRUE, 
+    updateInterval = 1000,
+    magnet = list(step = 0.9)
+    )
+
+
+  highchart() %>% 
+    hc_chart(type = "column") %>% 
+    hc_yAxis(max = 6, min = 0) %>% 
+    hc_add_series(name = "A", data = c(2,3,4), zIndex = -10) %>% 
+    hc_add_series(name = "B",
+                  data = list(
+                    list(sequence = c(1,2,3,4)),
+                    list(sequence = c(1,2,3,4)),
+                    list(sequence = c(1,2,3,4))
+                  )) %>% 
+    hc_add_series(name = "C",
+                  data = list(
+                    list(sequence = c(3,2,1,3)),
+                    list(sequence = c(2,5,4,3)),
+                    list(sequence = c(1,2,3,4))
+                  )) %>% 
+    hc_motion(enabled = TRUE,
+              labels = 2000:2003,
+              series = c(1,2))
+```
+
