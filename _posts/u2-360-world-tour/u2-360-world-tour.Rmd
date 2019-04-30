@@ -22,10 +22,6 @@ draft: true
 source(here::here("_R/blog_setup.R"))
 ```
 
-Distill is a publication format for scientific and technical writing, native to the web.
-
-Learn more about using Distill at <https://rstudio.github.io/distill>.
-
 ```{r}
 library(tidyverse)
 library(rvest)
@@ -51,7 +47,6 @@ data <- data %>%
   fill(leg) %>% 
   filter(!str_detect(date, "Leg "), date != "TOTAL")
 
-
 data <- data %>% 
   mutate(
     attendance2 = str_extract(attendance, ".* "),
@@ -61,31 +56,17 @@ data <- data %>%
     revenue2 = as.numeric(revenue2),
     revenue2 = coalesce(revenue2, 0),
     date2 = as.Date(date, format = "%d %B %Y"),
-    ym = date2 - day(date2) + days(1),
     leg = str_replace(leg, "\\[\\d+\\]\\[\\d+\\]", "")
     )
-
-glimpse(data)
 
 data <- data %>% 
   select(
     leg, date = date2, city, country, venue, 
     opening_act, attendance = attendance2,
-    revenue = revenue2, ym
+    revenue = revenue2
     )
 
-dfym <- data %>% 
-  group_by(leg, ym, country, city, venue) %>% 
-  summarise(
-    concerts = n(),
-    attendance = sum(attendance),
-    revenue = sum(revenue)
-    ) %>% 
-  mutate(
-    location = paste0(country, ", ", city),
-    z = revenue
-    ) %>% 
-  ungroup()
+glimpse(data)
 ```
 
 
