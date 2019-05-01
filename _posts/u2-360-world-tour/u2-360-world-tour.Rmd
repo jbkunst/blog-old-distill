@@ -9,6 +9,7 @@ date: 04-10-2019
 output:
   distill::distill_article:
     self_contained: true
+    toc: true
 categories: 
   - data-visualization
   - highcharts    
@@ -22,217 +23,122 @@ draft: true
 source(here::here("_R/blog_setup.R"))
 ```
 
-```{r}
+## intro
+
+```{r, results='hide'}
 library(tidyverse)
 library(rvest)
 library(lubridate)
 Sys.setlocale("LC_TIME","English")
+```
 
 
-# DATA --------------------------------------------------------------------
+```{r}
 html <- read_html("https://en.wikipedia.org/wiki/U2_360%C2%B0_Tour")
 
-data <- html_table(html, fill = TRUE)[[2]] 
+html_data <- html_table(html, fill = TRUE)[[2]] 
 
-data <- data %>% 
+html_data <- html_data %>% 
   tbl_df() %>% 
   rename_all(str_to_lower) %>% 
   rename_all(str_replace_all, "\\s+", "_")
 
-glimpse(data)
+glimpse(html_data)
 
-# remove intermediate leg 
-data <- data %>% 
+data <- html_data %>%
   mutate(leg = ifelse(str_detect(date, "Leg "), date, NA)) %>% 
   fill(leg) %>% 
-  filter(!str_detect(date, "Leg "), date != "TOTAL")
-
-data <- data %>% 
+  filter(!str_detect(date, "Leg "), date != "TOTAL") %>% 
   mutate(
-    attendance2 = str_extract(attendance, ".* "),
-    attendance2 = str_replace_all(attendance2, ",| |/", ""),
-    attendance2 = as.numeric(attendance2),
-    revenue2 =  str_replace_all(revenue, ",|\\$", ""),
-    revenue2 = as.numeric(revenue2),
-    revenue2 = coalesce(revenue2, 0),
-    date2 = as.Date(date, format = "%d %B %Y"),
-    leg = str_replace(leg, "\\[\\d+\\]\\[\\d+\\]", "")
+    attendance = str_extract(attendance, ".* "),
+    attendance = str_replace_all(attendance, ",| |/", ""),
+    attendance = as.numeric(attendance),
+    revenue =  str_replace_all(revenue, ",|\\$", ""),
+    revenue = as.numeric(revenue),
+    revenue = coalesce(revenue, 0),
+    date = as.Date(date, format = "%d %B %Y"),
+    leg = str_replace(leg, "\\[\\d+\\]\\[\\d+\\]", ""),
+    location = paste0(country, ", ", city)
     )
+
+# summarise(data, sum(revenue))
 
 data <- data %>% 
-  select(
-    leg, date = date2, city, country, venue, 
-    opening_act, attendance = attendance2,
-    revenue = revenue2
-    )
-
-glimpse(data)
+  group_by(leg, country, city, location, opening_act) %>% 
+  mutate(revenue = mean(revenue, na.rm = TRUE)) %>% 
+  ungroup()
 ```
+
+Locations
 
 
 ```{r, cache=TRUE}
-gcodes <- dfym %>% 
-  pull(location) %>% 
-  map_df(function(x = "United States, Minneapolis"){
-    
-    response <- httr::GET(
-      "http://www.datasciencetoolkit.org/maps/api/geocode/json",
-      query = list(sensor = "false", address = x)
-      ) %>% 
-      httr::content()
-    
-    loc <- response$results[[1]]$geometry$location
-    
-    tibble(lat = loc[[1]], lon = loc[[2]])
-    
-    
-  }) 
+locations <- data %>% 
+  distinct(location) %>% 
+  pull()
 
-gcodes
+gcodes <- map_df(locations, function(x = "United States, Minneapolis"){
+  
+  message(x)  
+
+  response <- httr::GET(
+    "http://www.datasciencetoolkit.org/maps/api/geocode/json",
+    query = list(sensor = "false", address = x)
+    ) %>% 
+    httr::content()
+  
+  loc <- response$results[[1]]$geometry$location
+  
+  tibble(lat = loc[[1]], lon = loc[[2]])
+  
+}) 
+
+gcodes <- gcodes %>% 
+  mutate(location = locations)
+
+data <- left_join(data, gcodes, by = "location")
 ```
 
+```{r, layout="l-screen-inset", echo=FALSE}
+rmarkdown::paged_table(data)
+```
+
+## Getting a map
 
 ```{r}
-dfym <- bind_cols(dfym, gcodes)
+library(ggmap) # you need also the maps package
 
-glimpse(dfym)
+world <- map_data("world")
+
+ggplot() +
+  geom_path(data = world, aes(long, lat, group = group)) 
 ```
 
+I like have ugly charts at the beggining. We can make it better doing:
 
-## chart
-
+- Removing the Antartica
+- Changing the projection. PLEASE. (https://gis.stackexchange.com/questions/44387/use-proj4-to-specify-robinson-projection-with-r-ggmap-and-ggplot2-packages)
+- removing axis and add some dark colors
 
 ```{r}
-library(highcharter)
+library(ggalt)
 
-world <- hcmap(nullColor = "#424242", borderColor = "gray") %>% 
-  hc_chart(backgroundColor = "#161C20") %>% 
-  hc_plotOptions(series = list(showInLegend = FALSE))
+world <- world %>%
+  as_tibble() %>% 
+  filter(region != "Antarctica")
+
+ggplot() +
+  geom_polygon(
+    data = world,
+    aes(long, lat, group = group),
+    color = "gray20", fill = "gray10",
+    size = 0.25
+    ) +
+  coord_proj("+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") +
+  theme_void() +
+  theme(panel.background = element_rect(fill = "black"))
 ```
 
-add data
+> Oh look! There is New Zealand!
 
-```{r, layout="l-screen"}
-world %>% 
-  hc_add_series(
-    data = dfym,
-    type = "mapbubble",
-    mapping = hcaes(x = lon, y = lat, z = z, name = location),
-    name = "Concerts",
-    minSize = "1%",
-    maxSize = "5%",
-    color = "white",
-    tooltip = list(
-      valueDecimals = 0,
-      valuePrefix = "$",
-      valueSuffix = " USD"
-      )
-  )
-```
-
-
-motion
-http://jsfiddle.net/gh/get/jquery/1.9.1/larsac07/Motion-Highcharts-Plugin/tree/master/demos/map-australia-bubbles-demo/
-
-```{r}
-dfym <- dfym %>% 
-  head(2)
-
-dateseq <- seq(min(dfym$ym), max(dfym$ym), by = "month")
-
-sequences <- map2(dfym$ym, dfym$z, function(x, y){ 
-  
-  ifelse(x > dateseq, 0, y)
-  
-  })
-
-sequences  <- list(
-  
-  list(list(lat =  0, lon = 0, z = 10), list(lat = 0, lon = 0, z = 20)),
-  list(list(lat = 30, lon = 30, z = 10), list(lat = 30, lon = 30, z = 20))
-  
-)
-
-sequences  <- list(
-  
-  list(20, 10),
-  list(10, 20)
-  
-)
-
-
-# cols <- viridis::inferno(12, begin = 0.2)
-# scales::show_col(cols)
-# 
-dfym <- mutate(dfym, sequence = sequences, color = colorize(revenue, cols))
-
-dateslabels <- format(dateseq, "%Y/%m")
-
-world %>% 
-  hc_add_series(
-    data = list(
-      list(sequence = list(list(lat = 10, lon = 10, z = 10), list(lat = 20, lon = 20, z = 20), list(lat = 30, lon = 30, z = 30)))
-    ),
-    type = "mapbubble"
-    ) %>% 
-  hc_add_series(
-    data = list(
-      list(sequence = list(list(lat = -10, lon = -10, z = 10), list(lat = -20, lon = -20, z = 20), list(lat = -30, lon = -30, z = 30)))
-    ),
-    type = "mapbubble"
-    ) %>% 
-    hc_add_series(
-    data = list(
-      list(
-        sequence = list(list(lat = -2000, lon = -2000, z = 10), list(lat = -2000, lon = -2000, z = 20), list(lat = -50, lon = -30, z = 30))
-        )
-    ),
-    type = "mapbubble"
-    ) %>% 
-  hc_motion(
-    enabled = TRUE, series = 1:100, labels = LETTERS[1:3],
-    loop = TRUE, autoPlay = TRUE, 
-    updateInterval = 1000,
-    magnet = list(step = 0.9)
-    )
-
-world %>% 
-  hc_add_series(
-    data = list(
-      list(
-        lon = 0,
-        lat = 0,
-        sequence = list(1, 2, 3)
-      )
-    ),
-    type = "mapbubble"
-    ) %>% 
-  hc_motion(
-    enabled = TRUE, series = 1:100, labels = LETTERS[1:3],
-    loop = TRUE, autoPlay = TRUE, 
-    updateInterval = 1000,
-    magnet = list(step = 0.9)
-    )
-
-
-  highchart() %>% 
-    hc_chart(type = "column") %>% 
-    hc_yAxis(max = 6, min = 0) %>% 
-    hc_add_series(name = "A", data = c(2,3,4), zIndex = -10) %>% 
-    hc_add_series(name = "B",
-                  data = list(
-                    list(sequence = c(1,2,3,4)),
-                    list(sequence = c(1,2,3,4)),
-                    list(sequence = c(1,2,3,4))
-                  )) %>% 
-    hc_add_series(name = "C",
-                  data = list(
-                    list(sequence = c(3,2,1,3)),
-                    list(sequence = c(2,5,4,3)),
-                    list(sequence = c(1,2,3,4))
-                  )) %>% 
-    hc_motion(enabled = TRUE,
-              labels = 2000:2003,
-              series = c(1,2))
-```
-
+## Animate!

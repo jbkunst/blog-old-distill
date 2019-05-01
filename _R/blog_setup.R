@@ -24,22 +24,26 @@ theme_set(theme_minimal(base_family = "Segoe UI", base_size = 7))
 # highcharter -------------------------------------------------------------
 library(highcharter)
 
+fntfmly <- '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"' 
+
 options(
-  highcharter.theme = 
+  highcharter.theme =
     hc_theme_smpl(
       chart = list(
         style = list(
-          fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+          fontFamily = fntfmly
           )
         ),
-      title = list(style = list(fontFamily = "Roboto")),
-      subtitle = list(style = list(fontFamily = "Roboto"))
+      title = list(style = list(fontFamily = fntfmly)),
+      subtitle = list(style = list(fontFamily = fntfmly)),
+      credits = list(style = list(fontFamily = fntfmly))
       )
   )
 
 hc_opts <- getOption("highcharter.chart")
+hc_opts$chart <- list(style = list(fontFamily = fntfmly))
 hc_opts$credits <- list(enabled = TRUE, text = "Coded by Joshua Kunst", href = "http://jkunst.com")
 options(highcharter.chart = hc_opts)
-
+rm(hc_opts)
 
 
