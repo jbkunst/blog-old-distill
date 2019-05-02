@@ -191,7 +191,7 @@ dstype <- data %>%
   mutate(type_1 = str_to_title(type_1)) %>% 
   arrange(desc(n)) 
 
-hchart(dstype, "bar", hcaes(x = type_1, y = n, color = color_1)) %>% 
+hchart(dstype, "bar", hcaes(x = type_1, y = n, color = color_1), name = "Pokemons") %>% 
   hc_xAxis(title = list(text = "Type")) %>% 
   hc_yAxis(title = list(text = "Amount"))
 ```
@@ -354,7 +354,16 @@ xt <- c(
 
 yt <- str_c("{point.", xt, "}")
 
-tb <- tooltip_table(xt, yt)
+xt <- str_replace(xt, "_", " ")
+
+
+tb <- tooltip_table(
+  xt, 
+  yt,
+  cellspacing="0", 
+  cellpadding="0", 
+  style = "border:none; border-collapse: collapse;"
+  )
 
 library(htmltools)
 
