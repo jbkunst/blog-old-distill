@@ -7105,8 +7105,11 @@ tsne_poke &lt;- data %&gt;%
   as_tibble() %&gt;% 
   select(-1)
 
-tsne_poke_coords &lt;- smallvis(tsne_poke, method = &quot;tsne&quot;, epoch_callback = FALSE)
-
+tsne_poke_coords &lt;- smallvis(tsne_poke, method = &quot;tsne&quot;, epoch_callback = FALSE)</code></pre>
+</div>
+<p>Let’s plot the data to see what we got.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
 data &lt;- data %&gt;% 
   mutate(
     x = tsne_poke_coords[, 1],

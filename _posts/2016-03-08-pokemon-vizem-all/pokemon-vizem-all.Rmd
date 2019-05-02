@@ -275,7 +275,7 @@ I met t-SNE (t-Distributed Stochastic Neighbor Embedding) algorithm in a Kaggle 
 
 So, it’s just use the algorithm and see what happend, right? We’ll select some variables and use the model.matrix to convert the strings variable into indicators for each level and apply the dimensional reduction algorithm.
 
-```{r, cache=TRUE, fig.keep=FALSE}
+```{r, cache=TRUE}
 library(smallvis)
 
 tsne_poke <- data %>%
@@ -292,7 +292,12 @@ tsne_poke <- data %>%
   select(-1)
 
 tsne_poke_coords <- smallvis(tsne_poke, method = "tsne", epoch_callback = FALSE)
+```
 
+Let's plot the data to see what we got.
+
+
+```{r,layout="l-body"}
 data <- data %>% 
   mutate(
     x = tsne_poke_coords[, 1],
