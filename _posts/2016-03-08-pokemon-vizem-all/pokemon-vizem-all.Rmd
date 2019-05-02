@@ -40,6 +40,7 @@ There is a pokemon api http://pokeapi.co/. But we want all the pokemon data once
 
 ```{r}
 library(tidyverse)
+library(highcharter)
 
 path <- function(x) paste0("https://raw.githubusercontent.com/phalt/pokeapi/master/data/v2/csv/", x)
 
