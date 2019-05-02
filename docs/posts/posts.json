@@ -134,6 +134,24 @@
     "preview_height": 505
   },
   {
+    "path": "posts/2016-03-08-pokemon-vizem-all/",
+    "title": "Pokemon: Viz 'em all",
+    "description": "At some point we had to do it",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2016-08-03",
+    "categories": [
+      "data-visualization",
+      "highcharts"
+    ],
+    "preview": "posts/2016-03-08-pokemon-vizem-all/images/ihavenoidea.gif",
+    "last_modified": "2019-05-02T02:20:15-03:00"
+  },
+  {
     "path": "posts/2016-04-12-adding-motion-to-choropleths/",
     "title": "Adding motion to choropleths",
     "description": "We will use the highchart motion plugin with a map.",

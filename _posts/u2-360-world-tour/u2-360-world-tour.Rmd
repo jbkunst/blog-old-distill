@@ -50,6 +50,7 @@ data <- html_data %>%
   fill(leg) %>% 
   filter(!str_detect(date, "Leg "), date != "TOTAL") %>% 
   mutate(
+    leg = str_replace(leg, " — ", ": "),
     attendance = str_extract(attendance, ".* "),
     attendance = str_replace_all(attendance, ",| |/", ""),
     attendance = as.numeric(attendance),
@@ -99,7 +100,7 @@ gcodes <- gcodes %>%
 data <- left_join(data, gcodes, by = "location")
 ```
 
-```{r, layout="l-screen-inset", echo=FALSE}
+```{r, echo=FALSE}
 rmarkdown::paged_table(data)
 ```
 
@@ -127,7 +128,7 @@ world <- world %>%
   as_tibble() %>% 
   filter(region != "Antarctica")
 
-ggplot() +
+p <- ggplot() +
   geom_polygon(
     data = world,
     aes(long, lat, group = group),
@@ -136,9 +137,119 @@ ggplot() +
     ) +
   coord_proj("+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") +
   theme_void() +
-  theme(panel.background = element_rect(fill = "black"))
+  theme(
+    legend.position = "none",
+    panel.background = element_rect(fill = "black")
+    )
+
+p
 ```
 
 > Oh look! There is New Zealand!
 
 ## Animate!
+
+```{r}
+library(gganimate)
+
+data <- data %>%
+  mutate(
+    id = row_number(),
+    attendance_cum_format = scales::comma(cumsum(attendance)),
+    revenue_cum_format = scales::dollar(cumsum(revenue)),
+    events = 1,
+    events = cumsum(events),
+    text = str_c(
+      leg,
+      location,
+      str_c("Events: ", events),
+      str_c("Attendace: ", attendance_cum_format),
+      str_c("Revenue: ", revenue_cum_format),
+      sep = "\n"
+      )
+    ) %>% 
+  group_by(leg) %>% 
+  mutate(
+    xmin = min(lat),
+    xmax = max(lat),
+    ymin = min(lon),
+    ymax = max(lon)
+    ) %>% 
+  ungroup() %>% 
+  mutate(
+    xmin_cum = RcppRoll::roll_min(xmin),
+    xmax_cum = RcppRoll::roll_max(xmin),
+    ymin_cum = RcppRoll::roll_min(xmin),
+    ymax_cum = RcppRoll::roll_max(xmin),
+  )
+
+dtest <- sample_n(data, 20) %>% arrange(date)
+
+p <- ggplot(dtest) +
+  geom_polygon(
+    data = world,
+    aes(long, lat, group = group),
+    color = "gray20", fill = "gray10",
+    size = 0.25
+    ) +
+  coord_proj("+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    plot.background = element_rect(fill = "black"),
+    title = element_text(color = "gray")
+    ) +
+  geom_point(
+    aes(lat, lon, size = revenue, group = id),
+    color = "gray",
+    alpha = 0.5
+    ) +
+  geom_text(aes(label = text), x = 180 , y = 50, color = "white", size = 3, alpha = 0.5, hjust = 1)
+
+p
+
+a <- p + 
+  transition_reveal(date) +
+  enter_grow() 
+  
+a
+
+
+p <- ggplot(dtest) +
+  geom_polygon(
+    data = world,
+    aes(long, lat, group = group),
+    color = "gray20", fill = "gray10",
+    size = 0.25
+    ) +
+  coord_proj("+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") +
+  theme_void() +
+  theme(
+    legend.position = "none",
+    plot.background = element_rect(fill = "black"),
+    title = element_text(color = "gray")
+    ) +
+  geom_point(
+    aes(lat, lon, size = revenue, group = id),
+    color = "gray",
+    alpha = 0.5
+    ) +
+  geom_text(aes(label = text, x = xmax * 1.10, y = ymax), color = "white", size = 2, alpha = 0.5, hjust = 1)
+
+p
+
+a <- p + 
+  transition_reveal(date) +
+  enter_grow() +
+  view_zoom_manual(
+    xmin = dtest$xmin-50,
+    xmax = dtest$xmax+50,
+    ymin = dtest$ymin-50,
+    ymax = dtest$ymax+50
+    )
+
+a
+
+animate(a, fps = 30, duration = 20, height = 588, width = 936)
+```
+

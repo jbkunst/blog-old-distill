@@ -44,6 +44,6 @@ hc_opts <- getOption("highcharter.chart")
 hc_opts$chart <- list(style = list(fontFamily = fntfmly))
 hc_opts$credits <- list(enabled = TRUE, text = "Coded by Joshua Kunst", href = "http://jkunst.com")
 options(highcharter.chart = hc_opts)
-rm(hc_opts)
+rm(hc_opts, fntfmly)
 
 
