@@ -100,9 +100,57 @@ gcodes <- gcodes %>%
 data <- left_join(data, gcodes, by = "location")
 ```
 
+And some tweaks in format:
+
+```{r}
+library(scales)
+
+data <- data %>%
+  mutate(
+    id = row_number(),
+    attendance_cum = cumsum(replace_na(attendance, 0)),
+    revenue_cum = cumsum(revenue),
+    events = 1,
+    events_cum = cumsum(events),
+    text = str_c(
+      leg,
+      location,
+      str_c("Events: ", events),
+      str_c("Attendace: ", comma(attendance_cum)),
+      str_c("Revenue: ", dollar(revenue_cum)),
+      sep = "\n"
+      )
+    ) 
+```
+
 ```{r, echo=FALSE}
 rmarkdown::paged_table(data)
 ```
+
+## Exploring the data
+
+```{r}
+datag <- data %>% 
+  select(date, leg, revenue_cum, attendance_cum) %>% 
+  gather(key, value, -date, -leg)
+
+ggplot(datag) +
+  geom_step(aes(date, value), color = "gray80") +
+  geom_step(aes(date, value, group = leg, color = leg), size = 2) +
+  facet_wrap(vars(key), scales = "free_y", ncol = 1) +
+  scale_color_viridis_d(option = "B", begin = 0.05, end = .95)
+```
+
+```{r}
+ggplot(data) +
+  geom_point(aes(revenue, attendance, color = leg)) +
+  scale_x_log10(labels = dollar) +
+  scale_y_continuous(labels = comma) +
+  scale_color_viridis_d(option = "B", begin = 0.05, end = .95)
+```
+
+
+
 
 ## Getting a map
 
@@ -150,42 +198,7 @@ p
 ## Animate!
 
 ```{r}
-library(gganimate)
-
-data <- data %>%
-  mutate(
-    id = row_number(),
-    attendance_cum_format = scales::comma(cumsum(attendance)),
-    revenue_cum_format = scales::dollar(cumsum(revenue)),
-    events = 1,
-    events = cumsum(events),
-    text = str_c(
-      leg,
-      location,
-      str_c("Events: ", events),
-      str_c("Attendace: ", attendance_cum_format),
-      str_c("Revenue: ", revenue_cum_format),
-      sep = "\n"
-      )
-    ) %>% 
-  group_by(leg) %>% 
-  mutate(
-    xmin = min(lat),
-    xmax = max(lat),
-    ymin = min(lon),
-    ymax = max(lon)
-    ) %>% 
-  ungroup() %>% 
-  mutate(
-    xmin_cum = RcppRoll::roll_min(xmin),
-    xmax_cum = RcppRoll::roll_max(xmin),
-    ymin_cum = RcppRoll::roll_min(xmin),
-    ymax_cum = RcppRoll::roll_max(xmin),
-  )
-
-dtest <- sample_n(data, 20) %>% arrange(date)
-
-p <- ggplot(dtest) +
+p <- ggplot(data) +
   geom_polygon(
     data = world,
     aes(long, lat, group = group),
@@ -207,47 +220,16 @@ p <- ggplot(dtest) +
   geom_text(aes(label = text), x = 180 , y = 50, color = "white", size = 3, alpha = 0.5, hjust = 1)
 
 p
+```
+
+
+```{r}
+library(gganimate)
+
 
 a <- p + 
-  transition_reveal(date) +
-  enter_grow() 
+  transition_reveal(date)
   
-a
-
-
-p <- ggplot(dtest) +
-  geom_polygon(
-    data = world,
-    aes(long, lat, group = group),
-    color = "gray20", fill = "gray10",
-    size = 0.25
-    ) +
-  coord_proj("+proj=robin +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs") +
-  theme_void() +
-  theme(
-    legend.position = "none",
-    plot.background = element_rect(fill = "black"),
-    title = element_text(color = "gray")
-    ) +
-  geom_point(
-    aes(lat, lon, size = revenue, group = id),
-    color = "gray",
-    alpha = 0.5
-    ) +
-  geom_text(aes(label = text, x = xmax * 1.10, y = ymax), color = "white", size = 2, alpha = 0.5, hjust = 1)
-
-p
-
-a <- p + 
-  transition_reveal(date) +
-  enter_grow() +
-  view_zoom_manual(
-    xmin = dtest$xmin-50,
-    xmax = dtest$xmax+50,
-    ymin = dtest$ymin-50,
-    ymax = dtest$ymax+50
-    )
-
 a
 
 animate(a, fps = 30, duration = 20, height = 588, width = 936)
