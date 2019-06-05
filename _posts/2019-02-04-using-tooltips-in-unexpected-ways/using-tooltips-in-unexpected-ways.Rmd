@@ -20,7 +20,6 @@ preview: images/preview.gif
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 source(here::here("_R/blog_setup.R"))
 ```
 
@@ -53,11 +52,15 @@ gptot <- left_join(gp, gp2, by = "country")
 hchart(
   gptot,
   "point",
-  hcaes(lifeExp, gdpPercap, name = country, size = pop, group = continent)
+  hcaes(lifeExp, gdpPercap, name = country, size = pop, group = continent, name = country)
   ) %>%
   hc_yAxis(type = "logarithmic") %>% 
   # here is the magic (inside the function)
-  hc_tooltip(useHTML = TRUE, pointFormatter = tooltip_chart(accesor = "ttdata"))
+  hc_tooltip(
+    useHTML = TRUE,
+    headerFormat = "<b>{point.key}</b>",
+    pointFormatter = tooltip_chart(accesor = "ttdata")
+    )
 ```
 
 Now we'll use a donut chart and try to place the tooltip inside to give it 

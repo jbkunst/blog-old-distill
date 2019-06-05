@@ -7,7 +7,7 @@
     <description>Data, Code and Visualization
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 23 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>mar., 23 abr. 2019 00:00:00 +0000</lastBuildDate>
     <item>
       <title>#GOT Animating the Shifting of Affiliations</title>
       <dc:creator>Joshua Kunst</dc:creator>
@@ -15,7 +15,7 @@
       <description>My first steps using the gganimate package using Game of Thrones 
 data!</description>
       <guid>http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations</guid>
-      <pubDate>Tue, 23 Apr 2019 00:00:00 +0000</pubDate>
+      <pubDate>mar., 23 abr. 2019 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations/images/preview.gif" medium="image" type="image/gif"/>
     </item>
     <item>
@@ -27,7 +27,7 @@ or captions just a very hidden chart at bottom of the web page.
 It will be a nice time to get the most interesting visual features
 of it.</description>
       <guid>http://jkunst.com/blog/posts/2019-04-08-when-charts-are-integrated-in-the-web-page</guid>
-      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      <pubDate>lun., 08 abr. 2019 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2019-04-08-when-charts-are-integrated-in-the-web-page/images/preview.png" medium="image" type="image/png" width="424" height="269"/>
     </item>
     <item>
@@ -38,7 +38,7 @@ of it.</description>
 can easily render html, that means we can put images, tables even charts. 
 So the possibilities are almost limitless.</description>
       <guid>http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways</guid>
-      <pubDate>Mon, 04 Feb 2019 00:00:00 +0000</pubDate>
+      <pubDate>lun., 04 feb. 2019 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.gif" medium="image" type="image/gif"/>
     </item>
     <item>
@@ -47,7 +47,7 @@ So the possibilities are almost limitless.</description>
       <link>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart</link>
       <description>Sometimes you need to express yourself.</description>
       <guid>http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart</guid>
-      <pubDate>Fri, 03 Mar 2017 00:00:00 +0000</pubDate>
+      <pubDate>vie., 03 mar. 2017 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png" medium="image" type="image/png" width="949" height="500"/>
     </item>
     <item>
@@ -58,7 +58,7 @@ So the possibilities are almost limitless.</description>
 Timo Grossenbacher using just ggplot2. Now is the turn of highcharter 
 because all can be better with a bit of interactivity.</description>
       <guid>http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map</guid>
-      <pubDate>Fri, 20 Jan 2017 00:00:00 +0000</pubDate>
+      <pubDate>vie., 20 ene. 2017 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2017-01-05-thematic-interactive-map/images/preview.gif" medium="image" type="image/gif"/>
     </item>
     <item>
@@ -67,7 +67,7 @@ because all can be better with a bit of interactivity.</description>
       <link>http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map</link>
       <description>Just for fun and because we can.</description>
       <guid>http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map</guid>
-      <pubDate>Thu, 15 Dec 2016 00:00:00 +0000</pubDate>
+      <pubDate>jue., 15 dic. 2016 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png" medium="image" type="image/png" width="379" height="191"/>
     </item>
     <item>
@@ -78,7 +78,7 @@ because all can be better with a bit of interactivity.</description>
 something, no matter  what it is, but I hope this will
 be somehow helpful.</description>
       <guid>http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app</guid>
-      <pubDate>Fri, 02 Dec 2016 00:00:00 +0000</pubDate>
+      <pubDate>vie., 02 dic. 2016 00:00:00 +0000</pubDate>
       <media:content url="http://jkunst.com/blog/posts/2016-12-02-replicating-nyt-weather-app/images/preview.png" medium="image" type="image/png" width="671" height="505"/>
     </item>
   </channel>
