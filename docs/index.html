@@ -1270,8 +1270,86 @@
   gtag('js', new Date());
   gtag('config', 'UA-17670833-5');
   </script>
+  <style type="text/css">
+  d-article {
+    font-weight: 300;
+  }
+  
+  .distill-site-nav {
+    animation:backgroundtransition 100s;
+    -moz-animation:backgroundtransition 100s infinite; /* Firefox */
+    -webkit-animation:backgroundtransition 100s infinite; /* Safari and Chrome */
+  }
+  
+  @-moz-keyframes backgroundtransition /* Firefox */ {
+     0%   {background: #B71C1C;} /* red */
+     10%  {background: #311b92;} /* deep purlple */
+     20%  {background: #0D47A1;} /* blue */
+     30%  {background: #004D40;} /* teal */
+     40%  {background: #212121;} /* grey */
+     50%  {background: #1A237E;} /* indigo */
+     60%  {background: #33691E;} /* ligth green */
+     70%  {background: #006064;} /* cyan */
+     80%  {background: #827717;} /* lime */
+     90%  {background: #263238;} /* blue gray*/
+     100% {background: #B71C1C;} /* red */
+  }
+  
+  @-webkit-keyframes backgroundtransition /* Safari and Chrome */ {
+     0%   {background: #B71C1C;} /* red */
+     10%  {background: #311b92;} /* deep purlple */
+     20%  {background: #0D47A1;} /* blue */
+     30%  {background: #004D40;} /* teal */
+     40%  {background: #212121;} /* grey */
+     50%  {background: #1A237E;} /* indigo */
+     60%  {background: #33691E;} /* ligth green */
+     70%  {background: #006064;} /* cyan */
+     80%  {background: #827717;} /* lime */
+     90%  {background: #263238;} /* blue gray*/
+     100% {background: #B71C1C;} /* red */
+  }
+  
+  /* https://codepen.io/sdthornton/pen/wBZdXq */
+  .distill-site-header {
+     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  }
+  
+  /* thunder animation */
+  /* from http://jsrocks.org/ */
+  .fab:hover, .fa:hover {
+      animation-name: thunder;
+      animation-duration: 1s;
+      animation-fill-mode: both;
+      animation-iteration-count: infinite;
+  
+      -webkit-animation-name: thunder;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: infinite;
+       transition: all 150ms ease 0s;
+  }
+  
+  @keyframes thunder{
+      0%, 20%, 40%, 60%, 80%, 100% {
+          transform: rotate3d(0, 0, 1, -5deg);
+      }
+      10%, 30%, 50%, 70%, 90% {
+          transform: rotate3d(0, 0, 1, 5deg);
+      }
+  }
+  
+  @-webkit-keyframes thunder{
+      0%, 20%, 40%, 60%, 80%, 100% {
+          transform: rotate3d(0, 0, 1, -5deg);
+      }
+      10%, 30%, 50%, 70%, 90% {
+          transform: rotate3d(0, 0, 1, 5deg);
+      }
+  }
+  </style>
   <!--/radix_placeholder_site_in_header-->
 
+  <link rel="stylesheet" href="styles.css" type="text/css"/>
 
 </head>
 
@@ -1803,28 +1881,28 @@ can it do.</p>
 <div class="posts-sidebar">
 <div class="sidebar-section subscribe">
 <h3>Subscribe</h3>
-<form method="post" action="https://blogtrottr.com">
-  <p>Get notified of new posts via email:</p>
-  <input type="text" name="btr_email" style="margin-bottom: 3px;" />
-  <input type="hidden" name="btr_url" value="http://jkunst.com/blog/index.xml"/>
-  <input type="hidden" name="schedule_type" value="0" />
-  <input type="submit" value="Subscribe" class="sbt" />
-</form>
-
-<style type="text/css">
-.sbt {
-  color: black;
-  background-color: #e7e7e7;
-  border: 2px solid #e7e7e7;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  border-radius: 2px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-  padding: 0px;
-}
-</style>
-
+<form method="post" action="https://blogtrottr.com">
+  <p>Get notified of new posts via email:</p>
+  <input type="text" name="btr_email" style="margin-bottom: 3px;" />
+  <input type="hidden" name="btr_url" value="http://jkunst.com/blog/index.xml"/>
+  <input type="hidden" name="schedule_type" value="0" />
+  <input type="submit" value="Subscribe" class="sbt" />
+</form>
+
+<style type="text/css">
+.sbt {
+  color: black;
+  background-color: #e7e7e7;
+  border: 2px solid #e7e7e7;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  padding: 0px;
+}
+</style>
+
 
 </div>
 <div class="sidebar-section categories">
@@ -1865,7 +1943,7 @@ can it do.</p>
 <a href="#">More articles &raquo;</a>
 </div>
 </div>
-<!--/radix_placeholder_article_listing-->
+<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
 <h1>Data, Code and Visualization</h1>
@@ -1898,77 +1976,7 @@ can it do.</p>
 <p>Joshua Kunst Copyright 2019</p>
 <style type="text/css">
 
-.distill-site-nav {
-  animation:backgroundtransition 100s;
-  -moz-animation:backgroundtransition 100s infinite; /* Firefox */
-  -webkit-animation:backgroundtransition 100s infinite; /* Safari and Chrome */
-}
 
-@-moz-keyframes backgroundtransition /* Firefox */ {
-   0%   {background: #B71C1C;} /* red */
-   10%  {background: #311b92;} /* deep purlple */
-   20%  {background: #0D47A1;} /* blue */
-   30%  {background: #004D40;} /* teal */
-   40%  {background: #212121;} /* grey */
-   50%  {background: #1A237E;} /* indigo */
-   60%  {background: #33691E;} /* ligth green */
-   70%  {background: #006064;} /* cyan */
-   80%  {background: #827717;} /* lime */
-   90%  {background: #263238;} /* blue gray*/
-   100% {background: #B71C1C;} /* red */
-}
-
-@-webkit-keyframes backgroundtransition /* Safari and Chrome */ {
-   0%   {background: #B71C1C;} /* red */
-   10%  {background: #311b92;} /* deep purlple */
-   20%  {background: #0D47A1;} /* blue */
-   30%  {background: #004D40;} /* teal */
-   40%  {background: #212121;} /* grey */
-   50%  {background: #1A237E;} /* indigo */
-   60%  {background: #33691E;} /* ligth green */
-   70%  {background: #006064;} /* cyan */
-   80%  {background: #827717;} /* lime */
-   90%  {background: #263238;} /* blue gray*/
-   100% {background: #B71C1C;} /* red */
-}
-
-/* https://codepen.io/sdthornton/pen/wBZdXq */
-.distill-site-header {
-   box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-}
-
-/* thunder animation */
-/* from http://jsrocks.org/ */
-.fab:hover, .fa:hover {
-    animation-name: thunder;
-    animation-duration: 1s;
-    animation-fill-mode: both;
-    animation-iteration-count: infinite;
-
-    -webkit-animation-name: thunder;
-    -webkit-animation-duration: 1s;
-    -webkit-animation-fill-mode: both;
-    -webkit-animation-iteration-count: infinite;
-     transition: all 150ms ease 0s;
-}
-
-@keyframes thunder{
-    0%, 20%, 40%, 60%, 80%, 100% {
-        transform: rotate3d(0, 0, 1, -5deg);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: rotate3d(0, 0, 1, 5deg);
-    }
-}
-
-@-webkit-keyframes thunder{
-    0%, 20%, 40%, 60%, 80%, 100% {
-        transform: rotate3d(0, 0, 1, -5deg);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: rotate3d(0, 0, 1, 5deg);
-    }
-}
 
 </style>
 </div>

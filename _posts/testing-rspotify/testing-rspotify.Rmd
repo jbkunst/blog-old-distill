@@ -10,6 +10,8 @@ output:
   distill::distill_article:
     self_contained: false
 draft: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -20,12 +22,24 @@ source(here::here("_R/blog_setup.R"))
 Details in https://www.rcharlie.com/spotifyr/index.html
 
 ```{r}
+library(tidyverse)
 library(spotifyr)
 access_token <- get_spotify_access_token()
 ```
 
 ```{r}
 recplayed <- spotifyr::get_my_recently_played(limit = 50, include_meta_info = TRUE)
+
+names(recplayed)
+
+names(recplayed$items)
+
+recplayed$items %>% 
+  as_tibble()
+
+str(recplayed)
+
+
 ```
 
 
