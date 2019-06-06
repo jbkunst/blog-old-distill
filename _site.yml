@@ -2,9 +2,6 @@ name: "blog"
 
 title: "Data, Code and Visualization"
 
-description: |
-  Data, Code and Visualization
-
 output_dir: "docs"
 
 base_url: http://jkunst.com/blog/
