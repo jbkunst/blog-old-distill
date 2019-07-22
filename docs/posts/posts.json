@@ -16,7 +16,7 @@
       "animation"
     ],
     "preview": "posts/2019-04-23-got-animating-the-shifting-of-affiliations/images/preview.gif",
-    "last_modified": "2019-04-23T04:16:03-03:00"
+    "last_modified": "2019-07-01T16:24:04-04:00"
   },
   {
     "path": "posts/2019-04-08-when-charts-are-integrated-in-the-web-page/",
@@ -34,7 +34,7 @@
       "highcharts"
     ],
     "preview": "posts/2019-04-08-when-charts-are-integrated-in-the-web-page/images/preview.png",
-    "last_modified": "2019-04-09T02:06:07-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 424,
     "preview_height": 269
   },
@@ -54,7 +54,7 @@
       "highcharts"
     ],
     "preview": "posts/2019-02-04-using-tooltips-in-unexpected-ways/images/preview.gif",
-    "last_modified": "2019-06-05T17:50:09-04:00"
+    "last_modified": "2019-07-01T16:24:04-04:00"
   },
   {
     "path": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/",
@@ -71,7 +71,7 @@
       "data-visualization"
     ],
     "preview": "posts/2017-03-03-giving-a-thematic-touch-to-your-interactive-chart/images/preview.png",
-    "last_modified": "2019-03-30T18:38:48-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 949,
     "preview_height": 500
   },
@@ -92,7 +92,7 @@
       "highcharts"
     ],
     "preview": "posts/2017-01-05-thematic-interactive-map/images/preview.gif",
-    "last_modified": "2019-03-24T17:55:58-03:00"
+    "last_modified": "2019-07-01T16:24:04-04:00"
   },
   {
     "path": "posts/2016-12-15-interactive-and-styled-middle-earth-map/",
@@ -110,7 +110,7 @@
       "highcharts"
     ],
     "preview": "posts/2016-12-15-interactive-and-styled-middle-earth-map/images/previewp.png",
-    "last_modified": "2019-03-24T17:58:15-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 379,
     "preview_height": 191
   },
@@ -129,7 +129,7 @@
       "data-visualization"
     ],
     "preview": "posts/2016-12-02-replicating-nyt-weather-app/images/preview.png",
-    "last_modified": "2019-03-29T01:12:28-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 671,
     "preview_height": 505
   },
@@ -149,7 +149,7 @@
       "highcharts"
     ],
     "preview": "posts/2016-03-08-pokemon-vizem-all/images/ihavenoidea.gif",
-    "last_modified": "2019-05-28T23:07:18-04:00"
+    "last_modified": "2019-07-01T16:24:04-04:00"
   },
   {
     "path": "posts/2016-04-12-adding-motion-to-choropleths/",
@@ -167,7 +167,7 @@
       "highcharts"
     ],
     "preview": "posts/2016-04-12-adding-motion-to-choropleths/images/preview.gif",
-    "last_modified": "2019-03-24T17:58:56-03:00"
+    "last_modified": "2019-07-01T16:24:04-04:00"
   },
   {
     "path": "posts/2016-03-24-how-to-weather-radials/",
@@ -186,7 +186,7 @@
       "ggplot2"
     ],
     "preview": "posts/2016-03-24-how-to-weather-radials/images/preview.png",
-    "last_modified": "2019-03-29T02:06:12-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 425,
     "preview_height": 312
   },
@@ -206,7 +206,7 @@
       "ggplot2"
     ],
     "preview": "posts/2015-10-30-visualizing-chess-data-with-ggplot/images/preview.png",
-    "last_modified": "2019-03-29T02:05:47-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 333,
     "preview_height": 331
   },
@@ -226,7 +226,7 @@
       "htmlwidgets"
     ],
     "preview": "posts/2015-10-07-rchess-a-chess-package-for-r/images/preview.png",
-    "last_modified": "2019-03-30T17:30:25-03:00",
+    "last_modified": "2019-07-01T16:24:04-04:00",
     "preview_width": 301,
     "preview_height": 302
   }

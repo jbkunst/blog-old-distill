@@ -1,5 +1,5 @@
 ---
-title: "<small>Data, Code and Visualization</small>"
+title: "Data, Code and Visualization"
 site: distill::distill_website
 listing: posts
 ---

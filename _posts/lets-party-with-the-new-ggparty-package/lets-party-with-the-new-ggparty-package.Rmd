@@ -1,0 +1,160 @@
+---
+title: "Let's party with the new ggparty package"
+description: |
+  The new package ggparty package is a lifesaver when you want yo show your 
+  tree models to others who surely don't like the old base plot looking. And...
+  You know, this is a helper post for my future self who have some
+  memory problems. 
+  The ggparty package have a lot of functions to customize your tree plots much 
+  as you want so we'll see the most important (for me and my future self) here.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 07-22-2019
+output:
+  distill::distill_article:
+    self_contained: true
+    toc: true
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source(here::here("_R/blog_setup.R"))
+knitr::opts_chunk$set(layout = "l-body")
+```
+
+
+## Introduction
+
+Surely more than once you have needed to make a decision tree because:
+
+- _Someone_ or _they_ asked you.
+- Is an easy way to explain how the patterns in the data works, because trees are 
+usually the first approach to machine learnig for a lot of us.
+- Just you like them/it. Period.
+
+If you have some experience with decision trees in R you know the most popular packages 
+are `partykit` and `rpart`. In personal experience I always have much better results in `partykit` compared with `rpart` in terms of splits/structure. Besides the default plot is better IMHO, but that doesn't mean is a good looking plot _hahaha_:
+
+```{r}
+library(partykit)
+
+irisct <- ctree(Species ~ .,data = iris)
+
+plot(irisct, gp = gpar(fontsize = 8))
+```
+
+That is 80's flavor :D.
+
+## Data, duh!
+
+I pass my days in a chilean bank so usually work with data similar to the `germarcredit.csv`:
+a set of variables and a reponse varialbe indicating if the given account was in default or not.
+
+```{r}
+library(tidyverse)
+
+credit <- read_csv(here::here("data/credit.csv"))
+
+set.seed(123)
+
+credit <- credit %>% 
+  group_by(bad) %>% 
+  sample_n(10000, replace = TRUE) %>% 
+  ungroup() %>% 
+  select(-id_client, -contains("phone"),  -contains("residence"),
+         -profession_code, -payment_day, -marital_status, -sex,) %>% 
+  mutate(bad = ifelse(bad == 1, "bad", "good")) %>% 
+  mutate_if(is.character, as.factor)
+ 
+
+glimpse(credit)
+```
+
+## Back to the party
+
+Let's start with a simple model using the previous data and then plot it:
+
+```{r}
+tree <- ctree(bad ~ ., data = credit, control = ctree_control(maxdepth = 3))
+
+plot(tree, gp = gpar(fontsize = 8))
+```
+
+Now the `ggparty`'s version:
+
+```{r}
+library(ggparty)
+
+# from the example of ?ggparty
+ggparty(tree) +
+  geom_edge() +
+  geom_edge_label() +
+  geom_node_label(aes(label = splitvar), ids = "inner") +
+  geom_node_label(aes(label = info), ids = "terminal")
+```
+
+Oh! It looks promising but is kind of far of what `ggparty` can do.  
+
+The firsts questions about how `ggparty` works are:
+
+> Where does **splitvar** or **info** come from? - Me.
+
+> Why the terminal node show (in this case) **NA** - Me too.
+
+And the answers are:
+
+```{r}
+the_magic <- as_tibble(ggparty(tree)$data)
+
+glimpse(the_magic)
+```
+
+In summary:
+
+- The function `ggparty::ggparty` parse the tree (a `party` object) to a `data.frame` so
+you can use ggplot to show the parsed data.
+- Each row is a node with the related informaction: the `id`, position (`x` and `y`),
+`parent`, `kids`, etc.
+- And the magic keep going with the `nodedata_*` colums which have the data related in 
+that node!
+
+That's why if you see the `info` column, you can notice is full of `NA`s and then 
+the part `label = info` is showing us just the same `NA`s.
+
+So, we can do? A lot! In fact, if you are if you are familiarized with `tibble`s and 
+some `purrr` functions you now is easy operate list-columns.
+
+
+```{r}
+library(scales) # for comma,percent function
+
+ggparty(tree) +
+  geom_edge() +
+  geom_edge_label() +
+  geom_node_label(aes(label = splitvar), ids = "inner") +
+  geom_node_label(aes(label = info), ids = "terminal") +
+  geom_node_label(
+    aes(
+      label = str_c(
+        "N: ",
+        comma(nodesize),
+        "\nTarget rate: ",
+        percent(map_dbl(nodedata_bad, ~ mean(.x == "bad")))
+        )
+      ),
+  size = 2,
+  ids = "terminal")
+```
+
+Mmm... Too much to do! Right?
+
+
+
+
+
+
+
