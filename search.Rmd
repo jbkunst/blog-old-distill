@@ -1,0 +1,28 @@
+---
+title: "Search"
+site: distill::distill_website
+---
+
+<script async src="https://cse.google.com/cse.js?cx=008172104315650297967:fu6ppipi_fs"></script>
+<div class="gcse-search"></div>
+
+<style>
+.gsc-control-cse {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.gsc-search-button-v2, .gsc-search-button-v2:hover, .gsc-search-button-v2:focus {
+    border-color: #e7e7e7;
+    background-color: #e7e7e7;
+    background-image: none;
+    filter: none;
+    color: black
+}
+
+d-article table {
+  border-collapse: collapse;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+</style>

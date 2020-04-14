@@ -14,6 +14,8 @@ navbar:
   right:
     - text: "Home"
       href: index.html
+    - icon: fas fa-search
+      href: search.html
     - icon: fab fa-linkedin-in
       href: https://www.linkedin.com/in/joshuakunst
     - icon: fab fa-twitter
