@@ -1,6 +1,0 @@
----
-title: "Not found (404)"
-site: distill::distill_website
----
-
-Try the <a href="search.html">search</a> option to find what you want.
