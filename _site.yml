@@ -23,7 +23,7 @@ navbar:
     - icon: fab fa-github-alt
       href: https://github.com/jbkunst/blog
     - icon: fa fa-rss
-      href: index.xml   
+      href: index.xml      
 
 output: 
   distill::distill_article:
