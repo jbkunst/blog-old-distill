@@ -1,4 +1,12 @@
 
+Joshua Kunst - copyright <script>document.write(new Date().getFullYear())</script>
 
-Joshua Kunst &copy; <script>document.write(new Date().getFullYear())</script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var t = setInterval(function(){
+      var resizeEvent = new Event('resize');
+      window.dispatchEvent(resizeEvent);  
+    }, 1000);
+  });
+</script>  

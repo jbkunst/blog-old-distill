@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 
 
 # copy rss ----------------------------------------------------------------
-try(fs::file_copy("docs/index.xml", "docs/category/r/rss/index.xml", overwrite = TRUE))
+# try(fs::file_copy("docs/index.xml", "docs/category/r/rss/index.xml", overwrite = TRUE))
 
 
 # ggplot2 -----------------------------------------------------------------

@@ -1,5 +1,6 @@
 ---
 title: "Data, Code and Visualization"
+descrition: "My own personal blog"
 site: distill::distill_website
 listing: posts
 ---
