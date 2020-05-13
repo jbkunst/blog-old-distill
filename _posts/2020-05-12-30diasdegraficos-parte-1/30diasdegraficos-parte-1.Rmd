@@ -26,7 +26,7 @@ source(here::here("_R/blog_setup.R"))
 knitr::opts_chunk$set(layout = "l-body-outset")
 ```
 
-```{r, echo=FALSE, fig.cap="30 días de gráficos! Yay!", out.extra="class=external",}
+```{r, echo=FALSE, fig.cap="30 días de gráficos! Yay!", out.extra="class=external"}
 knitr::include_graphics("images/listado30graficosaldia.jpg")
 ```
 
@@ -72,8 +72,6 @@ El gráfico más popular, quizás el más fácil de leer. Algunas consideracione
 - No es recomendable usar muchas categorías. Obviamente dependerá del espacio
 pero la idea es no generar tantas barras para seguir viendo las categorías
 
-
-
 ```{r}
 conteo_clases <- count(datos::millas, clase)
 conteo_clases
@@ -107,5 +105,60 @@ hchart(conteo_clases, "column", hcaes(x = clase, y = n), name = "Conteo") %>%
   hc_title(text = "Conteo de tipos de automóviles en los datos 'millas'")
 ```
 
+## Día 2: líneas
 
+Otro clásico. El gráfico de lineas se utiliza generalmente cuando existe una
+variable temporal en nuestros datos. También tiene sus variaciones como los
+slopecharts o bumpcharts.
+
+Los datos que utilizaremos corresponden de paises del paquete {datos}, que 
+orignalmente pertencen al {gapminder}. Para simplificar la información
+agrouparemos por continente y año para obtener un promedio ponderado
+por la población de cada país.
+
+```{r}
+continentes <- datos::paises %>% 
+  group_by(anio, continente) %>% 
+  summarise(
+    pib_per_capita_pond = weighted.mean(pib_per_capita, poblacion),
+    esperanza_de_vida_pond = weighted.mean(esperanza_de_vida, poblacion)
+  )
+
+continentes
+```
+
+En esta oportunidad utilizaremos `group = continente` al realizar el mapeo para
+separar los datos según esta variable.
+
+```{r}
+hc <- hchart(continentes, "line", hcaes(anio, esperanza_de_vida_pond, group = continente))
+hc
+```
+
+¿Qué podemos mejora? ¡Mucho! Por ejemplo es dificil comparar para un mismo año,
+los valores aparecen con muchos decimales, podemos mejorar las leyendas para 
+que sea más fácil asociar las líneas, colores y continentes, para eso usaremos
+la funciòn `hc_tooltip` para modificar el tooltip y `hc_legend` para mejorar
+las leyendas
+
+```{r}
+hc %>% 
+  hc_tooltip(table = TRUE, valueDecimals = 2) %>% 
+  hc_legend(layout = "proximate")
+```
+
+
+## Anexos
+
+### Mapeo (mapping)
+
+Mapeo o mapping se refiere a asociar una columna de una tabla a una característica
+visual de un objeto. Por ejemplo para realizar un diagrama de puntos, uno debe
+asociar la posiciòn vertical a una columna, y la posición horizontal a otra columna.
+Quizás también asociar el tamaño en otra e incluso el color o forma. Más 
+detalles en https://www.sharpsightlabs.com/blog/r-package-think-about-visualization/.
+
+```{r, echo=FALSE, fig.cap="Ilustraciòn mapear", out.extra="class=external"}
+knitr::include_graphics("images/4_bubble-chart_mapping-vars.png")
+```
 
