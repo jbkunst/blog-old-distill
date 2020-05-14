@@ -148,6 +148,63 @@ hc %>%
 ```
 
 
+## Día 3: puntos/burbujas
+
+Seguimos con los gráficos tradicionales. El gráfico de puntos o scatter plot 
+se utiliza generelamente para observa la relación entre dos variables 
+continuas. Luego el gráfico se puede complementar/complejizar agregando tamaño,
+forma, colores a los puntos para agregar más información.
+
+```{r}
+paises_2007 <- filter(datos::paises, anio == 2007)
+paises_2007
+```
+
+De la forma usual, utilizaremos la función `hchart`:
+
+```{r}
+hchart(paises_2007, "scatter", hcaes(pib_per_capita, esperanza_de_vida, group = continente))
+```
+
+Es un buen gráfico para patir ¿no? Ahora intentaremos:
+
+- Agregar información de la población a través del tamaño del punto (mapeo!).
+- Utilizar _captions_ para dar contexto o una explicación de lo que se puede observar.
+Utilizaremos código _HTML_, esto es tags como: `<b></b>` para negrita `<i></i>` para
+itálicas, `<br/>` para salto de línea, etc. existen muchos y nunca están de más conocerlos.
+- Simplificar el tooltip indicando solamente el nombre del país, para esto
+utilizaremos el argumento `pointFormat` en la función `hc_tooltip` dando como
+valor `"{point.pais}"`: `{}` indica que será un valor dinámico (bien simplificado
+este comentario), `point` siempre va pues se refiere al punto que el tooltip 
+se está refiriendo, finalmente `pais` para señalar que utilizaremos esta
+columna del data frame.
+- Finalmente, cuando existen variables que son *asimétricas* -están cargadas 
+hacia un lado- es bueno probar cambiando la escala del eje, en nuestro caso el
+PIB. Acá será útil nuevamente el _caption_ para recordar que se está usando
+escala logarítmica. Esto se hace con simplemente `hc_xAxis(type = "logarithmic")`.
+
+
+```{r}
+texto_explicativo <- "El gráfico nos muestra la relación entre el 
+<b>PIB percápita</b> y la <b>Esperanza de vida</b> para países en el año 2007.
+Se observa que la gran cantidad de paise con baja esperanza de vida pertenecen
+al continente Africano de los cuales la mayoría posee bajo PIB per cápita.<br/>
+Para <b>PIB percápita</b> se está utlizando una escala <i>logarítmica</i> debido
+a la asimetría de esta variable."
+
+hchart(
+  paises_2007, 
+  "scatter",
+  hcaes(pib_per_capita, esperanza_de_vida, group = continente, z = poblacion),
+  maxSize = 30 # para fijar y setar el tamaño máximo
+  ) %>% 
+  hc_tooltip(pointFormat = "{point.pais}") %>% 
+  hc_caption(text = texto_explicativo) %>% 
+  hc_title(text = "Relación entre PIB y Esperanza de vida") %>% 
+  hc_xAxis(type = "logarithmic")
+```
+
+
 ## Anexos
 
 ### Mapeo (mapping)

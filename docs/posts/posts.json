@@ -9,14 +9,14 @@
         "url": "http://jkunst.com/"
       }
     ],
-    "date": "2020-05-13",
+    "date": "2020-05-14",
     "categories": [
       "español",
       "data-visualization",
       "ggplot2"
     ],
     "preview": "posts/2020-05-12-30diasdegraficos-parte-1/images/preview.jpg",
-    "last_modified": "2020-05-13T19:23:00-04:00"
+    "last_modified": "2020-05-14T11:07:23-04:00"
   },
   {
     "path": "posts/2019-04-23-got-animating-the-shifting-of-affiliations/",
@@ -168,7 +168,7 @@
       "highcharts"
     ],
     "preview": "posts/2016-03-08-pokemon-vizem-all/images/ihavenoidea.gif",
-    "last_modified": "2019-05-28T23:07:18-04:00"
+    "last_modified": "2020-05-13T19:42:04-04:00"
   },
   {
     "path": "posts/2016-04-12-adding-motion-to-choropleths/",
