@@ -19,7 +19,13 @@ library(extrafont)
 # extrafont::font_import()
 suppressMessages(suppressWarnings(loadfonts()))
 
-theme_set(theme_minimal(base_family = "Segoe UI", base_size = 7))
+theme_set(
+  theme_minimal(base_family = "Segoe UI", base_size = 7) +
+    theme(
+      strip.background = element_rect(fill = "gray90", colour = NA),
+      legend.position = "bottom"
+    )
+  )
 
 # highcharter -------------------------------------------------------------
 library(highcharter)

@@ -12,7 +12,8 @@ output:
     self_contained: true
     toc: true
 categories: 
-  - español
+  - spanish
+  - highcharts
   - data-visualization
   - ggplot2
 editor_options: 
@@ -26,13 +27,13 @@ source(here::here("_R/blog_setup.R"))
 knitr::opts_chunk$set(layout = "l-body-outset")
 ```
 
+## Introducción
+
+Agradecer por la iniciativa a la comunidad de [R4DS_es](https://twitter.com/R4DS_es) <3:
+
 ```{r, echo=FALSE, fig.cap="30 días de gráficos! Yay!", out.extra="class=external"}
 knitr::include_graphics("images/listado30graficosaldia.jpg")
 ```
-
-## Introducción
-
-Agradecer por la iniciativa a la comunidad de [@R4DS_es](https://twitter.com/R4DS_es) <3:
 
 Este post es muy espacial pues cumpl(e|irá|iría) muchas características.
 
@@ -73,7 +74,7 @@ El gráfico más popular, quizás el más fácil de leer. Algunas consideracione
 pero la idea es no generar tantas barras para seguir viendo las categorías
 
 ```{r}
-conteo_clases <- count(datos::millas, clase)
+conteo_clases <- count(millas, clase)
 conteo_clases
 ```
 
@@ -117,7 +118,7 @@ agrouparemos por continente y año para obtener un promedio ponderado
 por la población de cada país.
 
 ```{r}
-continentes <- datos::paises %>% 
+continentes <- paises %>% 
   group_by(anio, continente) %>% 
   summarise(
     pib_per_capita_pond = weighted.mean(pib_per_capita, poblacion),
@@ -156,7 +157,7 @@ continuas. Luego el gráfico se puede complementar/complejizar agregando tamaño
 forma, colores a los puntos para agregar más información.
 
 ```{r}
-paises_2007 <- filter(datos::paises, anio == 2007)
+paises_2007 <- filter(paises, anio == 2007)
 paises_2007
 ```
 
@@ -203,6 +204,61 @@ hchart(
   hc_title(text = "Relación entre PIB y Esperanza de vida") %>% 
   hc_xAxis(type = "logarithmic")
 ```
+
+## Día 4: gráficos con facetas
+
+Las facetas son una buena forma de _desaturar_ un gráfico con mucha información
+visual crendo pequeños graficos particionando los datos. En este caso, no son 
+muchos los paquetes o librería que manejan tan bien esta característica o 
+funcionalidad como {ggplot2}. En el caso de {highcharter} esta funcionalidad
+es limitada además manual, teniendo como solución realizar gráficos por separado
+y luego mostrándolos todos juntos.
+
+Siguiendo con {ggplot2}, esta se realiza _automágicamente_ con la función
+`facet_wrap` (existe también `?facet_grid`) indicando por que variable partcionar
+los datos. Un tip que veces se utiliza es
+plotear todos los datos en cada faceta con un color suave con el fin de 
+comparar la distribución o forma de los datos particulares de la faceta
+con el total. Esto se hace agregando una capa (`geom`) del mismo tipo
+con unos datos que no posean la variable para realizar las facetas; que 
+en nuestro ejemplo es `Especies`:
+
+
+```{r}
+flores_auxiliar <- flores %>% 
+  select(Largo.Sepalo, Ancho.Sepalo)
+
+ggplot(flores) +
+  geom_point(aes(Largo.Sepalo, Ancho.Sepalo), color = "gray90", data = flores_auxiliar, size = 1) +
+  geom_point(aes(Largo.Sepalo, Ancho.Sepalo, color = Especies), size = 1.5) +
+  scale_color_viridis_d(end = 0.8) +
+  facet_wrap(vars(Especies)) +
+  labs(title = "Distribución de Largo y Ancho de Sépalo según Especies")
+```
+
+
+**Medio/Avanzado**. Si quisiéramos realizar de todas formas con {highcharter}, 
+una solución sería la siguiente: crear ejes 3 ejes, una para cada especies/grupo 
+y luego asignar para cada grupo un eje.
+
+```{r}
+hchart(
+  flores, 
+  "scatter",
+  hcaes(Largo.Sepalo, Ancho.Sepalo, group = Especies),
+  yAxis = c(0, 1, 2) # parte clave para asignar cada grupo a cada eje Y
+  ) %>% 
+  # esta es la parte donde se crean *manualmente* 3 ejes.
+  hc_yAxis_multiples(
+    create_yaxis(
+      naxis = 3,
+      lineWidth = 2,
+      title = purrr::map(0:2, ~list(text = "Ancho.Sepalo"))
+      )
+  ) %>% 
+  hc_title(text = "Distribución de Largo y Ancho de Sépalo según Especies")
+```
+
 
 
 ## Anexos
