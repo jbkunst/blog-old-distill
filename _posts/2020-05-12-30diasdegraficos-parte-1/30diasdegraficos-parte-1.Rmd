@@ -320,7 +320,10 @@ hc06
 ```
 
 **Medio/Avanzado**. Ahora intentaremos utilizar el espacio interior para 
-colocar un tooltip más grande y más _textual_ (como un _knob chart_).
+colocar un tooltip más grande y más _textual_ (como un _knob chart_). Otra parte
+importante es utilizar el argumento `positioner` en highcharts con el fin de 
+que independiente del valor en el cual el cursor está, éste siempre este al
+medio del gráfico.
 
 ```{r}
 hc06 %>% 
