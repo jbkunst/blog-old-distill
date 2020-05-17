@@ -102,8 +102,10 @@ conteo_clases <- conteo_clases %>%
   arrange(-n) %>% 
   mutate(clase = fct_inorder(clase))
 
-hchart(conteo_clases, "column", hcaes(x = clase, y = n), name = "Conteo") %>% 
+hc01 <- hchart(conteo_clases, "column", hcaes(x = clase, y = n), name = "Conteo") %>% 
   hc_title(text = "Conteo de tipos de automóviles en los datos 'millas'")
+
+hc01
 ```
 
 ## Día 2: líneas
@@ -132,8 +134,7 @@ En esta oportunidad utilizaremos `group = continente` al realizar el mapeo para
 separar los datos según esta variable.
 
 ```{r}
-hc <- hchart(continentes, "line", hcaes(anio, esperanza_de_vida_pond, group = continente))
-hc
+hchart(continentes, "line", hcaes(anio, esperanza_de_vida_pond, group = continente))
 ```
 
 ¿Qué podemos mejora? ¡Mucho! Por ejemplo es dificil comparar para un mismo año,
@@ -143,9 +144,11 @@ la funciòn `hc_tooltip` para modificar el tooltip y `hc_legend` para mejorar
 las leyendas
 
 ```{r}
-hc %>% 
+hc02 <- hchart(continentes, "line", hcaes(anio, esperanza_de_vida_pond, group = continente)) %>% 
   hc_tooltip(table = TRUE, valueDecimals = 2) %>% 
   hc_legend(layout = "proximate")
+
+hc02
 ```
 
 
@@ -193,7 +196,7 @@ al continente Africano de los cuales la mayoría posee bajo PIB per cápita.<br/
 Para <b>PIB percápita</b> se está utlizando una escala <i>logarítmica</i> debido
 a la asimetría de esta variable."
 
-hchart(
+hc03 <- hchart(
   paises_2007, 
   "scatter",
   hcaes(pib_per_capita, esperanza_de_vida, group = continente, z = poblacion),
@@ -203,13 +206,15 @@ hchart(
   hc_caption(text = texto_explicativo) %>% 
   hc_title(text = "Relación entre PIB y Esperanza de vida") %>% 
   hc_xAxis(type = "logarithmic")
+
+hc03
 ```
 
 ## Día 4: gráficos con facetas
 
 Las facetas son una buena forma de _desaturar_ un gráfico con mucha información
-visual crendo pequeños graficos particionando los datos. En este caso, no son 
-muchos los paquetes o librería que manejan tan bien esta característica o 
+visual creando pequeños graficos particionando los datos. En este caso, no son 
+muchos los paquetes o librerías que manejan tan bien esta característica o 
 funcionalidad como {ggplot2}. En el caso de {highcharter} esta funcionalidad
 es limitada además manual, teniendo como solución realizar gráficos por separado
 y luego mostrándolos todos juntos.
@@ -242,7 +247,7 @@ una solución sería la siguiente: crear ejes 3 ejes, una para cada especies/gru
 y luego asignar para cada grupo un eje.
 
 ```{r}
-hchart(
+hc04 <- hchart(
   flores, 
   "scatter",
   hcaes(Largo.Sepalo, Ancho.Sepalo, group = Especies),
@@ -257,6 +262,93 @@ hchart(
       )
   ) %>% 
   hc_title(text = "Distribución de Largo y Ancho de Sépalo según Especies")
+
+hc04
+```
+
+
+
+## Día 5: diagrama de arcos
+
+Los diagrama de arcos son un caso de especial de _layout_ al graficar redes. 
+_Layout_ se refiere a la distribución visual de nodos (o vertices) y aristas. 
+Las redes muestran relacion entre pares de observaciones en los datos. 
+
+**En lo personal** el layout no me agrada mucho pues no lo considero algo que 
+aporte. De todas formas existe mucha documentación para realizar este tipo de
+gráficos con {ggplot2} con ayuda de la librería {ggraph} cuya documentación está 
+[acá](https://ggraph.data-imaginist.com/index.html).
+
+## Día 6: donut
+
+¿A quien no le gustan las donas? Los gráficos de donut son un caso especial
+de los gráficos de pie en el cual se remueve parte del centro el cual reduce
+la distorción (visual) al percibir las cantidades. Este gráfico, al igual que
+el pie, se utiliza generalmente para demostrar la distribución de un total.
+
+Para realizar un gráfico de donut con {highcharter} se debe considerar lo 
+siguiente:
+
+- Hace un gráfico de tipo "pie" utilizando los argumentos `name` e `y` en el 
+mapeo para la categoría y cantidad respectivamente.
+- Usar el argumeno `innerSize` con algún porcentaje para cuanta área remover y 
+así obtener un gráfico de donut.
+- En este caso particular, calcularemos el porcentaje como valor y luego con
+el paquete {scales} transformaremos ese número en _formato_ procentaje.
+- Con el valor anterior lo utilizaremos para crear etiquetas (_labels_)
+con más información usando el argumento `dataLabels` con el valor 
+`"{point.name}<br>({point.porcentaje})"` esto escribirá algo del tipo: 
+"categoría (porcentaje%)" para cada punto.
+
+```{r}
+library(scales)
+
+diamantes_cortes <- count(diamantes, corte)
+diamantes_cortes <- mutate(diamantes_cortes, porcentaje = percent(n/sum(n)))
+
+diamantes_cortes
+
+# para un pie remover la parte de "innerSize"
+hc06 <- hchart(
+  diamantes_cortes, "pie", hcaes(name = corte, y = n),
+  name = "Corte",
+  innerSize = "80%",
+  dataLabels = list(format = "{point.name}<br>({point.porcentaje})")
+  )
+
+hc06
+```
+
+**Medio/Avanzado**. Ahora intentaremos utilizar el espacio interior para 
+colocar un tooltip más grande y más _textual_ (como un _knob chart_).
+
+```{r}
+hc06 %>% 
+  # con la siguiente opción desactivamos los 'dataLabels' para que no 
+  # exista infomración redundante
+  hc_plotOptions(
+    series = list(dataLabels = list(enabled = FALSE))
+  ) %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    style = list(fontSize = "30px"),
+    headerFormat = "",
+    pointFormat = "<div style='text-align: center;'>Corte <b>{point.name}</b><br>{point.y} casos<br>{point.porcentaje} del total</div>",
+    positioner = JS(
+      "function () {
+      
+        /* one of the most important parts! */
+        xp =  this.chart.chartWidth/2 - this.label.width/2
+        yp =  this.chart.chartHeight/2 - this.label.height/2
+      
+        return { x: xp, y: yp };
+      
+      }"),
+    shadow = FALSE,
+    borderWidth = 0,
+    backgroundColor = "transparent",
+    hideDelay = 1000
+    )
 ```
 
 
