@@ -32,7 +32,7 @@ knitr::opts_chunk$set(layout = "l-body-outset")
 Agradecer por la iniciativa a la comunidad de [R4DS_es](https://twitter.com/R4DS_es) <3:
 
 ```{r, echo=FALSE, fig.cap="30 días de gráficos! Yay!", out.extra="class=external"}
-knitr::include_graphics("images/listado30graficosaldia.jpg")
+try(knitr::include_graphics("images/listado30graficosaldia.jpg"))
 ```
 
 Este post es muy espacial pues cumpl(e|irá|iría) muchas características.
@@ -354,6 +354,109 @@ hc06 %>%
     )
 ```
 
+
+
+## Día 7: ridgeline
+
+El gráfico de tipo *ridgeline* viene a solucionar la superposición de muchas 
+densidades (o histogramas) haciendo distintos ejes x dependiendo de una 
+variable. Trabajarlo con {ggplot2} es muy sencillo dada la extensión {ggridges}
+por [Claus Wilke](https://twitter.com/clauswilke).
+
+```{r}
+# install.packages("ggridges")
+library(ggridges)
+library(lubridate)
+
+clima <- clima %>% 
+  mutate(
+    fecha = ymd(paste(anio, mes, dia, paste = "-")),
+    mes_fecha = fct_inorder(months(fecha))
+  )
+
+gg07 <- ggplot(clima, aes(x = temperatura, y = mes_fecha, fill = stat(x))) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis_c(name = "Temp. [F]", option = "C")
+
+gg07
+```
+
+Directo y sin mucha complicación.
+
+**Avanzado**. [HighchartsJS](https://www.highcharts.com/) -por tanto {highcharter}-
+no soporta este tipo de gráfico... _Pero, pero, peeero_ podemos todavía crearlo 
+con ayuda del gráfico anterior. ¡¿Cómo?! Cuando uno grafica una densidad, como el caso
+anterior todo la información es traducida a posiciones, colores y otras características, 
+las cuales {ggplot2} emplea para realizar finalmente grafico. Gracias a la
+funcion `ggplot_build` se puede acceder a dichos datos por lo que se pueden
+emplear para graficar con {highcharter}. Por ejemplo acá para dibujar 
+la densidad utilizaremos gráficos de àrea. 
+
+```{r}
+dd07 <- as_tibble(ggplot_build(gg07)$data[[1]])
+
+glimpse(dd07)
+
+dd07_02 <- dd07 %>% 
+  filter(y != ymax) %>%
+  filter(abs(y - ymax) >= 0.01) %>%
+  select(x, y, ymax, group, density) %>% 
+  mutate_all(round, 3) %>%
+  arrange(group, x) %>% 
+  rename(l = y, h = ymax) 
+
+# transformar el grupo al mes
+dd07_02 <- dd07_02 %>% 
+  mutate(
+    fecha = ymd(paste("2003", group, 1, paste = "-")),
+    mes_fecha = fct_inorder(months(fecha))
+  )
+
+dd07_02
+
+hc07 <- hchart(
+  dd07_02, 
+  "arearange",
+  hcaes(x = x, low = l - 1, high = h - 1, group = mes_fecha),
+  zIndex = 12:1,
+  lineWidth = 3
+  ) %>% 
+  hc_colors(viridis_pal()(12)) %>% 
+  # tabla para distribución de datos
+  hc_tooltip(
+    shared = TRUE,
+    useHTML = TRUE,
+    headerFormat = "<b>Densidad estimada en {point.x} ºF</b><table>",
+    pointFormat = '<tr><td><span style="color:{point.color}">●</span> {series.name}</td><td><b>{point.density}</b></td></tr>',
+    footerFormat = "</table>",
+    crosshairs = TRUE
+    ) %>% 
+
+  # todo esto es para limpiar los markers y halos
+  hc_plotOptions(
+    series = list(
+      marker = list(
+        radius = 0,
+        enabled = FALSE
+        ),
+      states = list(
+        hover = list(
+          halo = list(
+            size = 0
+          )
+        )
+      )
+    )
+  ) %>% 
+  hc_legend(layout = "proximate") %>% 
+  hc_yAxis(visible = FALSE, min = 0.5) %>% 
+  hc_xAxis(title = list(text = "Temperatura ºF")) %>% 
+  hc_title(text = "Distribución de temperaturas por mes") %>% 
+  hc_subtitle(text = "Datos obtenidos del data frame <pre>clima</pre> del
+              paquete datos")
+
+hc07
+```
 
 
 ## Anexos
