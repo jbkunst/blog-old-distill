@@ -389,8 +389,7 @@ con ayuda del gráfico anterior. ¡¿Cómo?! Cuando uno grafica una densidad, co
 anterior todo la información es traducida a posiciones, colores y otras características, 
 las cuales {ggplot2} emplea para realizar finalmente grafico. Gracias a la
 funcion `ggplot_build` se puede acceder a dichos datos por lo que se pueden
-emplear para graficar con {highcharter}. Por ejemplo acá para dibujar 
-la densidad utilizaremos gráficos de àrea. 
+emplear para graficar con {highcharter}. 
 
 ```{r}
 dd07 <- as_tibble(ggplot_build(gg07)$data[[1]])
@@ -457,6 +456,110 @@ hc07 <- hchart(
 
 hc07
 ```
+
+## Dia 8: contorno
+
+¡Contornos! Este gráfico no es muy estándar, usualmente está asociado a información
+(geo)espacial, topográfica, o información bivariada cunado las dos variables
+son continuas.
+
+Usaremos los datos `volcano` que está en formato matriz, la cual usando la 
+función `melt` del paquete `reshape` lo pasaremos a formato data frame. Luego
+con la función `geom_contour`  de {ggplot2} dibujaremos los contornos de nivel
+del volcan. Notar que el data set de entrada son puntos x e y y un valor z, el
+cual se generan los contornos en función de estas tres variables; graficaremos
+el grid de puntos para recordar que estos son los valores de entrada.
+
+```{r}
+volcano3d <- as_tibble(reshape2::melt(volcano))
+names(volcano3d) <- c("x", "y", "z")
+
+volcano3d
+
+gg08 <- ggplot(volcano3d, aes(x, y, z = z)) +
+  geom_contour(aes(color =  ..level..), bins = 20, size = 1) +
+  geom_point(alpha = 0.1, size = 1, fill = "black", color = "black", shape = 16) +
+  scale_color_viridis_c() +
+  coord_cartesian(expand = FALSE) 
+
+gg08
+```
+
+**Intermedio/Anvanzado**. Ahora, para realizar el mismo gráfico con {highcharter}
+usamos la función `layer_data` del paquete {ggplot2} para extraer la información
+de la capa `geom_contour` a renderizar. 
+
+Otra cosa no tan directa es colorear de acuerdo al nivel de cada linea del 
+contorno. Para ello nos ayudaremos de la funcion `colorize` del paquete {highcharter}
+que toma un vector numérico y un set de colores e internamente utiliza la
+función `colorRampPalette` para crear una paleta de colores. Con lo anterior
+asociamos cada color a un nivel y extraemos los colores los cuales utilizaremos
+con la función `hc_colors`.
+
+```{r}
+# Usamos i = 1 pues la primera capa es la de los contornos (la 2d son los puntos)
+dd08 <- as_tibble(layer_data(gg08, i = 1)) 
+
+# me gusta redondear para enviar menos información al objeto highcharter
+dd08 <- dd08 %>% 
+  select(x, y, level, piece) %>% 
+  mutate_all(round, 2)
+
+dd08 <- dd08 %>% 
+  mutate(col = colorize(level, viridis_pal(option = "B", end = 0.9)(50)))
+
+cols <- dd08 %>% 
+  distinct(level, piece, col) %>% 
+  pull(col)
+
+dd08 <- dd08 %>%
+  select(-col)
+```
+
+Con los datos listo solo falta crear la función con `hchart` y agregar detalles
+como:
+
+- Remover los ejes con ` hc_xAxis(visible = FALSE)` para tener un gráfico 
+más limpio.
+- Evitar que cada línea aparezca en la leyenda con `showInLegend = FALSE`.
+- También cambiar el default de poner el resto de series con trasnparencia 
+cuando una está siendo selccionada con el cursor. Esto se hace con la parte 
+`hc_plotOptions(..`.
+
+
+```{r}
+hc08 <- hchart(
+  dd08,
+  "line",
+  hcaes(x, y, group = piece),
+  showInLegend = FALSE, 
+  enableMouseTracking = TRUE,
+  lineWidth = 0.5
+  ) %>%  
+  hc_colors(cols) %>% 
+  hc_xAxis(visible = FALSE, max = 87, min = 1)  %>% 
+  hc_yAxis(visible = FALSE, max = 61, min = 1) %>% 
+  hc_tooltip(
+    headerFormat = "", 
+    pointFormat = "Nivel: <b>{point.level}</b><br>(x: {point.x}; y: {point.y})"
+    ) %>% 
+  hc_plotOptions(
+    series = list(
+      states = list(
+        inactive = list(
+          opacity = 0.7
+        )
+      )
+    )
+  ) %>% 
+  hc_title(text = "Información topográfica del volcan Maunga Whay en Auckland") %>% 
+  hc_subtitle(text = "Maunga Whau es uno de los 50 volcanees en el área volcánica de Auckland. Estos 
+datos proveen informción topográfica para Maunga Whau en un grid de 10 por 10 metros.") %>% 
+  hc_caption(text = "Datos digitalizados a partir de un mapa topográfico por <b>Ross Ihaka</b>. Estos datos no deben considerarse precisos.")
+
+hc08
+```
+
 
 
 ## Anexos
