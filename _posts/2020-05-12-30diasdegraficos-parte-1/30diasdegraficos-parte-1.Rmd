@@ -684,7 +684,76 @@ hc09_2 <- hchart(conteo_clases_millas, "column", hcaes(x = clase_n, y = n, group
 hc09_2
 ```
 
+## Día 10: paletas de colores
 
+Más que graficar con ciertas paletas de colores tengo las ganas de mostrar
+algunas funciones  útiltes para manejar colores en **R**.
+
+La primera que se me viene a la mente es la funcion `show_col` del paquete
+{scales}. Esta función permite ver los colores de un vector de _colores_ (duh!).
+
+```{r}
+library(scales)
+
+# la sintaxis que no te engañe. hue_pal() retorna una funcion por lo que
+# luego le pasamos el argumento 9
+colores_ggplot2_default <- hue_pal()(9)
+colores_ggplot2_default
+
+show_col(colores_ggplot2_default, borders = FALSE)
+```
+
+
+```{r}
+colores_viridis <- viridis_pal(option = "B", begin = 0.1, end = 0.9)(16)
+
+show_col(colores_viridis, labels = FALSE, borders = NA)
+```
+
+Otro paquete que recolecta muchas paletas de muuuchoas paquetes es el 
+paquete {paleteer} de Emil Hvitfeldt, su sitio web https://www.hvitfeldt.me.
+Este paquete tiene la función `paletteer_c` que además de retornar los colores
+de la paleta los imprime en consola.{paletter} tiene además la
+familia de funciones `scale_(color|fill)_paletteer_(d|c|binned)` para integrar
+las paletas con gráficos de {ggplot2}.
+
+
+```{r}
+# install.packages("paletteer")
+library(paletteer)
+
+paleta_scico <- paletteer_c("scico::tokyo", n = 9)
+
+show_col(paleta_scico, borders = NA)
+```
+
+Otra función de utilidad es `colorRampPalette` del paquete {grDevices}
+la cual dada un vector de colores puede generar una paleta de una cantidad
+dada de colores intermpolanto los colores intermedios. Por ejemplo, `paleta_scico`
+es un vector de 9 colores, podemos generar una paleta de 3 colores de la 
+siguente manera:
+
+```{r}
+colores <- grDevices::colorRampPalette(paleta_scico)(3)
+colores
+```
+
+La integración con {highcharter} no es tan complicada. Basta con darle 
+los colores con la función `hc_colors`.
+
+```{r}
+hchart(
+  flores, "scatter", 
+  hcaes(Largo.Sepalo, Ancho.Sepalo, group = Especies),
+  marker = list(radius = 5)
+  ) %>% 
+  hc_colors(colores) %>% 
+  hc_add_theme(hc_theme_flatdark()) %>% 
+  hc_title(text = "Usando la paleta tokyo del paquete scico a través de paletteer")
+```
+
+Eso ha sido todo en esta primera parte, ya estoy ansioso por partir
+la segunda!
 
 ## Anexos
 
