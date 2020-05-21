@@ -6595,6 +6595,45 @@ d-article {
   padding: 0px;
 }
 
+
+/* top button */
+#button {
+  display: inline-block;
+  background-color: #FF9800;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  border-radius: 4px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  transition: background-color .3s, 
+    opacity .5s, visibility .5s;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 1000;
+}
+#button::after {
+  content: "\f077";
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 2em;
+  line-height: 50px;
+  color: #fff;
+}
+#button:hover {
+  cursor: pointer;
+  background-color: #333;
+}
+#button:active {
+  background-color: #555;
+}
+#button.show {
+  opacity: 1;
+  visibility: visible;
+}
+
 </style>
 <!--/radix_placeholder_site_in_header-->
 
@@ -7139,6 +7178,10 @@ var disqus_config = function () {
 <!--radix_placeholder_navigation_after_body-->
 <div class="distill-site-nav distill-site-footer">
   <p>Joshua Kunst - copyright <script>document.write(new Date().getFullYear())</script></p>
+  <!-- Back to top button -->
+  <p>
+    <a id="button"/>
+  </p>
   <script>
   document.addEventListener("DOMContentLoaded", function() {
     var t = setInterval(function(){
@@ -7146,6 +7189,29 @@ var disqus_config = function () {
       window.dispatchEvent(resizeEvent);  
     }, 1000);
   });
+  
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    
+    var btn = $('#button');
+
+    $(window).scroll(function() {
+      if ($(window).scrollTop() &gt; 300) {
+        btn.addClass('show');
+      } else {
+        btn.removeClass('show');
+      }
+    });
+    
+    btn.on('click', function(e) {
+      e.preventDefault();
+      $('html, body').animate({scrollTop:0}, '300');
+    });
+    
+    
+  });
+  
+  
 </script>
 </div>
 <!--/radix_placeholder_navigation_after_body-->

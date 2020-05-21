@@ -43,7 +43,7 @@ d-article {
 
 /* thunder animation */
 /* from http://jsrocks.org/ */
-.fab:hover, .fa:hover {
+.fab:hover, .fa:hover, .fas:hover {
     animation-name: thunder;
     animation-duration: 1s;
     animation-fill-mode: both;

@@ -63,6 +63,7 @@ library(datos)       # datos
 library(highcharter) # gráficos
 library(ggplot2)     # más gráficos  
 library(dplyr)       # manipulación de datos
+library(tidyr)       # más manipulación de datos
 ```
 
 ## Día 1: barras/columnas
@@ -391,7 +392,12 @@ las cuales {ggplot2} emplea para realizar finalmente grafico. Gracias a la
 funcion `ggplot_build` se puede acceder a dichos datos por lo que se pueden
 emplear para graficar con {highcharter}. 
 
+Nos ayudaremos con los `tags` de {htmltools} para que sea más facil definir
+la tabla en HTML en el argumento `pointFormat`.
+
 ```{r}
+library(htmltools)
+
 dd07 <- as_tibble(ggplot_build(gg07)$data[[1]])
 
 glimpse(dd07)
@@ -426,7 +432,14 @@ hc07 <- hchart(
     shared = TRUE,
     useHTML = TRUE,
     headerFormat = "<b>Densidad estimada en {point.x} ºF</b><table>",
-    pointFormat = '<tr><td><span style="color:{point.color}">●</span> {series.name}</td><td><b>{point.density}</b></td></tr>',
+    # pointFormat = '<tr><td><span style="color:{point.color}">●</span> {series.name}</td><td><b>{point.density}</b></td></tr>',
+    pointFormat = as.character(tags$tr(
+      tags$td(
+        tags$span(style = "color:{point.color}", "●"),
+        "{series.name}"
+      ),
+      tags$td(tags$strong("{point.density}"))
+    )),
     footerFormat = "</table>",
     crosshairs = TRUE
     ) %>% 
@@ -552,12 +565,123 @@ hc08 <- hchart(
       )
     )
   ) %>% 
-  hc_title(text = "Información topográfica del volcan Maunga Whay en Auckland") %>% 
+  hc_title(text = "Información topográfica del volcán Maunga Whay en Auckland") %>% 
   hc_subtitle(text = "Maunga Whau es uno de los 50 volcanees en el área volcánica de Auckland. Estos 
 datos proveen informción topográfica para Maunga Whau en un grid de 10 por 10 metros.") %>% 
   hc_caption(text = "Datos digitalizados a partir de un mapa topográfico por <b>Ross Ihaka</b>. Estos datos no deben considerarse precisos.")
 
 hc08
+```
+
+
+
+## Día 9: áreas apiladas
+
+El gráfico de áreas apiladas, o el apilamiento en general (stacking en inglés)
+se utiliza para representar el total diferenciando por otra variable. A veces
+este gráfico acompaña bien a conteos por tiempo incluyendo una variable categórica.
+
+```{r}
+# install.packages("ggplot2movies")
+data(movies, package = "ggplot2movies")
+
+colores <- viridis_pal(option = "B", end = 0.8)(7)
+
+peliculas <- movies %>% 
+  select(anio = year, Action:Short) %>% 
+  gather(categoria, cantidad, -anio) %>% 
+  group_by(anio, categoria) %>% 
+  summarise(cantidad = sum(cantidad)) %>% 
+  mutate(
+    categoria = case_when(
+      categoria == "Action" ~ "Acción",
+      categoria == "Animation" ~ "Animación",
+      categoria == "Comedy" ~ "Comedia",
+      categoria == "Documentary" ~ "Documental",
+      categoria == "Drama" ~ "Drama",
+      categoria == "Romance" ~ "Romance",
+      categoria == "Short" ~ "Cortometraje",
+      TRUE ~ NA_character_
+    )
+  )
+
+peliculas
+
+hc09 <- hchart(peliculas, "area", hcaes(anio, cantidad, group = categoria)) %>% 
+  # stacking! apilamiento!
+  hc_plotOptions(
+    series = list(
+      stacking = list(enbled = TRUE),
+      marker = list(symbol = "circle")
+      )
+  ) %>%
+  hc_colors(colores) %>% 
+  hc_tooltip(table = TRUE, sort = TRUE)
+
+hc09
+```
+
+**Medio**. Crearemos un data frame de eventos temporales, los cuales
+pasando a listas en un formato reconocido por highchartsJS agregaremos
+al gráfico como `plotLine`s (existen también las `plotBand`s).
+
+```{r}
+eventos <- tibble(
+  anio = c(1930, 1941, 1990),
+  texto = c(
+    "Comienzo era dorada en Hollywood.",
+    "Aparición de la televisión.",
+    "Comienzo aumento<br>del cine independiente.")
+)
+
+data_plotLine <- eventos %>% 
+  transmute(
+    value = anio,
+    label = purrr::map(texto, ~ list(text = .x))
+  ) %>% 
+  mutate(color = "#666", width = 2, zIndex = 10)
+
+hc09 <- hc09 %>% 
+  hc_xAxis(
+    plotLines = list_parse(data_plotLine)
+  ) %>% 
+  hc_title(
+    text = "Cantidad de películas por Género"
+  ) %>% 
+  hc_caption(
+    text = "Datos provenientes de <b>IMDB</b> a través del paquete ggplot2movies.<br>
+    La Mayoria de eventos fueron obtenidos a partir de lectura flash en <b>Wikipedia</b>."
+  )
+
+hc09
+```
+
+Como segundo ejercicio ilustrativo, podemos agregar más detalles al gráfico obtenido en
+en los [gráficos de columnas](#día-1-barrascolumnas).
+
+```{r}
+conteo_clases_millas <- count(millas, clase, cilindros) %>% 
+  arrange(-n) %>% 
+  mutate(
+    clase = fct_inorder(clase),
+    clase_n = as.numeric(clase) - 1,
+    cilindros = factor(cilindros, c(4,5,6,8))
+  )
+
+hc09_2 <- hchart(conteo_clases_millas, "column", hcaes(x = clase_n, y = n, group = cilindros)) %>% 
+  hc_xAxis(categories = levels(pull(conteo_clases_millas, clase))) %>% 
+  hc_title(
+    text = "Conteo de tipos de automóviles en los datos 'millas' diferenciando 
+    por cantidad de cilindros"
+    ) %>% 
+  hc_plotOptions(
+    series = list(
+      stacking = list(enabled = TRUE)  
+      )
+    ) %>% 
+  hc_tooltip(shared = TRUE)
+
+hc09_2
 ```
 
 
