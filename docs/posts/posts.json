@@ -2,7 +2,7 @@
   {
     "path": "posts/2020-05-22-30diasdegraficos-parte-2/",
     "title": "#30diasdegraficos Parte 2",
-    "description": "La segunda parte, A seguir aprendiendo!",
+    "description": "La segunda parte, A seguir aprendiendo de todas las posibilidades que \nhighcharts a través de R nos puede brindar.",
     "author": [
       {
         "name": "Joshua Kunst",
@@ -17,9 +17,9 @@
       "ggplot2"
     ],
     "preview": "posts/2020-05-22-30diasdegraficos-parte-2/images/preview.png",
-    "last_modified": "2020-05-22T21:32:26-04:00",
-    "preview_width": 737,
-    "preview_height": 475
+    "last_modified": "2020-05-22T21:38:14-04:00",
+    "preview_width": 900,
+    "preview_height": 569
   },
   {
     "path": "posts/2020-05-12-30diasdegraficos-parte-1/",

@@ -1,7 +1,8 @@
 ---
 title: "#30diasdegraficos Parte 2"
 description: |
-  La segunda parte, A seguir aprendiendo!
+  La segunda parte, A seguir aprendiendo de todas las posibilidades que 
+  highcharts a través de R nos puede brindar.
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
