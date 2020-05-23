@@ -1,7 +1,7 @@
 ---
 title: "#30diasdegraficos Parte 2"
 description: |
-  La segunda parte, A seguir aprendiendo de todas las posibilidades que 
+  La segunda parte, A seguir aprendiendo sobre todas las posibilidades que 
   highcharts a través de R nos puede brindar.
 author:
   - name: Joshua Kunst
@@ -62,7 +62,11 @@ options(highcharter.lang = newlang_opts)
 
 ## Día 11: mapas de calor
 
-```{r heatmap, cache=TRUE, layout="l-screen-inset"}
+Mapa de calor. Usualmente se utiliza para visualizar relaciones entre dos
+variables categorícas (o 2 contínuas categorizandolas). En este ejemplo
+utilizaremos día y hora como una variables "numericas discretas".
+
+```{r heatmap, layout="l-screen-inset"}
 # install.packages("aimsir17")
 library(lubridate)
 
@@ -82,14 +86,14 @@ hc11 <- hchart(
   "heatmap",
   hcaes(datetime_to_timestamp(fecha), hora, value = temperatura),
   colsize =  36e5 * 24 # 1 hour * 24 = 1 day
-  ) %>% 
-  hc_title(text = "Temperaturas del aeropuerto Knock") %>% 
-  hc_subtitle(text = "Datos obtenidos del paquete {aimsir17}.") %>% 
-  hc_chart(zoomType = "x") %>% 
+  ) %>%
+  hc_title(text = "Temperaturas del aeropuerto Knock") %>%
+  hc_subtitle(text = "Datos obtenidos del paquete {aimsir17}.") %>%
+  hc_chart(zoomType = "x") %>%
   hc_xAxis(
     type = "datetime",
     title = list(text = FALSE)
-    ) %>% 
+    ) %>%
   hc_yAxis(
     minPadding = 0,
     maxPadding = 0,
@@ -102,25 +106,83 @@ hc11 <- hchart(
     reversed = TRUE,
     labels = list(format = "{value}:00"),
     title = list(text = FALSE)
-  ) %>% 
+  ) %>%
   hc_tooltip(
     headerFormat = "Temperatura<br/>",
     pointFormat =  "{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>"
-  ) %>% 
+  ) %>%
   hc_colorAxis(
     stops = color_stops(10, colors = scales::viridis_pal(option = "B")(10)),
     # fuerza a utilzar mejor el espectro de colores para que HJS no amplie el
     # eje para tener numero "redondos
     startOnTick = FALSE,
     endOnTick =  FALSE
-  ) %>% 
+  ) %>%
   hc_legend(
     align = "right",
     layout = "vertical",
     verticalAlign = "top"
    )
-  
+
 hc11
+```
+
+## Día 12: paleta (lillipop)
+
+Gráfico que se utiliza en forma general para describir una variable numérica
+para un set de individuos/registros (a diferencia de gráfico de barra que 
+usualmente se utiliza sumando cantidades por categoría).
+
+Los datos a utilizar son `mtautos` del paquete {datos} pero pasando 
+algunas variables a las métricas que usualemente en LA utilizamos: libras a kilos,
+pulgadas cúbicas a centímeotrs cúbicos, etc.
+
+```{r}
+mtautos2 <- as_tibble(mtautos) %>% 
+  mutate(auto = rownames(mtautos)) %>% 
+  arrange(desc(caballos)) %>% 
+  mutate(
+    auto = forcats::fct_inorder(factor(auto)),
+    peso_kg = round(0.4535923 * peso * 1000),
+    cilindrada_cc = round(16.387 * cilindrada)
+    ) 
   
+mtautos2
+```
+
+La implementación en {highcharter} es directa, solamente usar el mapeo 
+de `name` para la variable categórica y `low` para la numérica (`low` 
+dado que esta es una modificación del gráfico de dumbbell que utiliza además
+`high`).
+
+**Basico/Medio**. En esta oportunidad haremos un tooltip de tipo tabla con
+el fin de mostrar más información que los HP de cada vehículo. Para esto 
+usaremos la función auxiliar `tooltip_table` en el argumento `pointFormat`.
+
+```{r}
+x <- c("Caballos:", "Peso", "Cilindrada")
+y <- c(
+  "{point.y} HP",
+  "{point.peso_kg} kg",
+  "{point.cilindrada_cc} cc"
+)
+
+hc12 <- hchart(mtautos2, "lollipop", hcaes(name = auto, low = caballos), name = "caballos (HP)") %>% 
+  hc_xAxis(type = "category") %>% 
+  hc_yAxis(labels = list(format = "{value} HP")) %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    pointFormat = tooltip_table(x, y)
+    ) %>% 
+  hc_title(
+    text = "Caballos de fuerza para autómóviles de Motor Trend"
+  ) %>% 
+  hc_subtitle(
+    text = "Los datos fueron extraídos de la revista Motor Trend de Estados 
+    Unidos de 1974, y tiene datos de consumo de combustible y 10 aspectos de diseño 
+    y rendimiento para 32 automóviles (modelos de 1973-1974)."
+  )
+
+hc12
 ```
 
