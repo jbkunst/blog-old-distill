@@ -17,7 +17,7 @@ categories:
   - ggplot2
 editor_options: 
   chunk_output_type: console
-preview: images/preview.jpg
+preview: images/preview.png
 ---
 
 
