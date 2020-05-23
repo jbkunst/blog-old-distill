@@ -1,0 +1,125 @@
+---
+title: "#30diasdegraficos Parte 2"
+description: |
+  La segunda parte, A seguir aprendiendo!
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: "`r format(Sys.time(), '%m-%d-%Y')`"
+output:
+  distill::distill_article:
+    self_contained: true
+    toc: true
+categories: 
+  - spanish
+  - highcharts
+  - data-visualization
+  - ggplot2
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.jpg
+---
+
+
+```{r setup, include=FALSE}
+source(here::here("_R/blog_setup.R"))
+knitr::opts_chunk$set(layout = "l-body-outset")
+```
+
+## Introducción
+
+Seguiremos utilizando los mismos paquetes que la parte anterior.
+
+```{r}
+# ejecutar estas líneas para poder instalar {datos}
+# install.packages("remotes")
+# remotes::install_github("cienciadedatos/datos")
+
+library(datos)       # datos
+library(highcharter) # gráficos
+library(ggplot2)     # más gráficos  
+library(dplyr)       # manipulación de datos
+library(tidyr)       # más manipulación de datos
+```
+
+Cambiando configuración
+
+```{r}
+newlang_opts <- getOption("highcharter.lang")
+
+f <- Sys.Date()
+dias <- weekdays((f - lubridate::days(lubridate::wday(f) - 1)) + lubridate::days(0:6))
+
+newlang_opts$weekdays <- dias
+newlang_opts$Months <- as.character(lubridate::month(1:12, label = TRUE, abbr = FALSE))
+newlang_opts$shortMonths <- as.character(lubridate::month(1:12, label = TRUE, abbr = TRUE))
+newlang_opts$thousandsSep <- ","
+
+options(highcharter.lang = newlang_opts)
+```
+
+
+## Día 11: mapas de calor
+
+```{r heatmap, cache=TRUE, layout="l-screen-inset"}
+# install.packages("aimsir17")
+library(lubridate)
+
+data(observations, package = "aimsir17")
+
+temperaturas <- observations %>% 
+  filter(station == "KNOCK AIRPORT") %>% 
+  select(fecha = date, hora = hour, temperatura = temp) %>% 
+  mutate(fecha = as.Date(fecha))
+
+# temperaturas %>% 
+#   count(fecha, hora) %>% 
+#   count(n)
+
+hc11 <- hchart(
+  temperaturas,
+  "heatmap",
+  hcaes(datetime_to_timestamp(fecha), hora, value = temperatura),
+  colsize =  36e5 * 24 # 1 hour * 24 = 1 day
+  ) %>% 
+  hc_title(text = "Temperaturas del aeropuerto Knock") %>% 
+  hc_subtitle(text = "Datos obtenidos del paquete {aimsir17}.") %>% 
+  hc_chart(zoomType = "x") %>% 
+  hc_xAxis(
+    type = "datetime",
+    title = list(text = FALSE)
+    ) %>% 
+  hc_yAxis(
+    minPadding = 0,
+    maxPadding = 0,
+    startOnTick = FALSE,
+    endOnTick = FALSE,
+    tickPositions = list(0, 6, 12, 18, 24),
+    tickWidth = 1,
+    min = 0,
+    max = 23,
+    reversed = TRUE,
+    labels = list(format = "{value}:00"),
+    title = list(text = FALSE)
+  ) %>% 
+  hc_tooltip(
+    headerFormat = "Temperatura<br/>",
+    pointFormat =  "{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>"
+  ) %>% 
+  hc_colorAxis(
+    stops = color_stops(10, colors = scales::viridis_pal(option = "B")(10)),
+    # fuerza a utilzar mejor el espectro de colores para que HJS no amplie el
+    # eje para tener numero "redondos
+    startOnTick = FALSE,
+    endOnTick =  FALSE
+  ) %>% 
+  hc_legend(
+    align = "right",
+    layout = "vertical",
+    verticalAlign = "top"
+   )
+  
+hc11
+  
+```
+
