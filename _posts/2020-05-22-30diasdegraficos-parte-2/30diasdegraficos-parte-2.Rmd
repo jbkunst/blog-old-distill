@@ -43,7 +43,7 @@ library(dplyr)       # manipulación de datos
 library(tidyr)       # más manipulación de datos
 ```
 
-Cambiando configuración
+Cambiando configuración para el español.
 
 ```{r}
 newlang_opts <- getOption("highcharter.lang")
@@ -52,7 +52,7 @@ f <- Sys.Date()
 dias <- weekdays((f - lubridate::days(lubridate::wday(f) - 1)) + lubridate::days(0:6))
 
 newlang_opts$weekdays <- dias
-newlang_opts$Months <- as.character(lubridate::month(1:12, label = TRUE, abbr = FALSE))
+newlang_opts$months <- as.character(lubridate::month(1:12, label = TRUE, abbr = FALSE))
 newlang_opts$shortMonths <- as.character(lubridate::month(1:12, label = TRUE, abbr = TRUE))
 newlang_opts$thousandsSep <- ","
 
@@ -64,7 +64,27 @@ options(highcharter.lang = newlang_opts)
 
 Mapa de calor. Usualmente se utiliza para visualizar relaciones entre dos
 variables categorícas (o 2 contínuas categorizandolas). En este ejemplo
-utilizaremos día y hora como una variables "numericas discretas".
+utilizaremos día y hora como una variables "numericas discretas". 
+
+Caso de `heatmaps` son los visualizar distancia entre observaciones/individuos.
+
+```{r}
+mtautos2 <- mtautos[1:20, ]
+matriz_distancias <- dist(mtautos2)
+
+hchart(matriz_distancias) %>% 
+  hc_title(text = "Distancia entre características de los vehículos")
+```
+
+Y también explorar correlaciones:
+
+```{r}
+hchart(cor(mtautos))
+```
+
+**Medio/Avanzado**. Es la implementación de este ejemplo 
+https://www.highcharts.com/demo/heatmap-canvas. Notar la relación de 
+opciones en HighchartsJS y {highcharter}.
 
 ```{r heatmap, layout="l-screen-inset"}
 # install.packages("aimsir17")
@@ -127,6 +147,7 @@ hc11 <- hchart(
 hc11
 ```
 
+
 ## Día 12: paleta (lillipop)
 
 Gráfico que se utiliza en forma general para describir una variable numérica
@@ -185,4 +206,92 @@ hc12 <- hchart(mtautos2, "lollipop", hcaes(name = auto, low = caballos), name = 
 
 hc12
 ```
+
+## Día 13: visualizar datos temporales
+
+Notar que el último gráfico del [día 11](##día-11-mapas-de-calor) es un caso 
+particular de de visualizar datos temporales.
+
+Usualmente en **R** los datos temporales o serie de tiempo vienen en un 
+objecto de clase `ts` (time series) que básicamente son valores numéricos
+asociado a una fecha (o índice). Notar que también datos temporales pueden
+perfectamente almacenarse en un `data.frame`, nota los datos `observations`
+del [día 11](##día-11-mapas-de-calor). 
+
+Para grafica objectos de clase `ts` en {highcharter} es bastante directo
+dado que `hchart` es una **función genérica**. Esto significa que la
+función dependiendo de la clase del objeto la interpretará/graficará de la 
+forma que corresponde. Por ejemplo `ts` y `data.frame` son clases que la
+función `hchart` reconoce, y existen muuuchas más clases que `hchart` puede
+interpretar, intenta correr `methods("hchart") ` para listar todas las clases
+que actualmente esta función soporta.
+
+Volviendo a nuestro gráfico en **R** existe los datos `co2` que son una
+serie de tiempo (clase `ts`).
+
+```{r}
+data(co2)
+
+str(co2)
+
+hchart(co2, name = "Concentración") %>% 
+  hc_title(
+    # para poder usar el tag html "sub" para subindices
+    useHTML = TRUE,
+    text = "Concentración atomsférica de CO<sub>2</sub> en Mauna Loa"
+  ) %>% 
+  hc_subtitle(
+    text = "Las concentraciones atmosféricas de CO2 se expresan en partes por 
+    millón (ppm) y se informan en la escala preliminar de fracción molar
+    manométrica SIO de 1997."
+  )
+```
+
+Aprovechando que estamos revisando series de tiempo, podemos hacer una
+descomposición usando Loess (suavizamiento). La función `stl` toma un
+serie de tiempo descomponiéndola en **tendencia**, **componente estacional** y
+**ruido**.
+
+Como veremos, el gráfico se realiza simplemente como `hchart(descomposicion)`:
+
+```{r, }
+descomposicion <- stl(co2, "per")
+
+hchart(descomposicion) %>% 
+  hc_tooltip(valueDecimals = 2) %>% 
+  hc_title(
+    useHTML = TRUE,
+    text = "Descomposición de la Concentración atomsférica de CO<sub>2</sub> en
+    Mauna Loa utilizando la funcion <code>stl</code>"
+  ) %>% 
+  hc_subtitle(
+    text = "<b>Descripción del comando <code>stl</code></b>:
+    El componente estacional se encuentra al suavizar loess la sub-serie
+    estacional (la serie de todos los valores de enero, ...); si s.window = 
+    'periódico' suavizado se reemplaza efectivamente tomando la media. Los 
+    valores estacionales se eliminan y el resto se suaviza para encontrar la 
+    tendencia. El nivel general se elimina del componente estacional y se agrega
+    al componente de tendencia. Este proceso se repite varias veces. El componente
+    restante son los residuos del ajuste estacional más tendencial."
+  ) %>% 
+  hc_size(height = "700px")
+```
+
+Para finalizar ejemplificaremos la integración de {highcharter} con el paquete
+{forecast} con el cual se puede realizar predicciones de los datos de forma
+simple.
+
+```{r}
+library(forecast)
+
+pronosticos <- forecast(ets(USAccDeaths), h = 48, level = 95)
+
+hchart(pronosticos) %>% 
+  hc_title(
+    text = "Muertes por accidentes en los EE. UU. 1973–1978 más predicciones
+    generadas utilizando {forecast}"
+  )
+```
+
+
 
