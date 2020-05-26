@@ -112,7 +112,8 @@ hc11 <- hchart(
   hc_chart(zoomType = "x") %>%
   hc_xAxis(
     type = "datetime",
-    title = list(text = FALSE)
+    title = list(text = FALSE),
+    showLastLabel = FALSE
     ) %>%
   hc_yAxis(
     minPadding = 0,
@@ -209,7 +210,7 @@ hc12
 
 ## Día 13: visualizar datos temporales
 
-Notar que el último gráfico del [día 11](##día-11-mapas-de-calor) es un caso 
+Notar que el último gráfico del [día 11](#día-11-mapas-de-calor) es un caso 
 particular de de visualizar datos temporales.
 
 Usualmente en **R** los datos temporales o serie de tiempo vienen en un 
@@ -234,7 +235,7 @@ data(co2)
 
 str(co2)
 
-hchart(co2, name = "Concentración") %>% 
+hc13 <- hchart(co2, name = "Concentración") %>% 
   hc_title(
     # para poder usar el tag html "sub" para subindices
     useHTML = TRUE,
@@ -245,6 +246,8 @@ hchart(co2, name = "Concentración") %>%
     millón (ppm) y se informan en la escala preliminar de fracción molar
     manométrica SIO de 1997."
   )
+
+hc13
 ```
 
 Aprovechando que estamos revisando series de tiempo, podemos hacer una
@@ -257,7 +260,7 @@ Como veremos, el gráfico se realiza simplemente como `hchart(descomposicion)`:
 ```{r, }
 descomposicion <- stl(co2, "per")
 
-hchart(descomposicion) %>% 
+hc132 <- hchart(descomposicion) %>% 
   hc_tooltip(valueDecimals = 2) %>% 
   hc_title(
     useHTML = TRUE,
@@ -274,7 +277,10 @@ hchart(descomposicion) %>%
     al componente de tendencia. Este proceso se repite varias veces. El componente
     restante son los residuos del ajuste estacional más tendencial."
   ) %>% 
+  hc_tooltip(table = TRUE) %>% 
   hc_size(height = "700px")
+
+hc132
 ```
 
 Para finalizar ejemplificaremos la integración de {highcharter} con el paquete
@@ -286,12 +292,170 @@ library(forecast)
 
 pronosticos <- forecast(ets(USAccDeaths), h = 48, level = 95)
 
-hchart(pronosticos) %>% 
+hc133 <- hchart(pronosticos) %>% 
   hc_title(
     text = "Muertes por accidentes en los EE. UU. 1973–1978 más predicciones
     generadas utilizando {forecast}"
-  )
+  ) %>% 
+  hc_tooltip(shared = TRUE, valueDecimals = 2)
+
+hc133
 ```
 
+
+## Día 14: treemaps
+
+Es un buen gráfico para sustituir el gráfico de barras cuando las categorías
+aumentan pues 
+
+```{r}
+library(forcats) # para usar la función fct_inorder
+
+conteo_clases <- count(millas, clase)
+conteo_clases
+
+hchart(
+  conteo_clases,
+  "treemap",
+  hcaes(clase, value = n, colorValue = n),
+  borderColor = NA # elimina border y se tiene un aspecto más limpio imho
+  ) %>% 
+  hc_colorAxis(stops  = color_stops()) %>% 
+  hc_title(text = "Conteo de tipos de automóviles en los datos 'millas'") %>% 
+  hc_colorAxis(endOnTick = FALSE)
+```
+
+
+**Avanzado** Trabajo en progreso!
+
+```{r}
+library(readr)
+
+url_base <- "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv"
+pkmn <- read_csv(file.path(url_base, "pokemon.csv"))
+
+pkmn_nombre_tipos <- read_csv(file.path(url_base, "type_names.csv")) %>% 
+  # inglés es 9, Japonez es 1, español 7
+  filter(local_language_id == 9)
+
+pkmn_tipo <- read_csv(file.path(url_base, "pokemon_types.csv"))
+pkmn_tipo <- pkmn_tipo %>% 
+  mutate(slot = paste0("type_", slot)) %>% 
+  left_join(pkmn_nombre_tipos, by = "type_id") %>% 
+  select(pokemon_id, slot, name) %>% 
+  spread(slot, name)
+```
+
+
+```{r}
+pkmn_colores_tipo <- pkmn_nombre_tipos %>% 
+  pull(name) %>% 
+  setdiff(c("???", "Shadow")) %>% 
+  purrr::map_df(function(t){
+  # t <- "psychic"
+  message(t)
+  
+  col <- "http://pokemon-uranium.wikia.com/wiki/Template:%s_color" %>% 
+    sprintf(t) %>%
+    xml2::read_html() %>% 
+    rvest::html_nodes("span > b") %>% 
+    rvest::html_text()
+  
+  tibble(type = t, color = paste0("#", col))
+})
+
+pkmn_colores_tipo2 <- crossing(
+  color_1 = pkmn_colores_tipo$color,
+  color_2 = pkmn_colores_tipo$color
+  ) %>% 
+  mutate(
+    color_f =
+      purrr::map2_chr(
+        color_1,
+        color_2,
+        ~ colorRampPalette(c(.x, .y))(100)[round(100 * .25)])
+    )
+
+# https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_base_stats_(Generation_VIII-present)
+
+pkmn <- pkmn %>% 
+  left_join(pkmn_tipo, by = c("id" = "pokemon_id")) %>% 
+  left_join(pkmn_colores_tipo %>% rename(type_1 = type, color_1 = color), by = "type_1") %>% 
+  left_join(pkmn_colores_tipo %>% rename(type_2 = type, color_2 = color), by = "type_2") %>% 
+  left_join(pkmn_colores_tipo2, by =  c("color_1", "color_2")) 
+
+pkmn <- pkmn %>% 
+   mutate(color_f = ifelse(is.na(color_f), color_1, color_f))
+```
+
+## Día 15: dendogramas
+
+Los dendogramas son una 2da iteración a la visualización de distancia 
+entre individuos o registros en una tabla como lo es el primer gráfico 
+del [día 11](#día-11-mapas-de-calor). Los dendogramás son complejos de leer pues
+traen mucha más información debido a que podemos ver como se van agrupando
+(en términos de distancia) las observaciones. Que una esté cerca de otra
+significa que sus carácterísticas son similares. 
+
+Para gráficar en {highcharter} haremos ya el conocido truco de extraer la
+información luego de generer un ggplot con la información. Un paquete 
+para generar dendogramas usando {ggplot2} es {ggdendro}.
+
+Los dendogramas salen como un resultado a partir de un "agrupamiento jerárquico"
+que viene a su vez de una matriz de distancias, por lo que calcularemos
+la clasterización antes de graficar el dendograma.
+
+```{r}
+# install.packages("ggdendro")
+library(ggdendro)
+
+hc <- hclust(dist(mtautos), "ave")
+
+ggd <- ggdendrogram(hc, rotate=TRUE)
+
+dd15 <- as_tibble(ggplot2::layer_data(ggd, 2))
+
+dd152 <- dd15 %>% 
+  select(x, xend, y, yend) %>% 
+  mutate(id = row_number()) %>% 
+  gather(key, value, -id) %>% 
+  mutate(key = stringr::str_remove(key, "end")) %>% 
+  group_by(id, key) %>% 
+  mutate(id2 = row_number()) %>% 
+  spread(key, value) %>% 
+  ungroup() %>% 
+  select(-id2) %>% 
+  mutate_if(is.numeric, round, 3)
+
+hc15 <- hchart(
+  dd152,
+  "line",
+  # x - 1 pues al colocar categorúías 
+  hcaes(x - 1, y, group = id),
+  color = "red",
+  showInLegend = FALSE
+  ) %>% 
+  # https://stackoverflow.com/questions/43638810/how-to-get-labels-from-hclust-result
+  hc_xAxis(
+    categories = hc$labels[hc$order], 
+    title = list(text = "Vehículos")
+    ) %>% 
+  hc_yAxis(
+    title = list(text = "Distancia"),
+    endOnTick = FALSE,
+    crosshair = TRUE
+    ) %>% 
+  hc_tooltip(
+    headerFormat = "",
+    pointFormat = "<b>x</b>: {point.x}<br><b>y</b>:{point.y}",
+    valueDecimals = 2
+    ) %>% 
+  hc_title(
+    useHTML = TRUE,
+    text = "Denograma en el dataset <code>mtautos</code>"
+    )
+  
+hc15
+```
 
 
