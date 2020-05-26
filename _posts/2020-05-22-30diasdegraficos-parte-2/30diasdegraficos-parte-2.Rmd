@@ -156,7 +156,7 @@ para un set de individuos/registros (a diferencia de gráfico de barra que
 usualmente se utiliza sumando cantidades por categoría).
 
 Los datos a utilizar son `mtautos` del paquete {datos} pero pasando 
-algunas variables a las métricas que usualemente en LA utilizamos: libras a kilos,
+algunas variables a las métricas que usualemente utilizamos: libras a kilos,
 pulgadas cúbicas a centímeotrs cúbicos, etc.
 
 ```{r}
@@ -452,7 +452,7 @@ hc15 <- hchart(
     ) %>% 
   hc_title(
     useHTML = TRUE,
-    text = "Denograma en el dataset <code>mtautos</code>"
+    text = "Dendograma en el dataset <code>mtautos</code>"
     )
   
 hc15
