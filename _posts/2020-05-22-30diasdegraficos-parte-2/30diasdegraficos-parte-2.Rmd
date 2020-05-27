@@ -305,12 +305,11 @@ hc133
 
 ## Día 14: treemaps
 
-Es un buen gráfico para sustituir el gráfico de barras cuando las categorías
-aumentan pues 
+Es un buen gráfico para sustituir el gráfico de barras cuando la cantidad
+de categorías aumentan. También sirve como alternativa a los gráficos 
+de torta o dunut (ñami!)
 
 ```{r}
-library(forcats) # para usar la función fct_inorder
-
 conteo_clases <- count(millas, clase)
 conteo_clases
 
@@ -326,14 +325,25 @@ hchart(
 ```
 
 
-**Avanzado** Trabajo en progreso!
+**Avanzado**. Este es una guia en español para hacer un treemap mostrando
+la cardinalidad de cada tipo y subtipo de pokemon. Primero descargaremos
+los datos desde el repositorio 
+https://github.com/PokeAPI/pokeapi/tree/master/data/v2/csv.
+
+Partiremos con la lista de pokemon:
 
 ```{r}
 library(readr)
 
 url_base <- "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv"
-pkmn <- read_csv(file.path(url_base, "pokemon.csv"))
 
+pkmnes <- read_csv(file.path(url_base, "pokemon.csv"))
+pkmnes
+```
+
+Ahora los tipos de pokemon:
+
+```{r}
 pkmn_nombre_tipos <- read_csv(file.path(url_base, "type_names.csv")) %>% 
   # inglés es 9, Japonez es 1, español 7
   filter(local_language_id == 9)
@@ -346,6 +356,8 @@ pkmn_tipo <- pkmn_tipo %>%
   spread(slot, name)
 ```
 
+Ahora, la gracia del treemap que haremos es que serán los colores. Esto 
+es lo que hara llamativo nuestro gráfico.
 
 ```{r}
 pkmn_colores_tipo <- pkmn_nombre_tipos %>% 
@@ -363,30 +375,108 @@ pkmn_colores_tipo <- pkmn_nombre_tipos %>%
   
   tibble(type = t, color = paste0("#", col))
 })
+```
 
+Ahora, calcularemos todas las combinaciones entre todos los colores para
+luego _promediarlos_ y generar un matiz entre el color con el del segundo tipo. 
+Esto se hace con la función `colorRampPalette`.
+
+```{r}
 pkmn_colores_tipo2 <- crossing(
   color_1 = pkmn_colores_tipo$color,
   color_2 = pkmn_colores_tipo$color
   ) %>% 
   mutate(
-    color_f =
-      purrr::map2_chr(
-        color_1,
-        color_2,
-        ~ colorRampPalette(c(.x, .y))(100)[round(100 * .25)])
+    color_f = purrr::map2_chr(
+      color_1,
+      color_2,
+      ~ colorRampPalette(c(.x, .y))(100)[round(100 * .25)])
     )
 
-# https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_base_stats_(Generation_VIII-present)
+pkmn_colores_tipo2
+```
 
-pkmn <- pkmn %>% 
+Los datos! **EL JOIN**.
+
+```{r}
+pkmn <- pkmnes %>% 
   left_join(pkmn_tipo, by = c("id" = "pokemon_id")) %>% 
   left_join(pkmn_colores_tipo %>% rename(type_1 = type, color_1 = color), by = "type_1") %>% 
   left_join(pkmn_colores_tipo %>% rename(type_2 = type, color_2 = color), by = "type_2") %>% 
-  left_join(pkmn_colores_tipo2, by =  c("color_1", "color_2")) 
-
-pkmn <- pkmn %>% 
-   mutate(color_f = ifelse(is.na(color_f), color_1, color_f))
+  left_join(pkmn_colores_tipo2, by =  c("color_1", "color_2")) %>% 
+  mutate(color_f = ifelse(is.na(color_f), color_1, color_f))
 ```
+
+Ahora obtendremos los prin
+
+```{r}
+dprinc <- pkmn %>% 
+  select(name = type_1, color = color_1) %>% 
+  distinct() %>% 
+  mutate(id = str_to_id(name))
+
+dsecun <- pkmn %>% 
+  count(type_1, type_2, color_f) %>% 
+  # los siguiente nombre de columnas son para que highcharts los use 
+  # internamente.
+  transmute(
+    name =  ifelse(is.na(type_2), paste("only", type_1), type_2),
+    parent = str_to_id(type_1),
+    color = color_f,
+    value = n
+    ) %>% 
+  mutate(id = as.character(row_number()))
+
+dd <- list(dprinc, dsecun) %>%
+  purrr::map(mutate_if, is.factor, as.character) %>% 
+  bind_rows() %>% 
+  list_parse() %>% 
+  purrr::map(function(x) x[!is.na(x)])
+```
+
+A continuación, finalmente, uno de los treemaps del cual **estoy orgulloso! :)** 
+
+
+```{r}
+hc14 <- highchart() %>% 
+  hc_chart(type = "treemap") %>% 
+  hc_title(
+    text = "Pokemon por tipos"
+  ) %>% 
+  hc_add_series(
+    data = dd,
+    allowDrillToNode = TRUE,
+    levelIsConstant = FALSE,
+    textOverflow = "clip",
+    dataLabels = list(color = "white"),
+    levels = list(
+      list(
+        level = 1,
+        borderWidth = 1,
+        dataLabels = list(
+          enabled = TRUE,
+          verticalAlign = "top",
+          align = "left",
+          style = list(fontSize = "12px", textOutline = FALSE)
+          )
+        ),
+      list(
+        level = 2,
+        borderWidth = 0,
+        dataLabels = list(enabled = FALSE)
+        )
+      )
+    ) %>% 
+  # esto es para que el primer nivel, que no tiene color asigando, 
+  # sea transparente.
+  hc_colors("trasnparent") %>% 
+  hc_size(height = 800)
+
+hc14
+```
+
+
+
 
 ## Día 15: dendogramas
 
