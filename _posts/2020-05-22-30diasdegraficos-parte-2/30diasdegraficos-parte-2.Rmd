@@ -21,7 +21,6 @@ editor_options:
 preview: images/preview.png
 ---
 
-
 ```{r setup, include=FALSE}
 source(here::here("_R/blog_setup.R"))
 knitr::opts_chunk$set(layout = "l-body-outset")
@@ -564,7 +563,7 @@ diamantes_cortes_1000 <- diamantes %>%
 
 diamantes_cortes_1000
 
-hchart(
+hc16 <- hchart(
   diamantes_cortes_1000,
   "item", 
   hcaes(name = corte, y = n),
@@ -575,6 +574,8 @@ hchart(
   hc_title(
     text = "Distribución de cortes en una muestra de 1000 diamantes"
   )
+
+hc16
 ```
 
 También tiene se puede configurar para que en realidad parezca un "parlamento".
@@ -642,7 +643,7 @@ encuenta2014_flujo <- combinaciones %>%
       mutate_if(is.factor, as.character)
   })
 
-hchart(
+hc17 <- hchart(
   encuenta2014_flujo, 
   "sankey",
   hcaes(from = desde, to = hacia, weight = peso),
@@ -652,6 +653,310 @@ hchart(
   text = "Distribución de las variables edad, estado civil y religión para los 
   datos <em>encuesta</em> para el año 2014"
   )
+
+hc17
+```
+
+
+## Día 18: datos espaciales
+
+Hay muchos tipos de datos y formas de representar espaciales:
+
+- Coropletas
+- Puntos/burbujas
+- Arcos
+- Contornos
+- Y supongo que muchos más.
+
+En esta oportunidad haremos coropletas que viene a colorear regiones de acuerdo
+a valores o categoría de una variable. En highcarter podemos utilizar como
+entrada archivos **geojson** los cuales representan características grográficas.
+
+Utilizaremos un geojson del gran Santiago que está en el repositorio de 
+@robsalasco (su [twitter](https://twitter.com/robsalasco) y 
+[github](https://github.com/robsalasco)). También utilizaremos su paquete 
+{sinimr} para acceder al sistema de información de municipalidades de Chile.
+
+Primero, los datos grográficos:
+
+```{r}
+# remotes::install_github("robsalasco/sinimr")
+library(geojsonio)
+
+url_gs_geojson <- "https://raw.githubusercontent.com/robsalasco/precenso_2016_geojson_chile/87bc72ea23ad19a116ae9af02fa1cb5ae06f29f3/Extras/GRAN_SANTIAGO.geojson"
+
+gransantiago <- jsonlite::fromJSON(url_gs_geojson, simplifyVector = FALSE)
+
+# str(gransantiago, max.level = 4)
+
+dcomuna <- gransantiago$features %>% 
+  purrr::map_df("properties") %>% 
+  rename_all(stringr::str_to_lower) %>% 
+  select(comuna, nom_comuna) %>% 
+  mutate(
+    comuna = as.numeric(comuna),
+    nom_comuna = stringr::str_to_title(nom_comuna)
+    )
+
+dcomuna
+
+gransantiago_geojson <- geojsonio::as.json(gransantiago)
+```
+
+Ahora datos para rellenarlos. Como mencionamos utilizaremos el paquete {sinimr}
+https://github.com/robsalasco/sinimr:
+
+```{r}
+# remotes::install_github("robsalasco/sinimr")
+library(sinimr)
+
+varcode <- 882
+
+nombre_variable <- sinimr::get_sinim_var_name(varcode)
+nombre_variable <- stringr::str_to_title(nombre_variable)
+
+dvar <- get_sinim(varcode, 2018, region = 13, truevalue = TRUE) %>% 
+  as_tibble() %>% 
+  select(code, value) 
+  
+dvar <- dvar %>% 
+  left_join(dcomuna, by = c("code" = "comuna")) %>% 
+  mutate(value = round(value/1e6))
+
+dvar
+```
+
+En higcharter los datos goeográficos van en el arguemnto `mapData` y los datos
+que tienen la información para _pintar_ van en el `data`. Notar que necesitamos 
+parsear los datos a lista con la función `list_parse` y que los datos deben
+venir con la columna `value` la cual se utilizará tanto para le color, leyenda,
+etc. Otra cosa importante es el `joinBy` que viene a ser lo que en un `left_join`
+es el arguemnto `by`.
+
+```{r}
+highchart(type = "map") %>%
+  hc_add_series(
+    mapData = gransantiago_geojson,
+    data = list_parse(dvar),
+    # "COMUNA" es la key en el geojson, "code" es la key en nuestros datos: dvar
+    joinBy = c("COMUNA", "code"),
+    showInLegend = FALSE,
+    name = nombre_variable,
+    dataLabels = list(enabled = TRUE, format = "{point.nom_comuna}")
+    ) %>% 
+  hc_colorAxis(minColor = "white", maxColor = "red", endOnTick = FALSE) %>% 
+  hc_tooltip(
+    # estos campos son de los datos dvar
+    pointFormat = "<b>{point.nom_comuna}</b>: ${point.value} MM"
+  ) %>% 
+  hc_title(
+    text = "Ingresos propios por comunas del gran Santiago para el año 2018"
+  ) %>% 
+  hc_subtitle(
+    text = "Datos obtenidos del paquete {sinimr} por @robsalasco"
+  ) %>% 
+  hc_size(height = 800)
+```
+
+**Avanzado**. Utilizaremos unas de las funcionalidades más entretenidas de
+{highcharter} que es poner gráficos dentro de un tooltip! Para esto es necesario
+tener una data _parseada_ en lista (de nuevo `list_parse`) para luego utilizarla
+en conjunto con la función `tooltip_chart` en el argumento `pointFormatter` en
+la función `hc_tooltip`.
+
+<aside>
+Más detalles en http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/
+</aside>
+
+Los datos para este ejemplo son los del Ministerio de Ciencia que cuenta por 
+comuna los casos registrados por COVID-19.
+
+
+```{r}
+library(scales) # para viridis_pal
+
+dcovid <- read_csv("https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto1/Covid-19.csv")
+
+dcovid_largo <- dcovid %>% 
+  filter(`Codigo region` == 13) %>% 
+  rename(comuna = `Codigo comuna`) %>% 
+  select(comuna, matches("[0-9]{4}")) %>% 
+  gather(fecha, casos, -comuna) %>% 
+  mutate(fecha = lubridate::ymd(fecha))
+
+dcovid_ultimo <- dcovid_largo %>% 
+  group_by(comuna) %>% 
+  filter(fecha == max(fecha)) %>% 
+  ungroup()
+
+dcovid_largo <- dcovid_largo %>% 
+  rename(x = fecha, y = casos) %>% 
+  mutate(x = datetime_to_timestamp(x)) %>% 
+  group_by(comuna) %>% 
+  nest() %>% 
+  rename(ttdata = data) %>% 
+  mutate(ttdata = purrr::map(ttdata, list_parse))
+
+dcovid <- left_join(
+  dcovid_ultimo,
+  dcovid_largo,
+  by = "comuna"
+  ) %>% 
+  mutate(comuna = as.numeric(comuna)) %>% 
+  inner_join(dcomuna, by = "comuna") %>% 
+  rename(value = casos)
+
+dcovid
+
+maxfecha <- dcovid %>% 
+  pull(fecha) %>% 
+  max() %>% 
+  format("%A %e de %B")
+```
+
+
+```{r}
+hc18 <- highchart(type = "map") %>%
+  hc_add_series(
+    mapData = gransantiago_geojson,
+    data = list_parse(dcovid),
+    # "COMUNA" es la key en el geojson, "code" es la key en nuestros datos: dvar
+    joinBy = c("COMUNA", "comuna"),
+    showInLegend = FALSE,
+    name = "Covid",
+    borderColor = 'transparent',
+    borderWidth = 0.1,     
+    dataLabels = list(
+      enabled = TRUE,
+      format = "{point.nom_comuna}",
+      style = list(fontSize = "12px", color = "#F5F5F5")
+      )
+    ) %>% 
+  hc_colorAxis(
+    stops = color_stops(n = 10, viridis_pal(option = "B", end = 0.95)(10)),
+    # fuerza a utilzar mejor el espectro de colores para que HJS no amplie el
+    # eje para tener numero "redondos
+    endOnTick =  FALSE
+    ) %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    headerFormat = "{point.key}",
+    pointFormatter = tooltip_chart(
+      accesor = "ttdata",
+      hc_opts = list(
+        subtitle = list(text = "point.nom_comuna"),
+        chart = list(backgroundColor = "white"),
+        xAxis = list(type = "datetime", showLastLabel = TRUE, endOnTick = FALSE),
+        yAxis = list(showLastLabel = TRUE, endOnTick = FALSE),
+        credits = list(enabled = FALSE)
+        ),
+      height = 225,
+      width = 400
+      )
+  ) %>% 
+  hc_title(
+    text = "Casos COVID-19 en el Gran Santiago",
+    align = "center"
+    ) %>% 
+  hc_subtitle(
+    text = paste("Datos Ministerio de Ciencia; con última actualización el", maxfecha),
+    align = "center"
+    ) %>% 
+  hc_legend(symbolWidth = 500, align = "center", verticalAlign = "top")
+
+hc18 %>% 
+  hc_size(height = 800)
+```
+
+```{r echo=FALSE, include=FALSE}
+hc18 %>% 
+  htmlwidgets::saveWidget(
+    file = here::here("docs/htmlwidgets/covid-19.html"), 
+    selfcontained = TRUE,
+    title = "día 18 de #30díadegraficos"
+    )
+```
+
+Ver en pantalla completa [acá](../../htmlwidgets/covid-19.html).
+
+## Día 19: streamgraph
+
+El steamgraph puede crearse a partir de un gráfico de áreas apiladas cuando en
+el eje x se utiliza una variable temporal. ¿Recuerdan el gráfico de áreas apiladas
+que hicimos en la **parte 1**? En el ejemplo teníamos en el eje
+x una variable asociada al tiempo por lo que podemos reutilizar el código
+simplemente cambiado el tipo de gráfico de `"area"` a `"streamgraph"`.
+
+Por tanto reutilizaremos el mismo código:
+
+```{r}
+library(scales) # para viridis_pal
+
+data(movies, package = "ggplot2movies")
+
+colores <- viridis_pal(option = "B", end = 0.8)(7)
+
+peliculas <- movies %>% 
+  select(anio = year, Action:Short) %>% 
+  gather(categoria, cantidad, -anio) %>% 
+  group_by(anio, categoria) %>% 
+  summarise(cantidad = sum(cantidad)) %>% 
+  mutate(
+    categoria = case_when(
+      categoria == "Action" ~ "Acción",
+      categoria == "Animation" ~ "Animación",
+      categoria == "Comedy" ~ "Comedia",
+      categoria == "Documentary" ~ "Documental",
+      categoria == "Drama" ~ "Drama",
+      categoria == "Romance" ~ "Romance",
+      categoria == "Short" ~ "Cortometraje",
+      TRUE ~ NA_character_
+    )
+  )
+
+eventos <- tibble(
+  anio = c(1930, 1941, 1990),
+  texto = c(
+    "Comienzo era dorada<br>en Hollywood.",
+    "Aparición<br>de la televisión.",
+    "Comienzo aumento<br>del cine independiente.")
+)
+
+data_plotLine <- eventos %>% 
+  transmute(
+    value = anio,
+    label = purrr::map(texto, ~ list(text = .x))
+  ) %>% 
+  mutate(color = "#666", width = 2, zIndex = 5)
+
+hc19 <- hchart(peliculas, "streamgraph", hcaes(anio, cantidad, group = categoria)) %>%
+  hc_yAxis(visible = FALSE) %>% # no tiene mucho sentido el
+  hc_colors(colores) %>% 
+  hc_tooltip(table = TRUE, sort = TRUE) %>% 
+   hc_xAxis(
+    plotLines = list_parse(data_plotLine)
+  ) %>% 
+  hc_title(
+    text = "Cantidad de películas por Género"
+  ) %>% 
+  hc_caption(
+    text = "Datos provenientes de <b>IMDB</b> a través del paquete ggplot2movies.<br>
+    La Mayoria de eventos fueron obtenidos a partir de lectura flash en <b>Wikipedia</b>."
+  ) %>% 
+  # https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/verticalalign/
+  hc_chart(
+    marginRight = 120
+  ) %>% 
+  hc_legend(
+    align = "right",
+    verticalAlign = "top",
+    layout = "vertical",
+    itemMarginBottom = 10,
+    x = 0,
+    y = 150
+  )
+
+hc19
 ```
 
 

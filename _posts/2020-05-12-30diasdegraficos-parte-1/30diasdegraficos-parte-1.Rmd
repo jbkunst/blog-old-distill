@@ -639,7 +639,7 @@ data_plotLine <- eventos %>%
     value = anio,
     label = purrr::map(texto, ~ list(text = .x))
   ) %>% 
-  mutate(color = "#666", width = 2, zIndex = 10)
+  mutate(color = "#666", width = 2, zIndex = 5)
 
 hc09 <- hc09 %>% 
   hc_xAxis(
