@@ -475,9 +475,6 @@ hc14 <- highchart() %>%
 hc14
 ```
 
-
-
-
 ## Día 15: dendogramas
 
 Los dendogramas son una 2da iteración a la visualización de distancia 
@@ -546,6 +543,115 @@ hc15 <- hchart(
     )
   
 hc15
+```
+
+
+
+
+## Día 16: gráficos de waffle
+
+También conocidos como pie cuadrados los gráficos de waffle son una alternativa
+a los pie charts. Em highchartsJS -por tanto en {highcharter}- el equivalente
+es "item".
+
+
+```{r, layout="l-body"}
+set.seed(123)
+
+diamantes_cortes_1000 <- diamantes %>% 
+  sample_n(1000) %>% 
+  count(corte)
+
+diamantes_cortes_1000
+
+hchart(
+  diamantes_cortes_1000,
+  "item", 
+  hcaes(name = corte, y = n),
+  name = "cortes",
+  marker = list(symbol = "square"),
+  showInLegend = TRUE
+  ) %>% 
+  hc_title(
+    text = "Distribución de cortes en una muestra de 1000 diamantes"
+  )
+```
+
+También tiene se puede configurar para que en realidad parezca un "parlamento".
+
+
+```{r, layout="l-body"}
+hchart(
+  diamantes_cortes_1000,
+  "item", 
+  hcaes(name = corte, y = n),
+  name = "cortes",
+  # marker = list(symbol = "square"),
+  showInLegend = TRUE,
+  size = "100%",
+  center = list("50%", "75%"),
+  startAngle = -100,
+  endAngle  = 100
+  ) %>% 
+  hc_title(
+    text = "Distribución de cortes en una muestra de 1000 diamantes con
+    un layout de <i>Parlamento</i>"
+  ) %>% 
+  hc_legend(
+    labelFormat = '{name} <span style="opacity: 0.4">{y}</span>'
+  )
+```
+
+## Día 15: diagramas de sankey
+
+Con los sankey plots se puede estudiar las distribución de más variables
+y como se distribuyen las categorías con las categorías de las variables adyacentes:
+
+**Medio**. Usualmente, los sankey necesitan un formato de datos donde se especifique
+_desde_, _hacia_ y el _peso_. En una tabla usual, tidy de debe calcular 
+los contedos de combinaciones de categorías. Para ello generamos un código
+el cual puede ser reusado en otra ocación con otros datos.
+
+```{r}
+encuesta2014 <- encuesta %>% 
+  filter(anio == 2014) %>% 
+  filter(complete.cases(.)) %>% 
+  mutate(edad = ggplot2::cut_number(edad, 4)) %>% 
+  select(estado_civil, edad, religion) %>% 
+  mutate(
+    estado_civil = forcats::fct_lump_lowfreq(estado_civil, other_level = "Otro estado civil"),
+    religion = forcats::fct_lump_lowfreq(religion, other_level = "Otra religion")
+  )
+
+combinaciones <- tibble(
+  var1 = names(encuesta2014),
+  var2 = lead(var1)
+) %>% 
+  filter(var1 != "n" | var2 != "n") %>% 
+  filter(complete.cases(.))
+
+encuenta2014_flujo <- combinaciones %>% 
+  purrr::pmap_df(function(var1 = "estado_civil", var2 = "edad"){
+    
+    encuesta2014 %>% 
+      select(all_of(var1) , all_of(var2)) %>% 
+      group_by_all() %>% 
+      count() %>% 
+      ungroup() %>% 
+      setNames(c("desde", "hacia", "peso")) %>% 
+      mutate_if(is.factor, as.character)
+  })
+
+hchart(
+  encuenta2014_flujo, 
+  "sankey",
+  hcaes(from = desde, to = hacia, weight = peso),
+  name = "Encuesta 2014"
+  ) %>% 
+  hc_title(
+  text = "Distribución de las variables edad, estado civil y religión para los 
+  datos <em>encuesta</em> para el año 2014"
+  )
 ```
 
 
