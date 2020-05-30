@@ -555,7 +555,7 @@ a los pie charts. Em highchartsJS -por tanto en {highcharter}- el equivalente
 es "item".
 
 
-```{r, layout="l-body"}
+```{r}
 set.seed(123)
 
 diamantes_cortes_1000 <- diamantes %>% 
@@ -580,7 +580,7 @@ hchart(
 También tiene se puede configurar para que en realidad parezca un "parlamento".
 
 
-```{r, layout="l-body"}
+```{r}
 hchart(
   diamantes_cortes_1000,
   "item", 
