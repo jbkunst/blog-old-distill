@@ -602,7 +602,7 @@ hchart(
   )
 ```
 
-## Día 15: diagramas de sankey
+## Día 17: diagramas de sankey
 
 Con los sankey plots se puede estudiar las distribución de más variables
 y como se distribuyen las categorías con las categorías de las variables adyacentes:
