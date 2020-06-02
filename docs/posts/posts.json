@@ -1,5 +1,27 @@
 [
   {
+    "path": "posts/2020-05-22-30diasdegraficos-parte-2/",
+    "title": "#30diasdegraficos Parte 2",
+    "description": "La segunda parte, A seguir aprendiendo sobre todas las posibilidades que \nhighcharts a través de R nos puede brindar.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2020-06-02",
+    "categories": [
+      "spanish",
+      "highcharts",
+      "data-visualization",
+      "ggplot2"
+    ],
+    "preview": "posts/2020-05-22-30diasdegraficos-parte-2/images/preview.png",
+    "last_modified": "2020-06-02T19:33:42-04:00",
+    "preview_width": 900,
+    "preview_height": 569
+  },
+  {
     "path": "posts/2020-05-12-30diasdegraficos-parte-1/",
     "title": "#30diasdegraficos Parte 1",
     "description": "30 días de gráficos para compartir y aprender gracias a la inciativa de\nR4DS_es. Aprenderemos manipulación básica en R, highcharter y más!",
@@ -18,28 +40,6 @@
     ],
     "preview": "posts/2020-05-12-30diasdegraficos-parte-1/images/preview.jpg",
     "last_modified": "2020-05-30T12:29:54-04:00"
-  },
-  {
-    "path": "posts/2020-05-22-30diasdegraficos-parte-2/",
-    "title": "#30diasdegraficos Parte 2",
-    "description": "La segunda parte, A seguir aprendiendo sobre todas las posibilidades que \nhighcharts a través de R nos puede brindar.",
-    "author": [
-      {
-        "name": "Joshua Kunst",
-        "url": "http://jkunst.com/"
-      }
-    ],
-    "date": "2020-05-30",
-    "categories": [
-      "spanish",
-      "highcharts",
-      "data-visualization",
-      "ggplot2"
-    ],
-    "preview": "posts/2020-05-22-30diasdegraficos-parte-2/images/preview.png",
-    "last_modified": "2020-05-30T19:32:40-04:00",
-    "preview_width": 900,
-    "preview_height": 569
   },
   {
     "path": "posts/2019-04-23-got-animating-the-shifting-of-affiliations/",

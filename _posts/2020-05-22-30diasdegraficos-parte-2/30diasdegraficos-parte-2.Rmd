@@ -468,11 +468,23 @@ hc14 <- highchart() %>%
     ) %>% 
   # esto es para que el primer nivel, que no tiene color asigando, 
   # sea transparente.
-  hc_colors("trasnparent") %>% 
-  hc_size(height = 800)
+  hc_colors("trasnparent")
 
-hc14
+hc14 %>% 
+  hc_size(height = 800)
 ```
+
+```{r echo=FALSE, include=FALSE}
+hc14 %>% 
+  htmlwidgets::saveWidget(
+    file = here::here("docs/htmlwidgets/treemap-pkmn.html"), 
+    selfcontained = TRUE,
+    title = "día 14 de #30díadegraficos"
+    )
+```
+
+Ver en pantalla completa [acá](../../htmlwidgets/treemap-pkmn.html).
+
 
 ## Día 15: dendogramas
 
@@ -960,3 +972,239 @@ hc19
 ```
 
 
+
+## Dia 20: redes
+
+Tomamos el ejemplo del paquete {economiccomplexity} en donde realiza un análisis
+de proximidad basado en lo que exporta cada país 
+https://pacha.dev/economiccomplexity/articles/basic-usage.html 
+
+```{r}
+# install.packages("economiccomplexity")
+library(economiccomplexity)
+library(igraph)
+library(Matrix)
+
+data(world_trade_avg_1998_to_2000)
+
+glimpse(world_trade_avg_1998_to_2000)
+
+world_trade_avg_1998_to_2000 <-world_trade_avg_1998_to_2000 %>% 
+  filter(!country %in% c("ant", "rom", "scg", "fsm", "umi"))
+
+bi <- balassa_index(world_trade_avg_1998_to_2000)
+
+pro <- proximity(bi)
+
+net <- projections(pro$proximity_country, pro$proximity_product)
+
+dfaggregated_countries <- aggregate(
+  world_trade_avg_1998_to_2000$value,
+  by = list(country = world_trade_avg_1998_to_2000$country),
+  FUN = sum
+)
+
+aggregated_countries <- setNames(dfaggregated_countries$x, dfaggregated_countries$country)
+
+V(net$network_country)$size <- aggregated_countries[match(V(net$network_country)$name, names(aggregated_countries))]
+
+red <- net$network_country
+```
+
+
+```{r}
+library(ggraph)
+
+ggraph(red, layout = "auto") +
+  geom_edge_link(edge_colour = "#a8a8a8") +
+  geom_node_point(aes(size = size), color = "#86494d") +
+  geom_node_text(aes(label = name), size = 2, vjust = 2.2) +
+  ggtitle("Proximity Based Network Projection for Products") +
+  theme_void()
+```
+
+
+
+**Avanzado**. Acá a partir del objeto igraph obtendremos un _layout_
+basado en el paquete {graphlayouts}. Luego dibujaremos independiente los vertices,
+las aristas y la información de las aristas.
+
+```{r}
+library(countrycode)
+
+dfvertices <- graphlayouts::layout_igraph_stress(net$network_country) %>% 
+  as_tibble() 
+
+dfvertices <- dfvertices %>% 
+  mutate(
+    exportacion_millones = round(size/1e6),
+    iso3c = toupper(name)
+    ) %>% 
+  left_join(
+    countrycode::codelist %>% 
+      select(iso3c, iso2c, nombre = cldr.name.es_cl),
+    by = "iso3c"
+  )
+
+dfvertices <- dfvertices %>% 
+  ungroup() %>% 
+  mutate(
+    color = colorize(size/max(size), colors = scales::viridis_pal(option = "B")(10))
+  ) %>% 
+  rowwise() %>% 
+  mutate(marker = list(marker = list(fillColor = color))) %>% 
+  select(-color)
+
+# glimpse(dfvertices)
+# glimpse(countrycode::codelist) 
+
+
+# aristas
+dfaristas <- red %>%
+  get.edgelist() %>%
+  data.frame(stringsAsFactors = FALSE) %>%
+  tbl_df() %>%
+  setNames(c("from", "to")) 
+
+dfaristas <- dfaristas %>%
+  left_join(
+    dfvertices %>% select(from = name, xf = x, yf = y),
+    by = "from")
+
+dfaristas <- dfaristas %>%
+    left_join(
+      dfvertices %>% select(to = name, xt = x, yt = y),
+      by = "to")
+
+dfaristas2 <- red %>%
+    edge_attr() %>%
+    data.frame(stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+dfaristas <- bind_cols(dfaristas, dfaristas2)
+
+dfaristas <- dfaristas %>% 
+  mutate(id = row_number()) %>% 
+  gather(key, value, -weight, -from, -to, -id) %>% 
+  mutate(key = stringr::str_remove_all(key, "f|t")) %>% 
+  group_by(id, key) %>% 
+  mutate(id2 = row_number()) %>% 
+  spread(key, value)
+
+
+dfaristas_info <- dfaristas %>% 
+  group_by(from, to, weight, id) %>% 
+  summarise_at(vars(x, y), mean) %>% 
+  ungroup() %>% 
+  mutate(
+    weight = round(100*weight, 2),
+    from_iso2 = countrycode::countrycode(from, origin = "iso3c", destination = "iso2c"),
+    to_iso2 = countrycode::countrycode(to, origin = "iso3c", destination = "iso2c")
+  )
+
+dfaristas <- dfaristas %>% 
+  select(x, y, id) %>% 
+  ungroup()
+```
+
+
+```{r}
+hc20 <- highchart() %>% 
+  # opciones generales
+  hc_plotOptions(
+    series = list(
+      color = hex_to_rgba("gray", 0.2),
+      marker = list(enabled = FALSE),
+      states = list(
+        inactive = list(
+          opacity = 1
+          )
+        )
+      )
+    ) %>% 
+  hc_boost(enabled = FALSE) %>% 
+  hc_chart(zoomType = "xy") %>% 
+  hc_tooltip(useHTML = TRUE) %>% 
+  hc_xAxis(visible = FALSE) %>% 
+  hc_yAxis(visible = FALSE) %>% 
+  hc_legend(verticalAlign = "top", align = "left") %>% 
+  hc_title(text = "Red basada en proyección de proximidad") %>%
+  hc_subtitle(
+      text = "Datos y análisis provisto en el paquete {economiccomplexity}<br>
+      El tamaño corresponde a la exportación promedio de cada país entre los años 98 y 2000"
+      ) %>%  
+  # vertices
+  hc_add_series(
+    dfvertices,
+    "bubble",
+    hcaes(x, y, size = size, colorValue = size),
+    tooltip = list(
+      headerFormat = "",
+      pointFormat = "
+      <center>
+      <b>{point.nombre}</b><br>
+      Exportaciones ${point.exportacion_millones} millones USD
+      <table style=\" height:20px;\">
+      <center>
+      <img src=\"https://www.countryflags.io/{point.iso2c}/shiny/64.png\" style=\"text-align: center\">
+      </center>
+      <table>
+      </center>"
+    ),
+    name = "Países",
+    minSize = 5,
+    maxSize = 25,
+    marker = list(enabled = TRUE, fillOpacity = 1)
+  ) %>% 
+  # aristas
+  hc_add_series(
+    dfaristas,
+    "line",
+    hcaes(x, y, group = id),
+    showInLegend = FALSE,
+    enableMouseTracking = FALSE,
+    zIndex = -10
+    ) %>%
+  # info aristas
+  hc_add_series(
+    dfaristas_info,
+    "scatter",
+    hcaes(x, y),
+    marker = list(
+      radius = 1
+    ),
+    legend = list(
+      symbolHeight = 11,
+      symbolWidth = 11,
+      symbolRadius = 5
+    ),
+    tooltip = list(
+      headerFormat = "",
+      pointFormat = "<center>
+      <b>Proximidad</b><br>
+      {point.weight}%<br>
+      <table style=\"height:20px!important\">
+      <tr>
+      <img src=\"https://www.countryflags.io/{point.from_iso2}/shiny/64.png\" width=\"50%\">
+      <img src=\"https://www.countryflags.io/{point.to_iso2}/shiny/64.png\" width=\"50%\">
+      </tr>
+      </table>
+      </center>"
+    ),
+    name = "Información artistas"
+  ) 
+
+hc20
+```
+
+
+```{r echo=FALSE, include=FALSE}
+hc20 %>% 
+  htmlwidgets::saveWidget(
+    file = here::here("docs/htmlwidgets/complexity-network.html"), 
+    selfcontained = TRUE,
+    title = "día 20 de #30díadegraficos"
+    )
+```
+
+Ver en pantalla completa [acá](../../htmlwidgets/complexity-network.html).
