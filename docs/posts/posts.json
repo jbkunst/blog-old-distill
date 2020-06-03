@@ -17,9 +17,31 @@
       "ggplot2"
     ],
     "preview": "posts/2020-05-22-30diasdegraficos-parte-2/images/preview.png",
-    "last_modified": "2020-06-02T19:33:42-04:00",
+    "last_modified": "2020-06-02T19:33:47-04:00",
     "preview_width": 900,
     "preview_height": 569
+  },
+  {
+    "path": "posts/2020-06-02-30diasdegraficos-parte-3/",
+    "title": "#30diasdegraficos Parte 3",
+    "description": "La tercera parte (y última?) Queda un buen trecho por recorrer y quedan\ncaracterísticas, opciones y series que nos falta ver, revisar y aprender.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2020-06-02",
+    "categories": [
+      "spanish",
+      "highcharts",
+      "data-visualization",
+      "ggplot2"
+    ],
+    "preview": "posts/2020-06-02-30diasdegraficos-parte-3/images/preview.png",
+    "last_modified": "2020-06-02T22:40:54-04:00",
+    "preview_width": 744,
+    "preview_height": 450
   },
   {
     "path": "posts/2020-05-12-30diasdegraficos-parte-1/",

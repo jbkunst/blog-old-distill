@@ -1,0 +1,150 @@
+---
+title: "#30diasdegraficos Parte 3"
+description: |
+  La tercera parte (y última?) Queda un buen trecho por recorrer y quedan
+  características, opciones y series que nos falta ver, revisar y aprender.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: "`r format(Sys.time(), '%m-%d-%Y')`"
+output:
+  distill::distill_article:
+    self_contained: true
+    toc: true
+categories: 
+  - spanish
+  - highcharts
+  - data-visualization
+  - ggplot2
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+---
+
+```{r setup, include=FALSE}
+source(here::here("_R/blog_setup.R"))
+knitr::opts_chunk$set(layout = "l-body-outset")
+```
+
+## Introducción
+
+Seguiremos utilizando los mismos paquetes que la parte anterior.
+
+```{r}
+# ejecutar estas líneas para poder instalar {datos}
+# install.packages("remotes")
+# remotes::install_github("cienciadedatos/datos")
+
+library(datos)       # datos
+library(highcharter) # gráficos
+library(ggplot2)     # más gráficos  
+library(readr)       # lectura de datos
+library(dplyr)       # manipulación de datos
+library(tidyr)       # más manipulación de datos
+
+```
+
+Cambiando configuración para el español.
+
+```{r}
+newlang_opts <- getOption("highcharter.lang")
+
+f <- Sys.Date()
+dias <- weekdays((f - lubridate::days(lubridate::wday(f) - 1)) + lubridate::days(0:6))
+
+newlang_opts$weekdays <- dias
+newlang_opts$months <- as.character(lubridate::month(1:12, label = TRUE, abbr = FALSE))
+newlang_opts$shortMonths <- as.character(lubridate::month(1:12, label = TRUE, abbr = TRUE))
+newlang_opts$thousandsSep <- ","
+
+options(highcharter.lang = newlang_opts)
+```
+
+
+## Día 21: gráficos con anotaciones
+
+Realizaremos el ejemplo canónico en HighcharsJS 
+
+```{r}
+tourfrance <- read_csv(here::here("data/tour_france_state_8.txt"))
+
+hc21 <- hchart(tourfrance, "area", hcaes(distance, elevation), fillOpacity = 0.25) %>% 
+  hc_title(text = "Tour de Francia 2017, Etapa 8: <i>Dole - Station des Rousses</i>") %>% 
+  hc_subtitle(text = "Ejemplo obtendido de la documentación de HighchartsJS") %>% 
+  hc_xAxis(labels = list(format = "{value} km"), title  = list(text = "Distancia")) %>% 
+  hc_yAxis(labels = list(format = "{value} m"), title = list(text = "Elevación")) %>% 
+  hc_tooltip(
+    headerFormat = "Distance: {point.x:.1f} km<br>",
+    pointFormat = "{point.y} m a. s. l."
+    )
+   
+hc21
+```
+
+
+```{r, layout="l-screen-inset"}
+df1 <- read_csv('"x","y", "text"
+27.98,255, "Arbois"
+45.5,611,"Montrond"
+63,651,"Mont-sur-Monnet"
+84,789,"Bonlieu"
+129.5,382,"Chassal"
+159,443,"Saint-Claude"')
+
+df2 <- read_csv('"x","y","text"
+101.44,1026,"Col de la Joux"
+138.5,748,"Côte de Viry"
+176.4,1202,"Montée de la Combe<br>de Laisia Les Molunes"')
+
+df3 <- read_csv('"x","y","text"
+96.2,783,"6.1 km climb<br>4.6% on avg."
+134.5,540,"7.6 km climb<br>5.2% on avg."
+172.2,925,"11.7 km climb<br>6.4% on avg."
+')
+
+df_to_annotations_labels <- function(df, xAxis = 0, yAxis = 0) {
+  
+  stopifnot(hasName(df, "x"))
+  stopifnot(hasName(df, "y"))
+  stopifnot(hasName(df, "text"))
+  
+  df %>% 
+    rowwise() %>% 
+    mutate(point = list(list(x = x, y = y, xAxis = 0, yAxis = 0))) %>% 
+    select(-x, -y)  
+  
+}
+
+df1_p <- df_to_annotations_labels(df1)
+
+df2_p <- df_to_annotations_labels(df2)
+
+df3_p <- df_to_annotations_labels(df3)
+  
+hc21 %>% 
+  hc_annotations(
+    list(
+      labelOptions = list(backgroundColor = 'rgba(255,255,255,0.5)', verticalAlign = "top", y = 15),
+      labels = list_parse(df1_p)
+      ),
+    list(
+      labels = list_parse(df2_p)
+      ),
+    list(
+      labelOptions = list(
+        shape = "connector",
+        align = "right",
+        justify = FALSE,
+        crop = TRUE,
+        style = list(fontSize = "0.8em", textOutline = "1px white")
+        ),
+      labels = list_parse(df3_p)
+      )
+    ) %>% 
+  hc_caption(
+    text = "Este gráfico utiliza la función Anotaciones de Highcharts para colocar
+    etiquetas en varios puntos de interés. Las etiquetas son <i>responsivas</i> y se ocultarán
+    para evitar la superposición en pantallas pequeñas."
+  )
+```
+
