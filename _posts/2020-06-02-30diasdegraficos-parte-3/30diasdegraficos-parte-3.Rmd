@@ -41,7 +41,6 @@ library(ggplot2)     # más gráficos
 library(readr)       # lectura de datos
 library(dplyr)       # manipulación de datos
 library(tidyr)       # más manipulación de datos
-
 ```
 
 Cambiando configuración para el español.
@@ -147,4 +146,347 @@ hc21 %>%
     para evitar la superposición en pantallas pequeñas."
   )
 ```
+
+
+## Día 22: datos textuales
+
+```{r}
+library(stringr)
+# library(rvest)
+# 
+# read_html("https://github.com/cienciadedatos/r4ds") %>% 
+#   html_nodes("a.js-navigation-open") %>% 
+#   html_text() %>% 
+#   str_subset("[0-9]{2}.*.Rmd") %>% 
+#   dput()
+
+secciones <- c(
+  "01-intro.Rmd", "02-explore.Rmd", "03-visualize.Rmd", "04-workflow-basics.Rmd", 
+  "05-transform.Rmd", "06-workflow-scripts.Rmd", "07-eda.Rmd", 
+  "08-workflow-projects.Rmd", "09-wrangle.Rmd", "10-tibble.Rmd", 
+  "11-import.Rmd", "12-tidy.Rmd", "13-relational-data.Rmd", "14-strings.Rmd", 
+  "15-factors.Rmd", "16-datetimes.Rmd", "17-program.Rmd", "18-pipes.Rmd", 
+  "19-functions.Rmd", "20-vectors.Rmd", "21-iteration.Rmd", "22-model.Rmd", 
+  "23-model-basics.Rmd", "24-model-building.Rmd", "25-model-many.Rmd", 
+  "26-communicate.Rmd", "27-rmarkdown.Rmd", "28-communicate-plots.Rmd", 
+  "29-rmarkdown-formats.Rmd", "30-rmarkdown-workflow.Rmd")
+
+ruta_base <- "https://raw.githubusercontent.com/cienciadedatos/r4ds/traduccion/"
+
+r4ds <- purrr::map_df(secciones, function(seccion = "23-model-basics.Rmd"){
+  
+  message(seccion)
+  
+  lineas <- read_lines(paste0(ruta_base, seccion))
+  
+  data_frame(
+    seccion = seccion,
+    texto  = lineas
+  )
+  
+})
+
+r4ds <- r4ds %>% 
+  mutate(
+    seccion_num = as.numeric(str_extract(seccion, "[0-9]{2}")),
+    capitulo = case_when(
+      seccion_num <=  1 ~ "1. Bienvenida",
+      seccion_num <=  8 ~ "2. Explorar",
+      seccion_num <= 16 ~ "3. Manejar datos",
+      seccion_num <= 21 ~ "4. Programar",
+      seccion_num <= 25 ~ "5. Modelar",
+      seccion_num <= 30 ~ "6. Comunicar",
+    )
+  )
+```
+
+
+```{r}
+library(tidytext)
+
+r4ds2 <- r4ds %>%
+  unnest_tokens(palabra, texto) %>% 
+  mutate(
+    palabra = str_to_lower(palabra),
+    palabra = str_remove_all(palabra, "_"),
+    palabra = str_remove_all(palabra, "[0-9]+"),
+    palabra = str_remove_all(palabra, "[:punct:]+"),
+    palabra = str_trim(palabra)
+    ) %>% 
+  filter(palabra != "") %>% 
+  anti_join(tibble(palabra = stopwords::stopwords(language = "es")), by = "palabra")
+
+r4ds2 <- r4ds2 %>%
+  count(capitulo, palabra, sort = TRUE)
+
+total_r4ds2 <- r4ds2 %>% 
+  group_by(capitulo) %>% 
+  summarize(total = sum(n))
+
+r4ds2 <- left_join(r4ds2, total_r4ds2)
+
+r4ds2 <- r4ds2 %>%
+  bind_tf_idf(palabra, capitulo, n)
+
+r4ds2
+
+r4ds2_top <- r4ds2 %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(palabra = factor(palabra, levels = rev(unique(palabra)))) %>% 
+  group_by(capitulo) %>% 
+  top_n(10) %>% 
+  ungroup()
+  
+ggplot(r4ds2_top, aes(palabra, tf_idf, fill = capitulo)) +
+  geom_col(show.legend = FALSE, width = 0.5) +
+  labs(x = NULL, y = "tf-idf") +
+  scale_fill_viridis_d(option = "B", begin = 0.1, end = 0.9) +
+  facet_wrap(vars(capitulo), ncol = 3, scales = "free") +
+  coord_flip()
+
+```
+
+
+```{r}
+r4ds2_top50 <- r4ds2 %>%
+  arrange(desc(tf_idf)) %>%
+  mutate(palabra = factor(palabra, levels = rev(unique(palabra)))) %>% 
+  group_by(capitulo) %>% 
+  top_n(50) %>% 
+  ungroup()
+
+r4ds2_top50 <- r4ds2_top50 %>% 
+  arrange(desc(tf_idf)) %>% 
+  add_row(capitulo = "", palabra = "R4DS", tf_idf = max(r4ds2_top50$tf_idf)* 2)
+
+fntfmly <- '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"' 
+
+hchart(
+  r4ds2_top50, 
+  "wordcloud",
+  hcaes(name = palabra, weight = tf_idf, color = capitulo),
+  style  = list(fontFamily = fntfmly, fontWeight = "bold"),
+  tooltip = list(
+    pointHeader = "<b>{point.key}</b>",
+    pointFormat = "Capítulo <b>{point.capitulo}</b><br>TF-IDF: {point.tf_idf:0.4f}"
+    )
+  )
+```
+
+
+## Día 23: proyección solar - sunburst
+
+```{r}
+# install.packages("treemap")
+library(treemap)
+
+paises_2007 <- datos::paises %>% 
+  filter(anio == max(anio)) %>% 
+  mutate(poblacion = round(poblacion/1e6))
+
+data_to_hierarchical_series <- function(data, group_vars, size_var) {
+  
+  # data <- paises_2007
+  # group_vars <- c("continente", "pais")
+  # size_var <- "poblacion"
+  
+  group_syms <- rlang::syms(group_vars)
+  size_sym <- rlang::sym(size_var)
+  
+  if (data %>%
+      select(!!!group_syms) %>%
+      mutate_all(as.character) %>%
+      purrr::map(unique) %>%
+      unlist() %>%
+      anyDuplicated()) stop("Sunburst data uses same label at multiple levels.")
+  
+  data <- data %>%
+    mutate_at(vars(all_of(group_vars)), as.character)
+  
+  name_cell <- function(..., depth) paste0(list(...), 1:depth, collapse = "")
+  
+  data_at_depth <- function(depth = 1) {
+    
+    data %>%
+      group_by(!!!group_syms[1:depth]) %>%
+      summarise(value = sum(!!size_sym)) %>%
+      ungroup() %>%
+      arrange(desc(value)) %>% 
+      mutate(name = !!group_syms[[depth]],
+             level = depth) %>%
+      # mutate_at(group_vars, as.character()) %>%
+      {
+        if (depth == 1)
+          mutate(., id = paste0(name, 1))
+        else {
+          mutate(
+            .,
+            parent = purrr::pmap_chr(list(!!!group_syms[1:depth - 1]),
+                                     name_cell,
+                                     depth = depth - 1),
+            id = paste0(parent, name, depth)
+          )
+        }
+      }
+  }
+  
+  sunburst_df <- 1:length(group_vars) %>%
+    purrr::map(data_at_depth) %>%
+    bind_rows() %>%
+    arrange(level)
+  
+  data_list <- sunburst_df %>%
+    highcharter::list_parse() # %>% purrr::map( ~ .[!is.na(.)])
+  
+  data_list
+  
+}
+
+
+dataserie <- data_to_hierarchical_series(
+  paises_2007,
+  group_vars = c("continente", "pais"),
+  size_var = "poblacion"
+  )
+
+highchart() %>%
+  hc_add_series(
+    data = dataserie,
+    type = "sunburst",
+    # type=  "treemap",
+    allowDrillToNode = TRUE,
+    levels = list(
+      list(
+        level = 1,
+        borderWidth = 0,
+        borderColor = "transparent",
+        colorByPoint = TRUE,
+        dataLabels = list(enabled = TRUE)
+        ),
+      list(
+        level = 2,
+        borderWidth = 0,
+        borderColor = "transparent",
+        colorVariation = list(key = "brightness", to = 0.50),
+        dataLabels = list(enabled = TRUE)
+        )
+      )
+    )
+
+paises_2007 <- paises_2007 %>% 
+  mutate(mundo = "Mundo")
+
+dataserie <- data_to_hierarchical_series(
+  paises_2007,
+  group_vars = c("mundo", "continente", "pais"),
+  size_var = "poblacion"
+  )
+
+highchart() %>%
+  hc_add_series(
+    data = dataserie,
+    type = "sunburst",
+    name = "Población",
+    # type=  "treemap",
+    allowDrillToNode = TRUE,
+    tooltip = list(
+      headerFormat = "<b>{point.key}</b><br>",
+      pointFormat = "{point.value} millones habitantes"
+    ),
+    levels = list(
+       list(
+        level = 1,
+        borderWidth = 0,
+        color = "transparent",
+        borderColor = "transparent",
+        # colorByPoint = TRUE,
+        dataLabels = list(enabled = TRUE)
+        ),
+      list(
+        level = 2,
+        borderWidth = 0,
+        borderColor = "transparent",
+        colorByPoint = TRUE,
+        dataLabels = list(enabled = TRUE)
+        ),
+      list(
+        level = 3,
+        borderWidth = 0,
+        borderColor = "transparent",
+        colorVariation = list(key = "brightness", to = 0.50),
+        dataLabels = list(enabled = TRUE)
+        )
+      )
+    )
+
+```
+
+
+## Día 24: coropleta
+
+Como en el día de datos espaciales realizamos una coropleta, esta realizaremos
+un diagrama de puntos sobre un mapa!
+
+```{r}
+aeropuertos <- read_csv("https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat", col_names = FALSE)
+
+aeropuertos  <- aeropuertos  %>%
+  filter(X4 == "Chile") %>% 
+  select(nombre = X2, lon = X8, lat = X7) %>% 
+  filter(lat <= 0, lon >= -90)
+
+hc24 <- hcmap("countries/cl/cl-all", showInLegend = FALSE) %>% 
+  hc_add_series(
+    data = aeropuertos, 
+    type = "mappoint",
+    name = "Aeropuertos de Chile",
+    tooltip = list(pointFormat = "{point.nombre} ({point.lat:0.2f}, {point.lon:0.2f})")
+    ) 
+```
+
+## Día 25: violín
+
+```{r}
+library(ggplot2)
+
+p25 <- ggplot(datos::flores, aes(Largo.Sepalo, Especies)) +
+  geom_violin()
+
+dflores <- datos::flores %>% 
+  distinct(Especies) %>% 
+  mutate(y = as.numeric(Especies))
+
+d25 <- as_tibble(layer_data(p25, 1)) %>% 
+  select(x, y, violinwidth, size, ndensity) %>% 
+  mutate_all(round, 3) %>% 
+  left_join(dflores, by = "y")
+
+d25 <- d25 %>% 
+  filter(row_number() %% 2 == 0)
+
+hchart(d25, "arearange", hcaes(x, low = y - violinwidth*size - 1, high = y + violinwidth*size - 1, group = Especies)) %>% 
+  hc_yAxis(
+    categories = dflores$Especies, 
+    type = "categorical", 
+    endOnTick = FALSE,
+    startOnTick = FALSE,
+    title = list(text = "Especies")
+    ) %>% 
+  hc_xAxis(
+    title = list(text = "Largo del Sépalo")
+    ) %>% 
+  hc_tooltip(
+    useHTML = TRUE,
+    pointFormat = "<span style='color:{point.color};'>&#9679;</span> {series.name}: <b>{point.ndensity:,.4f}</b><br/>"
+  )
+```
+
+## Fin
+
+Lamentablemente el tiempo (quizás la ganas!) dictaron a que no pudiese 
+completar todos los días del challenge. ¿Fail? Para nada! Aprendí mucho de 
+highcharts, volví a escribir en el blog <3 e hice post en español.
+
+
+
 
