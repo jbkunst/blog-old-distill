@@ -442,6 +442,8 @@ hc24 <- hcmap("countries/cl/cl-all", showInLegend = FALSE) %>%
     name = "Aeropuertos de Chile",
     tooltip = list(pointFormat = "{point.nombre} ({point.lat:0.2f}, {point.lon:0.2f})")
     ) 
+
+hc24
 ```
 
 ## Día 25: violín
