@@ -23,8 +23,10 @@ navbar:
     - icon: fab fa-github-alt
       href: https://github.com/jbkunst/blog
     - icon: fa fa-rss
-      href: index.xml      
-
+      href: index.xml
+    - icon: fa fa-user-astronaut
+      href: http://www.jkunst.com
+      
 output: 
   distill::distill_article:
     css: styles.css
