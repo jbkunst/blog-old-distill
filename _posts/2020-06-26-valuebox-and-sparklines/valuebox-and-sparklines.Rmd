@@ -224,7 +224,7 @@ behaviour about the data, so you can compare the _BIG_ number with the past.
 
 Let's simulate data to create a sparkline:
 
-```{r}
+```{r paged.print=TRUE}
 set.seed(123)
 
 N <- 20
@@ -257,7 +257,8 @@ the available horizontal (`width`) space, but we need to control the `heigth`.
 Now we can create a new `valueBox` function;
 
 ```{r}
-valueBox3 <- function(value, title, sparkobj = NULL, subtitle, icon = NULL, color = "aqua", width = 4, href = NULL){
+valueBox3 <- function(value, title, sparkobj = NULL, subtitle, icon = NULL,
+                      color = "aqua", width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   
@@ -387,7 +388,7 @@ hc_theme_sparkline_vb <- function(...) {
 
 Testing the theme.
 
-```{r}
+```{r fig.width=3}
 hc <- hc %>% 
   hc_add_theme(hc_theme_sparkline_vb()) %>% 
   hc_credits(enabled = FALSE)
@@ -431,7 +432,8 @@ This can be done using the icon `"info-cirle"` and using the class `"pull-right"
 to put in the corner.
 
 ```{r}
-valueBox4 <- function(value, title, sparkobj = NULL, subtitle, info = NULL, icon = NULL, color = "aqua", width = 4, href = NULL){
+valueBox4 <- function(value, title, sparkobj = NULL, subtitle, info = NULL, 
+                      icon = NULL, color = "aqua", width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   
@@ -502,12 +504,13 @@ _Voilà_ we have a value box with a information helper.
 
 ## Demo
 
-Demo section! We can sue other types of charts, texts and colors:
+Demo section! We can use other types of charts, texts and colors:
 
-Before the demo, let's ngive a proper name to our function:
+Before the demo, let's give a proper name to our function:
 
 ```{r valueBoxSpark}
-valueBoxSpark <- function(value, title, sparkobj = NULL, subtitle, info = NULL, icon = NULL, color = "aqua", width = 4, href = NULL){
+valueBoxSpark <- function(value, title, sparkobj = NULL, subtitle, info = NULL, 
+                          icon = NULL, color = "aqua", width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   

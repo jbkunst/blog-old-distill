@@ -6166,7 +6166,8 @@ hc</code></pre>
 <p>Now we can create a new <code>valueBox</code> function;</p>
 <div class="layout-chunk" data-layout="l-page">
 <pre class="r"><code>
-valueBox3 &lt;- function(value, title, sparkobj = NULL, subtitle, icon = NULL, color = &quot;aqua&quot;, width = 4, href = NULL){
+valueBox3 &lt;- function(value, title, sparkobj = NULL, subtitle, icon = NULL,
+                      color = &quot;aqua&quot;, width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   
@@ -6325,7 +6326,8 @@ Figure 6: A value box with a proper sparkline
 <p>This can be done using the icon <code>&quot;info-cirle&quot;</code> and using the class <code>&quot;pull-right&quot;</code> to put in the corner.</p>
 <div class="layout-chunk" data-layout="l-page">
 <pre class="r"><code>
-valueBox4 &lt;- function(value, title, sparkobj = NULL, subtitle, info = NULL, icon = NULL, color = &quot;aqua&quot;, width = 4, href = NULL){
+valueBox4 &lt;- function(value, title, sparkobj = NULL, subtitle, info = NULL, 
+                      icon = NULL, color = &quot;aqua&quot;, width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   
@@ -6389,11 +6391,12 @@ Figure 7: A value box with helper text on hover
 </div>
 <p><em>Voilà</em> we have a value box with a information helper.</p>
 <h2 id="demo">Demo</h2>
-<p>Demo section! We can sue other types of charts, texts and colors:</p>
-<p>Before the demo, let’s ngive a proper name to our function:</p>
+<p>Demo section! We can use other types of charts, texts and colors:</p>
+<p>Before the demo, let’s give a proper name to our function:</p>
 <div class="layout-chunk" data-layout="l-page">
 <pre class="r"><code>
-valueBoxSpark &lt;- function(value, title, sparkobj = NULL, subtitle, info = NULL, icon = NULL, color = &quot;aqua&quot;, width = 4, href = NULL){
+valueBoxSpark &lt;- function(value, title, sparkobj = NULL, subtitle, info = NULL, 
+                          icon = NULL, color = &quot;aqua&quot;, width = 4, href = NULL){
   
   shinydashboard:::validateColor(color)
   
