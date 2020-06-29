@@ -4,7 +4,7 @@
 .Ruserdata
 cache/
 .httr-oauth
-
+debug.log
 # History files
 .Rhistory
 .Rapp.history

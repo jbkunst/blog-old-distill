@@ -90,7 +90,7 @@ server <- function(input, output) {
 # shiny::shinyApp(ui, server, options = list(launch.browser = .rs.invokeShinyPaneViewer))
 ```
 
-This app look like:
+This app looks like:
 
 ```{r, fig.cap="The most simple value box", echo=FALSE}
 # shiny::shinyApp(ui, server, options = list(launch.browser = .rs.invokeShinyPaneViewer))
@@ -152,7 +152,7 @@ function(value, subtitle, icon = NULL, color = "aqua", width = 4, href = NULL){
 
 As we see, the `value` and `subtitle` arguments are the main ones. The other are
 just for styling and format. These elements are in `div(class = "inner", ...)`
-so here we'll put the new content there.
+so here we'll put the new content.
 
 Let's try to put a title in the top of the div and then use the subtitle as 
 an detailed text.
