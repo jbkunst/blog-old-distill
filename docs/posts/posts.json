@@ -1,5 +1,27 @@
 [
   {
+    "path": "posts/2020-06-26-valuebox-and-sparklines/",
+    "title": "valueBoxes and Sparklines",
+    "description": "The value boxes are a good way to get to the point quickly in a dashboard\nshowing the relevant value with a big font and eye-catching color. \nBut sometimes it would be better show that relevant number with a \nrelated text, sparkline or information to give context of that value, or \njust to compare it with the previoues ones. \nIn this post we'll show how to add sparklines to valueBox in shinydashboard\nand other related packages.",
+    "author": [
+      {
+        "name": "Joshua Kunst",
+        "url": "http://jkunst.com/"
+      }
+    ],
+    "date": "2020-06-29",
+    "categories": [
+      "shiny",
+      "highcharts",
+      "htmlwidgets"
+    ],
+    "preview": "posts/2020-06-26-valuebox-and-sparklines/images/preview.png",
+    "last_modified": "2020-06-29T02:09:08-04:00",
+    "input_file": "valuebox-and-sparklines.utf8.md",
+    "preview_width": 431,
+    "preview_height": 216
+  },
+  {
     "path": "posts/2020-06-15-when-2-charts-are-more-than-1/",
     "title": "The tale of two charts combined",
     "description": "…Or when two half chart are more than one, or maybe: The love between the \nstreamgraph and stack column chart… In this post we’ll review some ideas \nin the chart used by Financial Times in it’s Coronavirus tracker, and how we\ncan replicate it in R using highcharter package.",
