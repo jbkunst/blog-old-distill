@@ -27,6 +27,8 @@ knitr::opts_chunk$set(echo = FALSE)
 source(here::here("_R/blog_setup.R"))
 ```
 
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
 ## Introducction
 
 Week ago I see a tweet from Steven Bernard [@sdbernard](https://twitter.com/sdbernard)
@@ -389,12 +391,17 @@ hcft %>%
 
 
 ```{r echo=FALSE, include=FALSE}
-hcft %>% 
-  htmlwidgets::saveWidget(
-    file = here::here("docs/htmlwidgets/ft-stream-stacked-colum.html"), 
-    selfcontained = TRUE,
-    title = "Stream-stacked-column"
-    )
+fout <- "docs/htmlwidgets/ft-stream-stacked-column.html"
+
+try(fs::file_delete(here::here(fout)))
+try(fs::dir_delete(str_c(stringr::str_remove(here::here(fout), "\\.html"), "_files")))
+
+htmlwidgets::saveWidget(
+  hcft,
+  file = here::here(fout),
+  selfcontained = TRUE,
+  title = "Stream-stacked-column"
+  )
 ```
 
 See full screen [here](../../htmlwidgets/ft-stream-stacked-colum.html).
