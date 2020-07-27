@@ -759,6 +759,16 @@ d-appendix .citation-appendix,
 }
 
 
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+
 /* Improve display for browsers without grid (IE/Edge <= 15) */
 
 .downlevel {
@@ -5298,6 +5308,11 @@ d-article {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
   padding: 0px;
 }
+
+d-article iframe {
+  border: none;
+}
+
 </style>
 <!--/radix_placeholder_site_in_header-->
 
@@ -5322,22 +5337,22 @@ d-article {
 <div class="nav-right">
 <a href="../../index.html">Home</a>
 <a href="../../search.html">
-<i class="fas fa-search"></i>
+<i class="fas fa-search" aria-hidden="true"></i>
 </a>
 <a href="https://www.linkedin.com/in/joshuakunst">
-<i class="fab fa-linkedin-in"></i>
+<i class="fab fa-linkedin-in" aria-hidden="true"></i>
 </a>
 <a href="https://twitter.com/jbkunst">
-<i class="fab fa-twitter"></i>
+<i class="fab fa-twitter" aria-hidden="true"></i>
 </a>
 <a href="https://github.com/jbkunst/blog">
-<i class="fab fa-github-alt"></i>
+<i class="fab fa-github-alt" aria-hidden="true"></i>
 </a>
 <a href="../../index.xml">
-<i class="fa fa-rss"></i>
+<i class="fa fa-rss" aria-hidden="true"></i>
 </a>
 <a href="http://www.jkunst.com">
-<i class="fa fa-user-astronaut"></i>
+<i class="fa fa-user-astronaut" aria-hidden="true"></i>
 </a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
