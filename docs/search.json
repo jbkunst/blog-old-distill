@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "path": "index.html",
+      "title": "Data, Code and Visualization",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2020-12-09T09:26:17-03:00"
+    },
+    {
+      "path": "search.html",
+      "title": "Search",
+      "description": "Try some luck",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n\r\n.gsc-control-cse {\r\n    border-color: transparent;\r\n    background-color: transparent;\r\n}\r\n\r\n.gsc-search-button-v2, .gsc-search-button-v2:hover, .gsc-search-button-v2:focus {\r\n    border-color: #e7e7e7;\r\n    background-color: #e7e7e7;\r\n    background-image: none;\r\n    filter: none;\r\n    color: black\r\n}\r\n\r\nd-article table {\r\n  border-collapse: collapse;\r\n  margin-bottom: 0;\r\n  border-bottom: 0;\r\n}\r\n",
+      "last_modified": "2020-04-29T17:28:45-04:00"
+    }
+  ],
+  "collections": ["posts/posts.json"]
+}

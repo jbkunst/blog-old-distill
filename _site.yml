@@ -11,11 +11,12 @@ repository_url: https://github.com/jbkunst/blog
 creative_commons: CC BY
 
 navbar:
+  search: true
   right:
     - text: "Home"
       href: index.html
-    - icon: fas fa-search
-      href: search.html
+    # - icon: fas fa-search
+    #   href: search.html
     - icon: fab fa-linkedin-in
       href: https://www.linkedin.com/in/joshuakunst
     - icon: fab fa-twitter

@@ -1,0 +1,98 @@
+---
+title: "Copying the good"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 08-25-2020
+output:
+  distill::distill_article:
+    self_contained: false
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
+```
+
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
+## Introducction
+
+
+```{r}
+# remotes::install_github("rivaquiroga/guaguas")
+library(babynames)
+library(dplyr)
+library(highcharter)
+
+NAME <- "Britney"
+NAME <- "Anna"
+
+data <- babynames::babynames %>% 
+  filter(name == NAME, sex == "F") %>% 
+  select(x = year, y = prop)
+
+data <- data %>% 
+  mutate(
+    color = colorize(y),
+    alpha = scales::rescale(y, to = c(0.5, 1)),
+    alpha = round(alpha, 2),
+    color = purrr::map2_chr(color, alpha, shades::opacity)
+  )
+
+data
+
+zns <- data %>% 
+  select(value = x, color) %>% 
+  mutate(value = value + 0.5) %>% 
+  list_parse()
+
+data <- data %>% 
+  select(x, y) %>% 
+  mutate_all(round, 5)
+
+highchart() %>%
+  hc_add_series(
+    data,
+    "areaspline",
+    hcaes(x, y),
+    zones = zns,
+    id = "serie"
+  ) %>% 
+  hc_add_series(
+    data,
+    "line",
+    color = "white",
+    lineWidth = 8,
+    hcaes(x, y),
+    linkedTo = "serie"
+  ) %>%
+  hc_add_series(
+    data,
+    "line",
+    hcaes(x, y),
+    zones = zns,
+    linkedTo = "serie"
+  ) %>%
+  hc_plotOptions(
+    series = list(
+      showInLegend = FALSE,
+      zoneAxis = "x"
+      # marker = list(
+      #   states = list(
+      #     hover = list(
+      #       enabled = FALSE
+      #       )
+      #     )
+      #   )
+      )
+  ) %>% 
+  hc_yAxis(visible = FALSE)
+
+```
+
