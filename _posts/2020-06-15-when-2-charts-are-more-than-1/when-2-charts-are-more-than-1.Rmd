@@ -408,7 +408,7 @@ htmlwidgets::saveWidget(
   )
 ```
 
-See full screen [here](../../htmlwidgets/ft-stream-stacked-colum.html).
+See full screen [here](../../htmlwidgets/ft-stream-stacked-column.html).
 
 
 
