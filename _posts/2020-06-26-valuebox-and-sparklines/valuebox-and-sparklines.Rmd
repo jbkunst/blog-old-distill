@@ -35,6 +35,12 @@ message("this delete the images created in interactive mode (project's root)")
 # try(fs::dir_delete("images"))
 ```
 
+```{r, echo=FALSE}
+invisible(Sys.setlocale("LC_TIME", "English"))
+```
+
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
 ## Introducction
 
 When you create a dashboard to track some information is usual put the important

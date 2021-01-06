@@ -6,7 +6,7 @@ description: |
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
-date: "`r format(Sys.time(), '%m-%d-%Y')`"
+date: 05-12-2020
 output:
   distill::distill_article:
     self_contained: true

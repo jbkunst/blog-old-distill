@@ -164,13 +164,13 @@ library(rvest)
 tables <- read_html("https://en.wikipedia.org/wiki/Winter_Olympic_Games") %>% 
   html_table(fill = TRUE)
 
-dgames <- tables[[5]]
+dgames <- tables[[6]]
 dgames <- janitor::clean_names(dgames)
 dgames <- tbl_df(dgames)
 
 dgames <- mutate_if(dgames, is.character, str_trim)
 
-dgames <- filter(dgames, !games %in% c("1940", "1944"))
+dgames <- filter(dgames, !no %in% c("1940", "1944"))
 dgames <- filter(dgames, !year %in% seq(2018, by = 4, length.out = 4))
 dgames <- filter(dgames, row_number() != 1)
 ```
@@ -185,6 +185,7 @@ write_csv(dgames, tf)
 dgames <- read_csv(tf)
 
 dgames <- mutate(dgames,
+                 nations = n,
                  nations = str_extract(nations, "\\d+"),
                  nations = as.numeric(nations))
 
@@ -215,7 +216,8 @@ library(countrycode)
 urlico <- "url(https://raw.githubusercontent.com/tugmaks/flags/2d15d1870266cf5baefb912378ecfba418826a79/flags/flags-iso/flat/24/%s.png)"
 
 dgames <- dgames %>% 
-  mutate(country = str_extract(host, ", .*$"),
+  mutate(country = tn,
+    country = str_extract(host, ", .*$"),
          country = str_replace(country, ", ", ""),
          country = str_trim(country)) %>% 
   mutate(countrycode = countrycode(country, origin = "country.name", destination = "iso2c")) %>% 
@@ -223,7 +225,7 @@ dgames <- dgames %>%
          marker = map(marker, function(x) list(symbol = x)),
          flagicon = sprintf(urlico, countrycode),
          flagicon = str_replace_all(flagicon, "url\\(|\\)", "")) %>% 
-  rename(men = competitors_2, women = competitors_3)
+  rename(men = c_2, women = c_3)
 
 glimpse(dgames)
 
@@ -286,53 +288,5 @@ hcgames2 <- hchart(dgames, "areaspline", hcaes(year, nations, name = host), name
 ```{r}
 hcgames2
 ```
-
-## Example III: My Favorite Bonus
-
-```{r}
-library(rwars)
-
-swmovies <- get_all_films()
-
-swdata <- map_df(swmovies$results, function(x){
-  data_frame(
-    movie = x$title,
-    species = length(x$species),
-    planets = length(x$planets),
-    characters = length(x$characters),
-    vehicles = length(x$vehicles),
-    release = x$release_date
-  )
-}) 
-
-swdata <- gather(swdata, key, number, -movie, -release) %>% 
-  arrange(release)
-
-glimpse(swdata)
-```
-
-Data is ready!
-
-```{r}
-hchart(swdata, "line", hcaes(x = movie, y = number, group = key),
-       color = c("#e5b13a", "#4bd5ee", "#4AA942", "#FAFAFA")) %>% 
-  hc_title(
-    text = "Diversity in <span style=\"color:#e5b13a\"> STAR WARS</span> movies",
-    useHTML = TRUE
-  ) %>% 
-  hc_yAxis(gridLineColor = "#666666") %>% 
-  hc_tooltip(table = TRUE, sort = TRUE) %>% 
-  hc_credits(
-    enabled = TRUE,
-    text = "Source: SWAPI via rwars package",
-    href = "https://swapi.co/"
-  ) %>%
-  hc_chart(
-    backgroundColor = hex_to_rgba("black", "0.2"),
-    divBackgroundImage = "http://www.wired.com/images_blogs/underwire/2013/02/xwing-bg.gif"
-  ) %>% 
-  hc_add_theme(hc_theme_flatdark())
-```
-
 
 What do you think? I had fun, so for me this worth every background I used.

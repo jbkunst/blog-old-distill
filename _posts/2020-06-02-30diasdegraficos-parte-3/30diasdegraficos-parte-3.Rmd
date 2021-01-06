@@ -6,7 +6,7 @@ description: |
 author:
   - name: Joshua Kunst
     url: http://jkunst.com/
-date: "`r format(Sys.time(), '%m-%d-%Y')`"
+date: 06-2-2020
 output:
   distill::distill_article:
     self_contained: true
@@ -461,6 +461,7 @@ dflores <- datos::flores %>%
 d25 <- as_tibble(layer_data(p25, 1)) %>% 
   select(x, y, violinwidth, size, ndensity) %>% 
   mutate_all(round, 3) %>% 
+  mutate(y = as.numeric(y)) %>% 
   left_join(dflores, by = "y")
 
 d25 <- d25 %>% 

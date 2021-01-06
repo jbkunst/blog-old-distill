@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 library(ggplot2)
 library(extrafont)
 # extrafont::font_import()
+
+# this makes fonts works
 suppressMessages(suppressWarnings(loadfonts()))
 
 theme_set(
