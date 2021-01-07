@@ -70,15 +70,16 @@ in our chart.
 dtweets <- rtweet::get_timeline("year_progress", n = 400, token = token)
 
 dtweets <- dtweets %>% 
-  filter(between(year(created_at), 2020, 2020)) %>% 
-  mutate(created_at = as.Date(created_at)) 
+  filter(between(year(created_at), 2020, 2020)) %>%
+  mutate(created_at = as.Date(created_at)) %>% 
+  select(created_at, text, favorite_count, retweet_count) %>% 
+  arrange(created_at)
 
 dtweets <- dtweets %>% 
   distinct(created_at, .keep_all = TRUE)
 
 dtops <- dtweets %>% 
-  top_n(5, favorite_count) %>% 
-  select(created_at, text, favorite_count, retweet_count)
+  top_n(5, favorite_count) 
 
 dtops
 ```
