@@ -97,7 +97,7 @@ data <- dtweets %>%
   left_join(dtext, by = "created_at")
 ```
 
-## Fisrt chart
+## First chart
 
 ```{r}
 hchart(data, "line", hcaes(created_at, count, group = type)) 
@@ -141,7 +141,7 @@ top_annotations <- dtops %>%
 ## Final chart
 
 To our final chart we'll add some details as a better tooltip, title and the
-usual obvious and importan stuff.
+usual obvious and important stuff.
 
 ```{r, layout="l-page"}
 hchart(data, "line", hcaes(created_at, count, group = type)) %>% 
