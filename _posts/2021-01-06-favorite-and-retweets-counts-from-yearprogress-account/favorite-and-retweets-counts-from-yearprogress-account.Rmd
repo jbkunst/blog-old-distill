@@ -1,0 +1,189 @@
+---
+title: "Favorite and retweets counts from @year_progress account"
+description: |
+  I had this doubt a long time ago, and the results make sense with the expected... or maybe not?!
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 01-06-2021
+output:
+  distill::distill_article:
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+---
+
+
+```{r setup, include=FALSE}
+source(here::here("_R/blog_setup.R"))
+```
+
+You know, is the end of the year and more than one of your contacts retweet:
+
+```{r echo=FALSE}
+tweetrmd::tweet_screenshot("https://twitter.com/dsquintana/status/1343481829819633665")
+```
+
+Surely you remembered that in the middle of the year you saw the 50% retweet. 
+So why not see the number of favorites throughout the year? To do this we need
+some packages! The main one in this post will be `{rtweet}`, because..,
+we need tweets.
+
+```{r}
+library(tidyverse)
+library(rtweet)
+library(lubridate)
+library(highcharter)
+```
+
+
+```{r, echo=FALSE}
+# I know this is unsercure but hey, what's the worst that can happen?
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "JXG4ZCzx4oDpbSGh6bU1OwZFa",
+  consumer_secret = "JpOOkA44d9EHd2gvznG0yxSywR4yzQzbsxKlIDe2soS8Kd8KwU",
+  access_token = "7220752-P9Qvy2u2pqY2NAsmVs3j8AebkuL0zuN2zvBlc5BAcz",
+  access_secret = "zhzaTJqQBYGORWEcysi3oojbp4WkYH9TupJrNPUBQ4S3l"
+)
+```
+For download tweets I followed the instructions from https://cran.r-project.org/web/packages/rtweet/vignettes/auth.html
+
+```{r, eval=FALSE}
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "consumerkey",
+  consumer_secret = "consumer_secret",
+  access_token = "access_token",
+  access_secret = "access_secret"
+)
+```
+
+After get the tweets we filter the data and make some transformations. Then
+we'll get the top tweets in terms of the favorite count to make the annotations
+in our chart.
+
+
+```{r}
+# in interactive mode you can avoid/remove the token argument
+dtweets <- rtweet::get_timeline("year_progress", n = 400, token = token)
+
+dtweets <- dtweets %>% 
+  filter(between(year(created_at), 2020, 2020)) %>% 
+  mutate(created_at = as.Date(created_at)) 
+
+dtweets <- dtweets %>% 
+  distinct(created_at, .keep_all = TRUE)
+
+dtops <- dtweets %>% 
+  top_n(5, favorite_count) %>% 
+  select(created_at, text, favorite_count, retweet_count)
+
+dtops
+```
+
+
+```{r}
+dtext <- dtweets %>% 
+  select(created_at, text) %>% 
+  mutate(text = str_extract(text, "[0-9]+.*"))
+
+data <- dtweets %>% 
+  select(created_at, Favorites = favorite_count, Retweets = retweet_count) %>% 
+  gather(type, count, -created_at) %>% 
+  arrange(created_at) %>% 
+  left_join(dtext, by = "created_at")
+```
+
+## Fisrt chart
+
+```{r}
+hchart(data, "line", hcaes(created_at, count, group = type)) 
+```
+
+<aside>
+"keikaku" means "plan" in Japanese
+</aside>
+
+Ok, all according to keikau.
+
+Here we can see some peaks, and yes, the peaks are multiples of 5: 10, 15, 20, 75, etc.
+and some relevant points to, the top ones: 0, 50, 69, 98, 99.
+
+## Annotations
+
+It would be useful to add annotations to our graph with the relevant points.
+
+```{r}
+df_to_annotations_labels <- function(df, xAxis = 0, yAxis = 0) {
+  
+  stopifnot(hasName(df, "x"))
+  stopifnot(hasName(df, "y"))
+  stopifnot(hasName(df, "text"))
+  
+  df %>% 
+    rowwise() %>% 
+    mutate(point = list(list(x = x, y = y, xAxis = 0, yAxis = 0))) %>% 
+    select(-x, -y) %>% 
+    list_parse()
+  
+}
+
+
+top_annotations <- dtops %>%
+  mutate(created_at = datetime_to_timestamp(created_at)) %>% 
+  select(x = created_at, y = favorite_count, text) %>% 
+  df_to_annotations_labels()
+```
+
+## Final chart
+
+To our final chart we'll add some details as a better tooltip, title and the
+usual obvious and importan stuff.
+
+```{r, layout="l-page"}
+hchart(data, "line", hcaes(created_at, count, group = type)) %>% 
+  hc_title(text = "Favorite and retweets counts from @year_progress account in 2020") %>% 
+  hc_tooltip(
+    shared = TRUE, 
+    headerFormat = '{point.key}<br/>Progress: {point.text}<br/><table>',
+    table = TRUE
+  ) %>% 
+   hc_annotations(
+    list(
+      labelOptions = list(
+        shape = "connector",
+        align = "right",
+        justify = FALSE,
+        crop = TRUE,
+        style = list(fontSize = "0.8em", textOutline = "1px white")
+        ),
+      labels = top_annotations
+      )
+    ) %>% 
+  hc_yAxis(title = list(text = "Count")) %>% 
+  # from http://jsfiddle.net/kka8eyg5/3/
+  hc_xAxis(
+    title = list(text = NA),
+    endOnTick = FALSE,
+    labels = list(
+      staggerLines = 1,
+      formatter = JS("function () { return Highcharts.dateFormat('%B', this.value); }"),
+      tickPositioner = JS("function () {
+                var positions = [],
+                    tick = Math.floor(this.dataMin),
+                    increment = 1000 * 3600 * 24 * 91.5; // 3 months
+
+                for (tick; tick <= this.dataMax; tick += increment) {
+                    positions.push(tick);
+                }
+                if (positions.indexOf(this.dataMax) == -1) positions.push(this.dataMax);
+                return positions;
+            }")
+    )
+  )
+  
+```
+
+What do you think? Was the result expected?
