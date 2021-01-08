@@ -1,0 +1,69 @@
+---
+title: "Minimalistic toolptips with highcharter/highcharts"
+description: |
+  One of the many post to remember things that usually forget. Yes, this blog
+  is for that.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 01-07-2021
+output:
+  distill::distill_article:
+    self_contained: true
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.jpeg
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Time ago we make some _really nice but complex_ tooltips showing charts from
+the selected points (in the chart) using `{highcharter}` package -and highcharts-
+in the [using tooltips in unexpected ways](/..2019-02-04-using-tooltips-in-unexpected-ways/) 
+post. But sometimeswe need less: a tiny toolip, maybe for the available space, or requirements.
+
+So in this post we'll detail the parameters in `highcharter::hc_tooltip` function
+used in the [valuebox and sparklines](../2020-06-26-valuebox-and-sparklines) post 
+to get what we want.
+
+First, let's try a normal chart with a traditional tooltip.
+
+```{r}
+library(highcharter)
+library(tidyverse)
+
+hc <- hchart(citytemp_long, "line", hcaes(month, temp, group = city)) %>% 
+  hc_add_theme(hc_theme_538()) 
+
+hc
+```
+
+Did you see the tooltip? Is just a normal one, nothing special, it works :). Now, 
+what we came for, but before change arguments let's make clear what we'll change:
+
+- The main one is give the text outline effect to the text.
+- Change the `pointFormat` argument removing the ":" in the text because
+the `textOutline` effect don't work very well with this character.
+- Change the tooltip background setting the color to transparent.
+- Remove the border setting the `borderWidth` to 0.
+- Remove the shadow.
+
+And voila.
+
+```{r}
+hc %>% 
+  hc_tooltip(
+    pointFormat = "<span  style='color: {series.color}'> {series.name} <b>{point.y}</b><br/></span>",
+    shadow = FALSE,
+    backgroundColor = "transparent",
+    style = list(textOutline = "3px #404040"),
+    borderColor = "transparent",
+    borderWidth = 0
+  )
+```
+
+
+
