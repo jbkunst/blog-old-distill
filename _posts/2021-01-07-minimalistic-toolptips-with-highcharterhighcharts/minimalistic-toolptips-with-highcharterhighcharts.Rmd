@@ -17,7 +17,7 @@ preview: images/preview.jpeg
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Time ago we make some _really nice but complex_ tooltips showing charts from
