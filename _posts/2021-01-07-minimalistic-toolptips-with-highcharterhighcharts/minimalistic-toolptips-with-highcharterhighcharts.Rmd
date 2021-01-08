@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Time ago we make some _really nice but complex_ tooltips showing charts from
 the selected points (in the chart) using `{highcharter}` package -and highcharts-
 in the [using tooltips in unexpected ways](/..2019-02-04-using-tooltips-in-unexpected-ways/) 
-post. But sometimeswe need less: a tiny toolip, maybe for the available space, or requirements.
+post. But sometimes we need less: a tiny toolip, maybe for the available space, or requirements.
 
 So in this post we'll detail the parameters in `highcharter::hc_tooltip` function
 used in the [valuebox and sparklines](../2020-06-26-valuebox-and-sparklines) post 
