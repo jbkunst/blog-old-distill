@@ -1,0 +1,147 @@
+---
+title: "Using emoji with highcharter/highcharts"
+description: |
+  In this minipost we will see that it is not so complicated.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 01-10-2021
+output:
+  distill::distill_article:
+    self_contained: true
+draft: false
+categories:
+  - twitter
+  - minipost
+  - highcharts
+  - highcharter      
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
+```
+
+Let`s try using emoji symbols in highcharter/highcharts.
+
+Fist's some data:
+
+```{r}
+library(tidyverse)
+library(rtweet)
+library(highcharter)
+library(emo) #devtools::install_github("hadley/emo")
+```
+
+
+```{r, echo=FALSE}
+# I know this is unsercure but hey, what's the worst that can happen?
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "JXG4ZCzx4oDpbSGh6bU1OwZFa",
+  consumer_secret = "JpOOkA44d9EHd2gvznG0yxSywR4yzQzbsxKlIDe2soS8Kd8KwU",
+  access_token = "7220752-P9Qvy2u2pqY2NAsmVs3j8AebkuL0zuN2zvBlc5BAcz",
+  access_secret = "zhzaTJqQBYGORWEcysi3oojbp4WkYH9TupJrNPUBQ4S3l"
+)
+```
+
+For download tweets I followed the instructions from https://cran.r-project.org/web/packages/rtweet/vignettes/auth.html
+
+```{r, eval=FALSE}
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "consumerkey",
+  consumer_secret = "consumer_secret",
+  access_token = "access_token",
+  access_secret = "access_secret"
+)
+```
+
+## Chart 1
+
+Using emoji in the axis. In this case is direct, nothing special to do.
+
+```{r}
+# in interactive mode you can avoid/remove the token argument
+tweets <- rtweet::search_tweets("#rstats", n = 18000, token = token, include_rts = FALSE)
+
+emoji <- tweets %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  unnest(cols = c(emoji)) %>%
+  count(emoji, sort = TRUE) 
+
+max_count <- emoji %>% 
+  pull(n) %>% 
+  max()
+```
+
+
+```{r}
+hchart(
+  emoji, 
+  "bar",
+  hcaes(emoji, n), 
+  name = "Count",
+  # dataLabels = list(enabled = TRUE, style = list(fontWeight = "normal"))
+  ) %>% 
+  hc_xAxis(
+    min = 0,
+    max = 30,
+    scrollbar = list(enabled = TRUE)
+    ) %>% 
+  hc_yAxis(
+    max = max_count,
+    title = list(
+      text = "Count",
+      align = "high"
+      )
+    ) %>% 
+  hc_tooltip(
+    headerFormat = "{point.key}",
+    pointFormat = " {point.y}"
+  ) %>% 
+  hc_size(height = 700)
+```
+
+## Chart 2
+
+Using emoji as markers.
+
+```{r}
+emoji2 <- tweets %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  select(favorite_count, retweet_count, emoji) %>% 
+  filter(map_dbl(emoji, length) > 0) %>% 
+  unnest(cols = c(emoji)) %>% 
+  group_by(emoji) %>% 
+  summarise_all(sum) %>% 
+  filter(favorite_count*retweet_count > 0) 
+  
+emoji2
+  
+hchart(
+  emoji2,
+  "scatter", 
+  hcaes(favorite_count , retweet_count),
+  name = "emoji",
+  marker = list(
+    radius = 0
+    ),
+  dataLabels = list(
+    enabled = TRUE,
+    format = "{point.emoji}", 
+    allowOverlap = TRUE,
+    style = list(fontSize = 20),
+    y = 20
+    )
+  ) %>% 
+  hc_xAxis(type = "logarithmic", title = list(text = "Favorites"), minRange = 1) %>% 
+  hc_yAxis(type = "logarithmic", title = list(text = "Retweets"), minRange = 1) %>% 
+  hc_chart(zoomType = "xy")
+```
+
+

@@ -9,6 +9,11 @@ date: 01-06-2021
 output:
   distill::distill_article:
     self_contained: true
+categories: 
+  - twitter
+  - minipost
+  - highcharts
+  - highcharter    
 editor_options: 
   chunk_output_type: console
 preview: images/preview.png

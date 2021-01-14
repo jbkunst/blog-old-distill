@@ -10,6 +10,10 @@ date: 01-07-2021
 output:
   distill::distill_article:
     self_contained: true
+categories: 
+  - minipost
+  - highcharts
+  - highcharter      
 editor_options: 
   chunk_output_type: console
 preview: images/preview.jpeg

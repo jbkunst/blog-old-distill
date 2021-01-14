@@ -21,6 +21,7 @@ draft: false
 categories: 
   - shiny
   - highcharts
+  - highcharter
   - htmlwidgets
 editor_options: 
   chunk_output_type: console
