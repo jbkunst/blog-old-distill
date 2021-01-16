@@ -15,13 +15,15 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-source(here::here("_R/blog_setup.R"))
+knitr::opts_chunk$set(echo = TRUE)
+# source(here::here("_R/blog_setup.R"))
 ```
 
 _Post updated on `r format(Sys.time(), '%b %d, %Y')`_
 
 ## Introducction
+
+https://twitter.com/moritz_stefaner/status/1295733715579088896
 
 
 ```{r}
@@ -30,17 +32,27 @@ library(babynames)
 library(dplyr)
 library(highcharter)
 
-NAME <- "Britney"
-NAME <- "Anna"
+NAMES <- "Ariel"
+# c("Anna",  "Britney", "Whitney")
 
 data <- babynames::babynames %>% 
-  filter(name == NAME, sex == "F") %>% 
-  select(x = year, y = prop)
+  filter(name %in% NAMES) %>% 
+  select(name, x = year, y = prop) %>% 
+  group_by(name, x) %>% 
+  summarise(y = sum(y), .groups = "drop") %>% 
+  select(x, y)
 
+data
+```
+
+Color is given by the year -not the y value- so:
+
+```{r}
 data <- data %>% 
   mutate(
-    color = colorize(y),
-    alpha = scales::rescale(y, to = c(0.5, 1)),
+    # color = colorize(y, colors = viridisLite::inferno(100, begin = 0.2, end = 0.8)),
+    color = colorize(x, colors = viridisLite::inferno(100, begin = 0.2, end = 0.8)),
+    alpha = scales::rescale(sqrt(y), to = c(0.05, .75)),
     alpha = round(alpha, 2),
     color = purrr::map2_chr(color, alpha, shades::opacity)
   )
@@ -49,12 +61,22 @@ data
 
 zns <- data %>% 
   select(value = x, color) %>% 
+  distinct(value, .keep_all = TRUE) %>% 
   mutate(value = value + 0.5) %>% 
   list_parse()
 
 data <- data %>% 
   select(x, y) %>% 
   mutate_all(round, 5)
+```
+
+
+```{r, layout="l-page"}
+annotation <- data %>% 
+  filter(y == max(y)) %>% 
+  head(1) %>% # ties
+  mutate(text = "&#9660;") %>% 
+  df_to_annotations_labels()
 
 highchart() %>%
   hc_add_series(
@@ -62,37 +84,61 @@ highchart() %>%
     "areaspline",
     hcaes(x, y),
     zones = zns,
-    id = "serie"
-  ) %>% 
-  hc_add_series(
-    data,
-    "line",
-    color = "white",
-    lineWidth = 8,
-    hcaes(x, y),
+    enableMouseTracking = FALSE,
     linkedTo = "serie"
   ) %>%
   hc_add_series(
     data,
-    "line",
+    "spline",
+    hcaes(x, y),
+    color = "white",
+    lineWidth = 8,
+    hcaes(x, y),
+    enableMouseTracking = FALSE,
+    linkedTo = "serie"
+  ) %>%
+    hc_add_series(
+    data,
+    "spline",
     hcaes(x, y),
     zones = zns,
-    linkedTo = "serie"
+    lineWidth = 4,
+    id = "serie"
   ) %>%
   hc_plotOptions(
     series = list(
       showInLegend = FALSE,
-      zoneAxis = "x"
-      # marker = list(
-      #   states = list(
-      #     hover = list(
-      #       enabled = FALSE
-      #       )
-      #     )
-      #   )
-      )
+      zoneAxis = "x",
+      marker = list(enabled = FALSE),
+      hover = list(halo = list(size = 0))
+    )
   ) %>% 
-  hc_yAxis(visible = FALSE)
-
+  hc_yAxis(visible = FALSE) %>% 
+  hc_xAxis(
+    lineColor = "transparent",
+    tickLength = 0,
+    tickInterval = 1,
+    labels = list(
+      style = list(color = "gray"),
+      useHTML = TRUE,
+      formatter = JS("function(){  var v = (this.value % 5 == 0) ? '<span>&#9679</span>' : '•';  return v; }")
+    )
+  ) %>% 
+   hc_annotations(
+     list(
+       draggable = "",
+       labelOptions = list(
+         shape = "connector",
+         y = -30,
+         verticalAlign = "top",
+         justify = FALSE,
+         crop = TRUE,
+         useHTML = TRUE,
+         style = list(fontSize = "0.8em", textOutline = "1px white")
+         ),
+       labels = annotation
+       )
+     ) %>% 
+  hc_size(height = 300)
 ```
 

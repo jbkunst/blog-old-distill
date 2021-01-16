@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { color: #20794d; } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #20794d; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+  <!--radix_placeholder_meta_tags-->
+  <title>Copying the good</title>
+  
+  <meta property="description" itemprop="description" content="A short description of the post."/>
+  
+  
+  <!--  https://schema.org/Article -->
+  <meta property="article:published" itemprop="datePublished" content="2020-08-25"/>
+  <meta property="article:created" itemprop="dateCreated" content="2020-08-25"/>
+  <meta name="article:author" content="Joshua Kunst"/>
+  
+  <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+  <meta property="og:title" content="Copying the good"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:description" content="A short description of the post."/>
+  <meta property="og:locale" content="en_US"/>
+  
+  <!--  https://dev.twitter.com/cards/types/summary -->
+  <meta property="twitter:card" content="summary"/>
+  <meta property="twitter:title" content="Copying the good"/>
+  <meta property="twitter:description" content="A short description of the post."/>
+  
+  <!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-rmarkdown-metadata">
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","draft","editor_options"]}},"value":[{"type":"character","attributes":{},"value":["Copying the good"]},{"type":"character","attributes":{},"value":["A short description of the post.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Joshua Kunst"]},{"type":"character","attributes":{},"value":["http://jkunst.com/"]}]}]},{"type":"character","attributes":{},"value":["08-25-2020"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"logical","attributes":{},"value":[true]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["chunk_output_type"]}},"value":[{"type":"character","attributes":{},"value":["console"]}]}]}
+  </script>
+  <!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["copying-the-good_files/anchor-4.2.2/anchor.min.js","copying-the-good_files/bowser-1.9.3/bowser.min.js","copying-the-good_files/distill-2.2.21/template.v2.js","copying-the-good_files/highchart-binding-0.8.2.9000/highchart.js","copying-the-good_files/highcharts-8.1.2/css/htmlwdgtgrid.css","copying-the-good_files/highcharts-8.1.2/css/motion.css","copying-the-good_files/highcharts-8.1.2/custom/appear.js","copying-the-good_files/highcharts-8.1.2/custom/delay-animation.js","copying-the-good_files/highcharts-8.1.2/custom/reset.js","copying-the-good_files/highcharts-8.1.2/custom/symbols-extra.js","copying-the-good_files/highcharts-8.1.2/custom/text-symbols.js","copying-the-good_files/highcharts-8.1.2/custom/tooltip-delay.js","copying-the-good_files/highcharts-8.1.2/highcharts-3d.js","copying-the-good_files/highcharts-8.1.2/highcharts-more.js","copying-the-good_files/highcharts-8.1.2/highcharts.js","copying-the-good_files/highcharts-8.1.2/modules/accessibility.js","copying-the-good_files/highcharts-8.1.2/modules/annotations-advanced.js","copying-the-good_files/highcharts-8.1.2/modules/annotations.js","copying-the-good_files/highcharts-8.1.2/modules/arrow-symbols.js","copying-the-good_files/highcharts-8.1.2/modules/boost-canvas.js","copying-the-good_files/highcharts-8.1.2/modules/boost.js","copying-the-good_files/highcharts-8.1.2/modules/broken-axis.js","copying-the-good_files/highcharts-8.1.2/modules/bullet.js","copying-the-good_files/highcharts-8.1.2/modules/coloraxis.js","copying-the-good_files/highcharts-8.1.2/modules/current-date-indicator.js","copying-the-good_files/highcharts-8.1.2/modules/cylinder.js","copying-the-good_files/highcharts-8.1.2/modules/data.js","copying-the-good_files/highcharts-8.1.2/modules/datagrouping.js","copying-the-good_files/highcharts-8.1.2/modules/debugger.js","copying-the-good_files/highcharts-8.1.2/modules/dependency-wheel.js","copying-the-good_files/highcharts-8.1.2/modules/dotplot.js","copying-the-good_files/highcharts-8.1.2/modules/drag-panes.js","copying-the-good_files/highcharts-8.1.2/modules/draggable-points.js","copying-the-good_files/highcharts-8.1.2/modules/drilldown.js","copying-the-good_files/highcharts-8.1.2/modules/dumbbell.js","copying-the-good_files/highcharts-8.1.2/modules/export-data.js","copying-the-good_files/highcharts-8.1.2/modules/exporting.js","copying-the-good_files/highcharts-8.1.2/modules/full-screen.js","copying-the-good_files/highcharts-8.1.2/modules/funnel.js","copying-the-good_files/highcharts-8.1.2/modules/funnel3d.js","copying-the-good_files/highcharts-8.1.2/modules/gantt.js","copying-the-good_files/highcharts-8.1.2/modules/grid-axis.js","copying-the-good_files/highcharts-8.1.2/modules/heatmap.js","copying-the-good_files/highcharts-8.1.2/modules/histogram-bellcurve.js","copying-the-good_files/highcharts-8.1.2/modules/item-series.js","copying-the-good_files/highcharts-8.1.2/modules/lollipop.js","copying-the-good_files/highcharts-8.1.2/modules/map.js","copying-the-good_files/highcharts-8.1.2/modules/marker-clusters.js","copying-the-good_files/highcharts-8.1.2/modules/networkgraph.js","copying-the-good_files/highcharts-8.1.2/modules/no-data-to-display.js","copying-the-good_files/highcharts-8.1.2/modules/offline-exporting.js","copying-the-good_files/highcharts-8.1.2/modules/oldie-polyfills.js","copying-the-good_files/highcharts-8.1.2/modules/oldie.js","copying-the-good_files/highcharts-8.1.2/modules/organization.js","copying-the-good_files/highcharts-8.1.2/modules/overlapping-datalabels.js","copying-the-good_files/highcharts-8.1.2/modules/parallel-coordinates.js","copying-the-good_files/highcharts-8.1.2/modules/pareto.js","copying-the-good_files/highcharts-8.1.2/modules/pathfinder.js","copying-the-good_files/highcharts-8.1.2/modules/pattern-fill.js","copying-the-good_files/highcharts-8.1.2/modules/price-indicator.js","copying-the-good_files/highcharts-8.1.2/modules/pyramid3d.js","copying-the-good_files/highcharts-8.1.2/modules/sankey.js","copying-the-good_files/highcharts-8.1.2/modules/series-label.js","copying-the-good_files/highcharts-8.1.2/modules/solid-gauge.js","copying-the-good_files/highcharts-8.1.2/modules/sonification.js","copying-the-good_files/highcharts-8.1.2/modules/static-scale.js","copying-the-good_files/highcharts-8.1.2/modules/stock-tools.js","copying-the-good_files/highcharts-8.1.2/modules/stock.js","copying-the-good_files/highcharts-8.1.2/modules/streamgraph.js","copying-the-good_files/highcharts-8.1.2/modules/sunburst.js","copying-the-good_files/highcharts-8.1.2/modules/tilemap.js","copying-the-good_files/highcharts-8.1.2/modules/timeline.js","copying-the-good_files/highcharts-8.1.2/modules/treegrid.js","copying-the-good_files/highcharts-8.1.2/modules/treemap.js","copying-the-good_files/highcharts-8.1.2/modules/variable-pie.js","copying-the-good_files/highcharts-8.1.2/modules/variwide.js","copying-the-good_files/highcharts-8.1.2/modules/vector.js","copying-the-good_files/highcharts-8.1.2/modules/venn.js","copying-the-good_files/highcharts-8.1.2/modules/windbarb.js","copying-the-good_files/highcharts-8.1.2/modules/wordcloud.js","copying-the-good_files/highcharts-8.1.2/modules/xrange.js","copying-the-good_files/highcharts-8.1.2/plugins/draggable-legend.js","copying-the-good_files/highcharts-8.1.2/plugins/grouped-categories.js","copying-the-good_files/highcharts-8.1.2/plugins/highcharts-regression.js","copying-the-good_files/highcharts-8.1.2/plugins/motion.js","copying-the-good_files/highcharts-8.1.2/plugins/multicolor_series.js","copying-the-good_files/htmlwidgets-1.5.2/htmlwidgets.js","copying-the-good_files/jquery-3.5.0/jquery.min.js","copying-the-good_files/proj4js-2.3.15/proj4.js","copying-the-good_files/webcomponents-2.0.0/webcomponents.js"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+  <!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+  
+  <style type="text/css">
+  
+  body {
+    background-color: white;
+  }
+  
+  .pandoc-table {
+    width: 100%;
+  }
+  
+  .pandoc-table>caption {
+    margin-bottom: 10px;
+  }
+  
+  .pandoc-table th:not([align]) {
+    text-align: left;
+  }
+  
+  .pagedtable-footer {
+    font-size: 15px;
+  }
+  
+  d-byline .byline {
+    grid-template-columns: 2fr 2fr;
+  }
+  
+  d-byline .byline h3 {
+    margin-block-start: 1.5em;
+  }
+  
+  d-byline .byline .authors-affiliations h3 {
+    margin-block-start: 0.5em;
+  }
+  
+  .authors-affiliations .orcid-id {
+    width: 16px;
+    height:16px;
+    margin-left: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    padding-bottom: 2px;
+  }
+  
+  d-title .dt-tags {
+    margin-top: 1em;
+    grid-column: text;
+  }
+  
+  .dt-tags .dt-tag {
+    text-decoration: none;
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0em 0.4em;
+    margin-right: 0.5em;
+    margin-bottom: 0.4em;
+    font-size: 70%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  d-article table.gt_table td,
+  d-article table.gt_table th {
+    border-bottom: none;
+  }
+  
+  .html-widget {
+    margin-bottom: 2.0em;
+  }
+  
+  .l-screen-inset {
+    padding-right: 16px;
+  }
+  
+  .l-screen .caption {
+    margin-left: 10px;
+  }
+  
+  .shaded {
+    background: rgb(247, 247, 247);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .shaded .html-widget {
+    margin-bottom: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .shaded .shaded-content {
+    background: white;
+  }
+  
+  .text-output {
+    margin-top: 0;
+    line-height: 1.5em;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  d-article {
+    padding-top: 2.5rem;
+    padding-bottom: 30px;
+  }
+  
+  d-appendix {
+    padding-top: 30px;
+  }
+  
+  d-article>p>img {
+    width: 100%;
+  }
+  
+  d-article h2 {
+    margin: 1rem 0 1.5rem 0;
+  }
+  
+  d-article h3 {
+    margin-top: 1.5rem;
+  }
+  
+  d-article iframe {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.0em;
+    width: 100%;
+  }
+  
+  /* Tweak code blocks */
+  
+  d-article div.sourceCode code,
+  d-article pre code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+  
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: auto;
+  }
+  
+  d-article div.sourceCode {
+    background-color: white;
+  }
+  
+  d-article div.sourceCode pre {
+    padding-left: 10px;
+    font-size: 12px;
+    border-left: 2px solid rgba(0,0,0,0.1);
+  }
+  
+  d-article pre {
+    font-size: 12px;
+    color: black;
+    background: none;
+    margin-top: 0;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+  
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+  
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+  
+  d-article pre a {
+    border-bottom: none;
+  }
+  
+  d-article pre a:hover {
+    border-bottom: none;
+    text-decoration: underline;
+  }
+  
+  @media(min-width: 768px) {
+  
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: visible !important;
+  }
+  
+  d-article div.sourceCode pre {
+    padding-left: 18px;
+    font-size: 14px;
+  }
+  
+  d-article pre {
+    font-size: 14px;
+  }
+  
+  }
+  
+  figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+  
+  /* CSS for d-contents */
+  
+  .d-contents {
+    grid-column: text;
+    color: rgba(0,0,0,0.8);
+    font-size: 0.9em;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 0.25em;
+    justify-self: start;
+  }
+  
+  @media(min-width: 1000px) {
+    .d-contents.d-contents-float {
+      height: 0;
+      grid-column-start: 1;
+      grid-column-end: 4;
+      justify-self: center;
+      padding-right: 3em;
+      padding-left: 2em;
+    }
+  }
+  
+  .d-contents nav h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+  
+  .d-contents li {
+    list-style-type: none
+  }
+  
+  .d-contents nav > ul {
+    padding-left: 0;
+  }
+  
+  .d-contents ul {
+    padding-left: 1em
+  }
+  
+  .d-contents nav ul li {
+    margin-top: 0.6em;
+    margin-bottom: 0.2em;
+  }
+  
+  .d-contents nav a {
+    font-size: 13px;
+    border-bottom: none;
+    text-decoration: none
+    color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .d-contents nav a:hover {
+    text-decoration: underline solid rgba(0, 0, 0, 0.6)
+  }
+  
+  .d-contents nav > ul > li > a {
+    font-weight: 600;
+  }
+  
+  .d-contents nav > ul > li > ul {
+    font-weight: inherit;
+  }
+  
+  .d-contents nav > ul > li > ul > li {
+    margin-top: 0.2em;
+  }
+  
+  
+  .d-contents nav ul {
+    margin-top: 0;
+    margin-bottom: 0.25em;
+  }
+  
+  .d-article-with-toc h2:nth-child(2) {
+    margin-top: 0;
+  }
+  
+  
+  /* Figure */
+  
+  .figure {
+    position: relative;
+    margin-bottom: 2.5em;
+    margin-top: 1.5em;
+  }
+  
+  .figure img {
+    width: 100%;
+  }
+  
+  .figure .caption {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.5em;
+  }
+  
+  .figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+  
+  .figure .caption a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .figure .caption b,
+  .figure .caption strong, {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 1.0);
+  }
+  
+  /* Citations */
+  
+  d-article .citation {
+    color: inherit;
+    cursor: inherit;
+  }
+  
+  div.hanging-indent{
+    margin-left: 1em; text-indent: -1em;
+  }
+  
+  
+  /* Tweak 1000px media break to show more text */
+  
+  @media(min-width: 1000px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 16px;
+    }
+  
+    .grid {
+      grid-column-gap: 16px;
+    }
+  
+    d-article {
+      font-size: 1.06rem;
+      line-height: 1.7em;
+    }
+    figure .caption, .figure .caption, figure figcaption {
+      font-size: 13px;
+    }
+  }
+  
+  @media(min-width: 1180px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 32px;
+    }
+  
+    .grid {
+      grid-column-gap: 32px;
+    }
+  }
+  
+  
+  /* Get the citation styles for the appendix (not auto-injected on render since
+     we do our own rendering of the citation appendix) */
+  
+  d-appendix .citation-appendix,
+  .d-appendix .citation-appendix {
+    font-size: 11px;
+    line-height: 15px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 18px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.02);
+    padding: 10px 18px;
+    border-radius: 3px;
+    color: rgba(150, 150, 150, 1);
+    overflow: hidden;
+    margin-top: -12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  
+  /* Include appendix styles here so they can be overridden */
+  
+  d-appendix {
+    contain: layout style;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-top: 60px;
+    margin-bottom: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: rgba(0,0,0,0.5);
+    padding-top: 60px;
+    padding-bottom: 48px;
+  }
+  
+  d-appendix h3 {
+    grid-column: page-start / text-start;
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 1em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.65);
+  }
+  
+  d-appendix h3 + * {
+    margin-top: 1em;
+  }
+  
+  d-appendix ol {
+    padding: 0 0 0 15px;
+  }
+  
+  @media (min-width: 768px) {
+    d-appendix ol {
+      padding: 0 0 0 30px;
+      margin-left: -30px;
+    }
+  }
+  
+  d-appendix li {
+    margin-bottom: 1em;
+  }
+  
+  d-appendix a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+  
+  d-appendix > * {
+    grid-column: text;
+  }
+  
+  d-appendix > d-footnote-list,
+  d-appendix > d-citation-list,
+  d-appendix > distill-appendix {
+    grid-column: screen;
+  }
+  
+  /* Include footnote styles here so they can be overridden */
+  
+  d-footnote-list {
+    contain: layout style;
+  }
+  
+  d-footnote-list > * {
+    grid-column: text;
+  }
+  
+  d-footnote-list a.footnote-backlink {
+    color: rgba(0,0,0,0.3);
+    padding-left: 0.5em;
+  }
+  
+  
+  
+  /* Anchor.js */
+  
+  .anchorjs-link {
+    /*transition: all .25s linear; */
+    text-decoration: none;
+    border-bottom: none;
+  }
+  *:hover > .anchorjs-link {
+    margin-left: -1.125em !important;
+    text-decoration: none;
+    border-bottom: none;
+  }
+  
+  /* Social footer */
+  
+  .social_footer {
+    margin-top: 30px;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.67);
+  }
+  
+  .disqus-comments {
+    margin-right: 30px;
+  }
+  
+  .disqus-comment-count {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+  
+  #disqus_thread {
+    margin-top: 30px;
+  }
+  
+  .article-sharing a {
+    border-bottom: none;
+    margin-right: 8px;
+  }
+  
+  .article-sharing a:hover {
+    border-bottom: none;
+  }
+  
+  .sidebar-section.subscribe {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+  
+  .subscribe p {
+    margin-bottom: 0.5em;
+  }
+  
+  
+  .article-footer .subscribe {
+    font-size: 15px;
+    margin-top: 45px;
+  }
+  
+  
+  .sidebar-section.custom {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+  
+  .custom p {
+    margin-bottom: 0.5em;
+  }
+  
+  /* Styles for listing layout (hide title) */
+  .layout-listing d-title, .layout-listing .d-title {
+    display: none;
+  }
+  
+  /* Styles for posts lists (not auto-injected) */
+  
+  
+  .posts-with-sidebar {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+  
+  .posts-list .description h2,
+  .posts-list .description p {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+  
+  .posts-list .description h2 {
+    font-weight: 700;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .posts-list h2.post-tag {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 12px;
+  }
+  .posts-list {
+    margin-top: 60px;
+    margin-bottom: 24px;
+  }
+  
+  .posts-list .post-preview {
+    text-decoration: none;
+    overflow: hidden;
+    display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 24px 0;
+  }
+  
+  .post-preview-last {
+    border-bottom: none !important;
+  }
+  
+  .posts-list .posts-list-caption {
+    grid-column: screen;
+    font-weight: 400;
+  }
+  
+  .posts-list .post-preview h2 {
+    margin: 0 0 6px 0;
+    line-height: 1.2em;
+    font-style: normal;
+    font-size: 24px;
+  }
+  
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.4em;
+    font-size: 16px;
+  }
+  
+  .posts-list .post-preview .thumbnail {
+    box-sizing: border-box;
+    margin-bottom: 24px;
+    position: relative;
+    max-width: 500px;
+  }
+  .posts-list .post-preview img {
+    width: 100%;
+    display: block;
+  }
+  
+  .posts-list .metadata {
+    font-size: 12px;
+    line-height: 1.4em;
+    margin-bottom: 18px;
+  }
+  
+  .posts-list .metadata > * {
+    display: inline-block;
+  }
+  
+  .posts-list .metadata .publishedDate {
+    margin-right: 2em;
+  }
+  
+  .posts-list .metadata .dt-authors {
+    display: block;
+    margin-top: 0.3em;
+    margin-right: 2em;
+  }
+  
+  .posts-list .dt-tags {
+    display: block;
+    line-height: 1em;
+  }
+  
+  .posts-list .dt-tags .dt-tag {
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0.3em 0.4em;
+    margin-right: 0.2em;
+    margin-bottom: 0.4em;
+    font-size: 60%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  .posts-list img {
+    opacity: 1;
+  }
+  
+  .posts-list img[data-src] {
+    opacity: 0;
+  }
+  
+  .posts-more {
+    clear: both;
+  }
+  
+  
+  .posts-sidebar {
+    font-size: 16px;
+  }
+  
+  .posts-sidebar h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+  
+  .sidebar-section {
+    margin-bottom: 30px;
+  }
+  
+  .categories ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .categories li {
+    color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 0;
+  }
+  
+  .categories li>a {
+    border-bottom: none;
+  }
+  
+  .categories li>a:hover {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  }
+  
+  .categories .active {
+    font-weight: 600;
+  }
+  
+  .categories .category-count {
+    color: rgba(0, 0, 0, 0.4);
+  }
+  
+  
+  @media(min-width: 768px) {
+    .posts-list .post-preview h2 {
+      font-size: 26px;
+    }
+    .posts-list .post-preview .thumbnail {
+      float: right;
+      width: 30%;
+      margin-bottom: 0;
+    }
+    .posts-list .post-preview .description {
+      float: left;
+      width: 45%;
+    }
+    .posts-list .post-preview .metadata {
+      float: left;
+      width: 20%;
+      margin-top: 8px;
+    }
+    .posts-list .post-preview p {
+      margin: 0 0 12px 0;
+      line-height: 1.5em;
+      font-size: 16px;
+    }
+    .posts-with-sidebar .posts-list {
+      float: left;
+      width: 75%;
+    }
+    .posts-with-sidebar .posts-sidebar {
+      float: right;
+      width: 20%;
+      margin-top: 60px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+  }
+  
+  
+  /* Improve display for browsers without grid (IE/Edge <= 15) */
+  
+  .downlevel {
+    line-height: 1.6em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+  }
+  
+  .downlevel .d-title {
+    padding-top: 6rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .downlevel .d-title h1 {
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.1em;
+    margin: 0 0 0.5rem;
+  }
+  
+  .downlevel .d-title p {
+    font-weight: 300;
+    font-size: 1.2rem;
+    line-height: 1.55em;
+    margin-top: 0;
+  }
+  
+  .downlevel .d-byline {
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+    font-size: 0.8rem;
+    line-height: 1.8em;
+  }
+  
+  .downlevel .section-separator {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .downlevel .d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+  }
+  
+  
+  .downlevel .d-appendix {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: none;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.5);
+    padding-top: 40px;
+    padding-bottom: 48px;
+  }
+  
+  .downlevel .footnotes ol {
+    padding-left: 13px;
+  }
+  
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  
+  @media(min-width: 768px) {
+    .downlevel .base-grid,
+    .downlevel .distill-header,
+    .downlevel .d-title,
+    .downlevel .d-abstract,
+    .downlevel .d-article,
+    .downlevel .d-appendix,
+    .downlevel .distill-appendix,
+    .downlevel .d-byline,
+    .downlevel .d-footnote-list,
+    .downlevel .d-citation-list,
+    .downlevel .distill-footer,
+    .downlevel .appendix-bottom,
+    .downlevel .posts-container {
+    padding-left: 150px;
+    padding-right: 150px;
+    max-width: 900px;
+  }
+  }
+  
+  .downlevel pre code {
+    display: block;
+    border-left: 2px solid rgba(0, 0, 0, .1);
+    padding: 0 0 0 20px;
+    font-size: 14px;
+  }
+  
+  .downlevel code, .downlevel pre {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+  
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+  
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+  
+  .downlevel .posts-list .post-preview {
+    color: inherit;
+  }
+  
+  
+  
+  </style>
+  
+  <script type="application/javascript">
+  
+  function is_downlevel_browser() {
+    if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                   window.navigator.userAgent)) {
+      return true;
+    } else {
+      return window.load_distill_framework === undefined;
+    }
+  }
+  
+  // show body when load is complete
+  function on_load_complete() {
+  
+    // add anchors
+    if (window.anchors) {
+      window.anchors.options.placement = 'left';
+      window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+    }
+  
+  
+    // set body to visible
+    document.body.style.visibility = 'visible';
+  
+    // force redraw for leaflet widgets
+    if (window.HTMLWidgets) {
+      var maps = window.HTMLWidgets.findAll(".leaflet");
+      $.each(maps, function(i, el) {
+        var map = this.getMap();
+        map.invalidateSize();
+        map.eachLayer(function(layer) {
+          if (layer instanceof L.TileLayer)
+            layer.redraw();
+        });
+      });
+    }
+  
+    // trigger 'shown' so htmlwidgets resize
+    $('d-article').trigger('shown');
+  }
+  
+  function init_distill() {
+  
+    init_common();
+  
+    // create front matter
+    var front_matter = $('<d-front-matter></d-front-matter>');
+    $('#distill-front-matter').wrap(front_matter);
+  
+    // create d-title
+    $('.d-title').changeElementType('d-title');
+  
+    // create d-byline
+    var byline = $('<d-byline></d-byline>');
+    $('.d-byline').replaceWith(byline);
+  
+    // create d-article
+    var article = $('<d-article></d-article>');
+    $('.d-article').wrap(article).children().unwrap();
+  
+    // move posts container into article
+    $('.posts-container').appendTo($('d-article'));
+  
+    // create d-appendix
+    $('.d-appendix').changeElementType('d-appendix');
+  
+    // flag indicating that we have appendix items
+    var appendix = $('.appendix-bottom').children('h3').length > 0;
+  
+    // replace footnotes with <d-footnote>
+    $('.footnote-ref').each(function(i, val) {
+      appendix = true;
+      var href = $(this).attr('href');
+      var id = href.replace('#', '');
+      var fn = $('#' + id);
+      var fn_p = $('#' + id + '>p');
+      fn_p.find('.footnote-back').remove();
+      var text = fn_p.html();
+      var dtfn = $('<d-footnote></d-footnote>');
+      dtfn.html(text);
+      $(this).replaceWith(dtfn);
+    });
+    // remove footnotes
+    $('.footnotes').remove();
+  
+    // move refs into #references-listing
+    $('#references-listing').replaceWith($('#refs'));
+  
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      var id = $(this).attr('id');
+      $('.d-contents a[href="#' + id + '"]').parent().remove();
+      appendix = true;
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+    });
+  
+    // show d-appendix if we have appendix content
+    $("d-appendix").css('display', appendix ? 'grid' : 'none');
+  
+    // localize layout chunks to just output
+    $('.layout-chunk').each(function(i, val) {
+  
+      // capture layout
+      var layout = $(this).attr('data-layout');
+  
+      // apply layout to markdown level block elements
+      var elements = $(this).children().not('div.sourceCode, pre, script');
+      elements.each(function(i, el) {
+        var layout_div = $('<div class="' + layout + '"></div>');
+        if (layout_div.hasClass('shaded')) {
+          var shaded_content = $('<div class="shaded-content"></div>');
+          $(this).wrap(shaded_content);
+          $(this).parent().wrap(layout_div);
+        } else {
+          $(this).wrap(layout_div);
+        }
+      });
+  
+  
+      // unwrap the layout-chunk div
+      $(this).children().unwrap();
+    });
+  
+    // remove code block used to force  highlighting css
+    $('.distill-force-highlighting-css').parent().remove();
+  
+    // remove empty line numbers inserted by pandoc when using a
+    // custom syntax highlighting theme
+    $('code.sourceCode a:empty').remove();
+  
+    // load distill framework
+    load_distill_framework();
+  
+    // wait for window.distillRunlevel == 4 to do post processing
+    function distill_post_process() {
+  
+      if (!window.distillRunlevel || window.distillRunlevel < 4)
+        return;
+  
+      // hide author/affiliations entirely if we have no authors
+      var front_matter = JSON.parse($("#distill-front-matter").html());
+      var have_authors = front_matter.authors && front_matter.authors.length > 0;
+      if (!have_authors)
+        $('d-byline').addClass('hidden');
+  
+      // article with toc class
+      $('.d-contents').parent().addClass('d-article-with-toc');
+  
+      // strip links that point to #
+      $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+  
+      // add orcid ids
+      $('.authors-affiliations').find('.author').each(function(i, el) {
+        var orcid_id = front_matter.authors[i].orcidID;
+        if (orcid_id) {
+          var a = $('<a></a>');
+          a.attr('href', 'https://orcid.org/' + orcid_id);
+          var img = $('<img></img>');
+          img.addClass('orcid-id');
+          img.attr('alt', 'ORCID ID');
+          img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+          a.append(img);
+          $(this).append(a);
+        }
+      });
+  
+      // hide elements of author/affiliations grid that have no value
+      function hide_byline_column(caption) {
+        $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+      }
+  
+      // affiliations
+      var have_affiliations = false;
+      for (var i = 0; i<front_matter.authors.length; ++i) {
+        var author = front_matter.authors[i];
+        if (author.affiliation !== "&nbsp;") {
+          have_affiliations = true;
+          break;
+        }
+      }
+      if (!have_affiliations)
+        $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+  
+      // published date
+      if (!front_matter.publishedDate)
+        hide_byline_column("Published");
+  
+      // document object identifier
+      var doi = $('d-byline').find('h3:contains("DOI")');
+      var doi_p = doi.next().empty();
+      if (!front_matter.doi) {
+        // if we have a citation and valid citationText then link to that
+        if ($('#citation').length > 0 && front_matter.citationText) {
+          doi.html('Citation');
+          $('<a href="#citation"></a>')
+            .text(front_matter.citationText)
+            .appendTo(doi_p);
+        } else {
+          hide_byline_column("DOI");
+        }
+      } else {
+        $('<a></a>')
+           .attr('href', "https://doi.org/" + front_matter.doi)
+           .html(front_matter.doi)
+           .appendTo(doi_p);
+      }
+  
+       // change plural form of authors/affiliations
+      if (front_matter.authors.length === 1) {
+        var grid = $('.authors-affiliations');
+        grid.children('h3:contains("Authors")').text('Author');
+        grid.children('h3:contains("Affiliations")').text('Affiliation');
+      }
+  
+      // remove d-appendix and d-footnote-list local styles
+      $('d-appendix > style:first-child').remove();
+      $('d-footnote-list > style:first-child').remove();
+  
+      // move appendix-bottom entries to the bottom
+      $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+      $('.appendix-bottom').remove();
+  
+      // clear polling timer
+      clearInterval(tid);
+  
+      // show body now that everything is ready
+      on_load_complete();
+    }
+  
+    var tid = setInterval(distill_post_process, 50);
+    distill_post_process();
+  
+  }
+  
+  function init_downlevel() {
+  
+    init_common();
+  
+     // insert hr after d-title
+    $('.d-title').after($('<hr class="section-separator"/>'));
+  
+    // check if we have authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+  
+    // manage byline/border
+    if (!have_authors)
+      $('.d-byline').remove();
+    $('.d-byline').after($('<hr class="section-separator"/>'));
+    $('.d-byline a').remove();
+  
+    // remove toc
+    $('.d-contents').remove();
+  
+    // move appendix elements
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+    });
+  
+  
+    // inject headers into references and footnotes
+    var refs_header = $('<h3></h3>');
+    refs_header.text('References');
+    $('#refs').prepend(refs_header);
+  
+    var footnotes_header = $('<h3></h3');
+    footnotes_header.text('Footnotes');
+    $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+  
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+  
+    // remove appendix if it's empty
+    if ($('.d-appendix').children().length === 0)
+      $('.d-appendix').remove();
+  
+    // prepend separator above appendix
+    $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+  
+    // trim code
+    $('pre>code').each(function(i, val) {
+      $(this).html($.trim($(this).html()));
+    });
+  
+    // move posts-container right before article
+    $('.posts-container').insertBefore($('.d-article'));
+  
+    $('body').addClass('downlevel');
+  
+    on_load_complete();
+  }
+  
+  
+  function init_common() {
+  
+    // jquery plugin to change element types
+    (function($) {
+      $.fn.changeElementType = function(newType) {
+        var attrs = {};
+  
+        $.each(this[0].attributes, function(idx, attr) {
+          attrs[attr.nodeName] = attr.nodeValue;
+        });
+  
+        this.replaceWith(function() {
+          return $("<" + newType + "/>", attrs).append($(this).contents());
+        });
+      };
+    })(jQuery);
+  
+    // prevent underline for linked images
+    $('a > img').parent().css({'border-bottom' : 'none'});
+  
+    // mark non-body figures created by knitr chunks as 100% width
+    $('.layout-chunk').each(function(i, val) {
+      var figures = $(this).find('img, .html-widget');
+      if ($(this).attr('data-layout') !== "l-body") {
+        figures.css('width', '100%');
+      } else {
+        figures.css('max-width', '100%');
+        figures.filter("[width]").each(function(i, val) {
+          var fig = $(this);
+          fig.css('width', fig.attr('width') + 'px');
+        });
+  
+      }
+    });
+  
+    // auto-append index.html to post-preview links in file: protocol
+    // and in rstudio ide preview
+    $('.post-preview').each(function(i, val) {
+      if (window.location.protocol === "file:")
+        $(this).attr('href', $(this).attr('href') + "index.html");
+    });
+  
+    // get rid of index.html references in header
+    if (window.location.protocol !== "file:") {
+      $('.distill-site-header a[href]').each(function(i,val) {
+        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+      });
+    }
+  
+    // add class to pandoc style tables
+    $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+    $('.kable-table').children('table').addClass('pandoc-table');
+  
+    // add figcaption style to table captions
+    $('caption').parent('table').addClass("figcaption");
+  
+    // initialize posts list
+    if (window.init_posts_list)
+      window.init_posts_list();
+  
+    // implmement disqus comment link
+    $('.disqus-comment-count').click(function() {
+      window.headroom_prevent_pin = true;
+      $('#disqus_thread').toggleClass('hidden');
+      if (!$('#disqus_thread').hasClass('hidden')) {
+        var offset = $(this).offset();
+        $(window).resize();
+        $('html, body').animate({
+          scrollTop: offset.top - 35
+        });
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    if (is_downlevel_browser())
+      init_downlevel();
+    else
+      window.addEventListener('WebComponentsReady', init_distill);
+  });
+  
+  </script>
+  
+  <!--/radix_placeholder_distill-->
+  <script src="copying-the-good_files/htmlwidgets-1.5.2/htmlwidgets.js"></script>
+  <script src="copying-the-good_files/jquery-3.5.0/jquery.min.js"></script>
+  <script src="copying-the-good_files/proj4js-2.3.15/proj4.js"></script>
+  <link href="copying-the-good_files/highcharts-8.1.2/css/motion.css" rel="stylesheet" />
+  <script src="copying-the-good_files/highcharts-8.1.2/highcharts.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/highcharts-3d.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/highcharts-more.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/stock.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/map.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/annotations.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/data.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/drilldown.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/item-series.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/offline-exporting.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/overlapping-datalabels.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/exporting.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/export-data.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/funnel.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/heatmap.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/treemap.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/sankey.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/dependency-wheel.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/organization.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/solid-gauge.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/streamgraph.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/sunburst.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/vector.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/wordcloud.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/xrange.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/tilemap.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/venn.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/gantt.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/timeline.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/parallel-coordinates.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/bullet.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/coloraxis.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/dumbbell.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/lollipop.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/series-label.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/plugins/motion.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/custom/reset.js"></script>
+  <script src="copying-the-good_files/highcharts-8.1.2/modules/boost.js"></script>
+  <script src="copying-the-good_files/highchart-binding-0.8.2.9000/highchart.js"></script>
+  <script src="copying-the-good_files/anchor-4.2.2/anchor.min.js"></script>
+  <script src="copying-the-good_files/bowser-1.9.3/bowser.min.js"></script>
+  <script src="copying-the-good_files/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="copying-the-good_files/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+  <!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Copying the good","description":"A short description of the post.","authors":[{"author":"Joshua Kunst","authorURL":"http://jkunst.com/","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2020-08-25T00:00:00.000-04:00","citationText":"Kunst, 2020"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Copying the good</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p><p>A short description of the post.</p></p>
+</div>
+
+<div class="d-byline">
+  Joshua Kunst <a href="http://jkunst.com/" class="uri">http://jkunst.com/</a> 
+  
+<br/>08-25-2020
+</div>
+
+<div class="d-article">
+<p><em>Post updated on ene. 14, 2021</em></p>
+<h2 id="introducction">Introducction</h2>
+<p><a href="https://twitter.com/moritz_stefaner/status/1295733715579088896" class="uri">https://twitter.com/moritz_stefaner/status/1295733715579088896</a></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre><code><span class='co'># remotes::install_github("rivaquiroga/guaguas")</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://github.com/hadley/babynames'>babynames</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://jkunst.com/highcharter'>highcharter</a></span><span class='op'>)</span>
+
+<span class='va'>NAMES</span> <span class='op'>&lt;-</span> <span class='st'>"Britney"</span>
+<span class='co'># c("Anna",  "Britney", "Whitney")</span>
+
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'>babynames</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/babynames/man/babynames.html'>babynames</a></span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>name</span> <span class='op'>%in%</span> <span class='va'>NAMES</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>name</span>, x <span class='op'>=</span> <span class='va'>year</span>, y <span class='op'>=</span> <span class='va'>prop</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>name</span>, <span class='va'>x</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>, .groups <span class='op'>=</span> <span class='st'>"drop"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
+
+<span class='va'>data</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 50 x 2
+       x          y
+   &lt;dbl&gt;      &lt;dbl&gt;
+ 1  1968 0.0000076 
+ 2  1969 0.00000397
+ 3  1970 0.00000546
+ 4  1971 0.00000913
+ 5  1972 0.0000149 
+ 6  1973 0.0000212 
+ 7  1974 0.0000217 
+ 8  1975 0.0000237 
+ 9  1976 0.0000401 
+10  1977 0.0000486 
+# ... with 40 more rows</code></pre>
+</div>
+<p>Color is given by the year, not the y value:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre><code><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>data</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    <span class='co'># color = colorize(y, colors = viridisLite::inferno(100, begin = 0.2, end = 0.8)),</span>
+    color <span class='op'>=</span> <span class='fu'><a href='http://jkunst.com/highcharter/reference/colorize.html'>colorize</a></span><span class='op'>(</span><span class='va'>x</span>, colors <span class='op'>=</span> <span class='fu'>viridisLite</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/viridisLite/man/viridis.html'>inferno</a></span><span class='op'>(</span><span class='fl'>100</span>, begin <span class='op'>=</span> <span class='fl'>0.2</span>, end <span class='op'>=</span> <span class='fl'>0.8</span><span class='op'>)</span><span class='op'>)</span>,
+    alpha <span class='op'>=</span> <span class='fu'>scales</span><span class='fu'>::</span><span class='fu'><a href='https://scales.r-lib.org//reference/rescale.html'>rescale</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span>, to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>.75</span><span class='op'>)</span><span class='op'>)</span>,
+    alpha <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='va'>alpha</span>, <span class='fl'>2</span><span class='op'>)</span>,
+    color <span class='op'>=</span> <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_chr</a></span><span class='op'>(</span><span class='va'>color</span>, <span class='va'>alpha</span>, <span class='fu'>shades</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/shades/man/properties.html'>opacity</a></span><span class='op'>)</span>
+  <span class='op'>)</span>
+
+<span class='va'>data</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 50 x 4
+       x          y color     alpha
+   &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+ 1  1968 0.0000076  #420A6812  0.07
+ 2  1969 0.00000397 #470B6A0D  0.05
+ 3  1970 0.00000546 #4C0C6B0F  0.06
+ 4  1971 0.00000913 #510E6C12  0.07
+ 5  1972 0.0000149  #560F6D17  0.09
+ 6  1973 0.0000212  #5B126E1A  0.1 
+ 7  1974 0.0000217  #65156E1C  0.11
+ 8  1975 0.0000237  #65156E1C  0.11
+ 9  1976 0.0000401  #6A176E24  0.14
+10  1977 0.0000486  #6F196E26  0.15
+# ... with 40 more rows</code></pre>
+<div class="sourceCode">
+<pre><code><span class='va'>zns</span> <span class='op'>&lt;-</span> <span class='va'>data</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span>value <span class='op'>=</span> <span class='va'>x</span>, <span class='va'>color</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/distinct.html'>distinct</a></span><span class='op'>(</span><span class='va'>value</span>, .keep_all <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>value <span class='op'>=</span> <span class='va'>value</span> <span class='op'>+</span> <span class='fl'>0.5</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/list_parse.html'>list_parse</a></span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>data</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate_all.html'>mutate_all</a></span><span class='op'>(</span><span class='va'>round</span>, <span class='fl'>5</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-page">
+<div class="sourceCode">
+<pre><code><span class='fu'><a href='http://jkunst.com/highcharter/reference/highchart.html'>highchart</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_add_series.html'>hc_add_series</a></span><span class='op'>(</span>
+    <span class='va'>data</span>,
+    <span class='st'>"areaspline"</span>,
+    <span class='fu'><a href='http://jkunst.com/highcharter/reference/hcaes.html'>hcaes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>,
+    zones <span class='op'>=</span> <span class='va'>zns</span>,
+    enableMouseTracking <span class='op'>=</span> <span class='cn'>FALSE</span>,
+    linkedTo <span class='op'>=</span> <span class='st'>"serie"</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_add_series.html'>hc_add_series</a></span><span class='op'>(</span>
+    <span class='va'>data</span>,
+    <span class='st'>"spline"</span>,
+    <span class='fu'><a href='http://jkunst.com/highcharter/reference/hcaes.html'>hcaes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>,
+    color <span class='op'>=</span> <span class='st'>"white"</span>,
+    lineWidth <span class='op'>=</span> <span class='fl'>8</span>,
+    <span class='fu'><a href='http://jkunst.com/highcharter/reference/hcaes.html'>hcaes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>,
+    enableMouseTracking <span class='op'>=</span> <span class='cn'>FALSE</span>,
+    linkedTo <span class='op'>=</span> <span class='st'>"serie"</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span>
+    <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_add_series.html'>hc_add_series</a></span><span class='op'>(</span>
+    <span class='va'>data</span>,
+    <span class='st'>"spline"</span>,
+    <span class='fu'><a href='http://jkunst.com/highcharter/reference/hcaes.html'>hcaes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>,
+    zones <span class='op'>=</span> <span class='va'>zns</span>,
+    lineWidth <span class='op'>=</span> <span class='fl'>4</span>,
+    id <span class='op'>=</span> <span class='st'>"serie"</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_plotOptions.html'>hc_plotOptions</a></span><span class='op'>(</span>
+    series <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+      showInLegend <span class='op'>=</span> <span class='cn'>FALSE</span>,
+      zoneAxis <span class='op'>=</span> <span class='st'>"x"</span>,
+      marker <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>enabled <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>,
+      hover <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>halo <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_yAxis.html'>hc_yAxis</a></span><span class='op'>(</span>visible <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_xAxis.html'>hc_xAxis</a></span><span class='op'>(</span>
+    lineColor <span class='op'>=</span> <span class='st'>"transparent"</span>,
+    tickLength <span class='op'>=</span> <span class='fl'>0</span>,
+    tickInterval <span class='op'>=</span> <span class='fl'>1</span>,
+    labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+      style <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>color <span class='op'>=</span> <span class='st'>"gray"</span><span class='op'>)</span>,
+      useHTML <span class='op'>=</span> <span class='cn'>TRUE</span>,
+      formatter <span class='op'>=</span> <span class='fu'><a href='http://jkunst.com/highcharter/reference/highcharter-exports.html'>JS</a></span><span class='op'>(</span><span class='st'>"function(){  var v = (this.value % 5 == 0) ? '&lt;span&gt;&amp;#9679&lt;/span&gt;' : '•';  return v; }"</span><span class='op'>)</span>)
+    <span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='http://jkunst.com/highcharter/reference/hc_size.html'>hc_size</a></span><span class='op'>(</span>height <span class='op'>=</span> <span class='fl'>300</span><span class='op'>)</span>
+</code></pre>
+</div>
+<div id="htmlwidget-4b979f982081b29cab2c" style="width:100%;height:300px;" class="highchart html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4b979f982081b29cab2c">{"x":{"hc_opts":{"chart":{"reflow":true,"height":300},"title":{"text":null},"yAxis":{"title":{"text":null},"visible":false},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0,"showInLegend":false,"zoneAxis":"x","marker":{"enabled":false},"hover":{"halo":{"size":0}}},"treemap":{"layoutAlgorithm":"squarified"}},"series":[{"group":"group","data":[{"x":1968,"y":1e-005},{"x":1969,"y":0},{"x":1970,"y":1e-005},{"x":1971,"y":1e-005},{"x":1972,"y":1e-005},{"x":1973,"y":2e-005},{"x":1974,"y":2e-005},{"x":1975,"y":2e-005},{"x":1976,"y":4e-005},{"x":1977,"y":5e-005},{"x":1978,"y":5e-005},{"x":1979,"y":8e-005},{"x":1980,"y":0.0001},{"x":1981,"y":0.00012},{"x":1982,"y":0.00015},{"x":1983,"y":0.0002},{"x":1984,"y":0.00026},{"x":1985,"y":0.00051},{"x":1986,"y":0.00077},{"x":1987,"y":0.00085},{"x":1988,"y":0.00109},{"x":1989,"y":0.00126},{"x":1990,"y":0.00112},{"x":1991,"y":0.00088},{"x":1992,"y":0.00078},{"x":1993,"y":0.0006},{"x":1994,"y":0.00055},{"x":1995,"y":0.00041},{"x":1996,"y":0.00036},{"x":1997,"y":0.00033},{"x":1998,"y":0.00029},{"x":1999,"y":0.00077},{"x":2000,"y":0.0012},{"x":2001,"y":0.00083},{"x":2002,"y":0.00068},{"x":2003,"y":0.00048},{"x":2004,"y":0.00045},{"x":2005,"y":0.00035},{"x":2006,"y":0.00032},{"x":2007,"y":0.00025},{"x":2008,"y":0.00021},{"x":2009,"y":0.00019},{"x":2010,"y":0.00015},{"x":2011,"y":0.00015},{"x":2012,"y":0.00015},{"x":2013,"y":0.00016},{"x":2014,"y":0.00011},{"x":2015,"y":0.0001},{"x":2016,"y":8e-005},{"x":2017,"y":7e-005}],"type":"areaspline","zones":[{"value":1968.5,"color":"#420A6812"},{"value":1969.5,"color":"#470B6A0D"},{"value":1970.5,"color":"#4C0C6B0F"},{"value":1971.5,"color":"#510E6C12"},{"value":1972.5,"color":"#560F6D17"},{"value":1973.5,"color":"#5B126E1A"},{"value":1974.5,"color":"#65156E1C"},{"value":1975.5,"color":"#65156E1C"},{"value":1976.5,"color":"#6A176E24"},{"value":1977.5,"color":"#6F196E26"},{"value":1978.5,"color":"#741A6E26"},{"value":1979.5,"color":"#781C6D33"},{"value":1980.5,"color":"#7D1E6C38"},{"value":1981.5,"color":"#87216A3D"},{"value":1982.5,"color":"#87216A45"},{"value":1983.5,"color":"#8C23694D"},{"value":1984.5,"color":"#91256759"},{"value":1985.5,"color":"#9627667A"},{"value":1986.5,"color":"#9B296496"},{"value":1987.5,"color":"#A02A629E"},{"value":1988.5,"color":"#A52C60B3"},{"value":1989.5,"color":"#AA2E5EBF"},{"value":1990.5,"color":"#AF305BB5"},{"value":1991.5,"color":"#B33259A1"},{"value":1992.5,"color":"#B8355696"},{"value":1993.5,"color":"#BD385285"},{"value":1994.5,"color":"#C13A4F80"},{"value":1995.5,"color":"#CA40496E"},{"value":1996.5,"color":"#CA404969"},{"value":1997.5,"color":"#CE434661"},{"value":1998.5,"color":"#D246435E"},{"value":1999.5,"color":"#D64A3F96"},{"value":2000.5,"color":"#D94E3CBA"},{"value":2001.5,"color":"#DE51379C"},{"value":2002.5,"color":"#E155348C"},{"value":2003.5,"color":"#E45A3078"},{"value":2004.5,"color":"#E75F2D73"},{"value":2005.5,"color":"#EA632966"},{"value":2006.5,"color":"#EC682561"},{"value":2007.5,"color":"#EF6D2157"},{"value":2008.5,"color":"#F1721D4F"},{"value":2009.5,"color":"#F377194D"},{"value":2010.5,"color":"#F57C1542"},{"value":2011.5,"color":"#F6821142"},{"value":2012.5,"color":"#F8870D42"},{"value":2013.5,"color":"#F98C0945"},{"value":2014.5,"color":"#FA92073B"},{"value":2015.5,"color":"#FB980636"},{"value":2016.5,"color":"#FB9E0633"},{"value":2017.5,"color":"#FCA50A30"}],"enableMouseTracking":false,"linkedTo":"serie"},{"group":"group","data":[{"x":1968,"y":1e-005},{"x":1969,"y":0},{"x":1970,"y":1e-005},{"x":1971,"y":1e-005},{"x":1972,"y":1e-005},{"x":1973,"y":2e-005},{"x":1974,"y":2e-005},{"x":1975,"y":2e-005},{"x":1976,"y":4e-005},{"x":1977,"y":5e-005},{"x":1978,"y":5e-005},{"x":1979,"y":8e-005},{"x":1980,"y":0.0001},{"x":1981,"y":0.00012},{"x":1982,"y":0.00015},{"x":1983,"y":0.0002},{"x":1984,"y":0.00026},{"x":1985,"y":0.00051},{"x":1986,"y":0.00077},{"x":1987,"y":0.00085},{"x":1988,"y":0.00109},{"x":1989,"y":0.00126},{"x":1990,"y":0.00112},{"x":1991,"y":0.00088},{"x":1992,"y":0.00078},{"x":1993,"y":0.0006},{"x":1994,"y":0.00055},{"x":1995,"y":0.00041},{"x":1996,"y":0.00036},{"x":1997,"y":0.00033},{"x":1998,"y":0.00029},{"x":1999,"y":0.00077},{"x":2000,"y":0.0012},{"x":2001,"y":0.00083},{"x":2002,"y":0.00068},{"x":2003,"y":0.00048},{"x":2004,"y":0.00045},{"x":2005,"y":0.00035},{"x":2006,"y":0.00032},{"x":2007,"y":0.00025},{"x":2008,"y":0.00021},{"x":2009,"y":0.00019},{"x":2010,"y":0.00015},{"x":2011,"y":0.00015},{"x":2012,"y":0.00015},{"x":2013,"y":0.00016},{"x":2014,"y":0.00011},{"x":2015,"y":0.0001},{"x":2016,"y":8e-005},{"x":2017,"y":7e-005}],"type":"spline","color":"white","lineWidth":8,"enableMouseTracking":false,"linkedTo":"serie"},{"group":"group","data":[{"x":1968,"y":1e-005},{"x":1969,"y":0},{"x":1970,"y":1e-005},{"x":1971,"y":1e-005},{"x":1972,"y":1e-005},{"x":1973,"y":2e-005},{"x":1974,"y":2e-005},{"x":1975,"y":2e-005},{"x":1976,"y":4e-005},{"x":1977,"y":5e-005},{"x":1978,"y":5e-005},{"x":1979,"y":8e-005},{"x":1980,"y":0.0001},{"x":1981,"y":0.00012},{"x":1982,"y":0.00015},{"x":1983,"y":0.0002},{"x":1984,"y":0.00026},{"x":1985,"y":0.00051},{"x":1986,"y":0.00077},{"x":1987,"y":0.00085},{"x":1988,"y":0.00109},{"x":1989,"y":0.00126},{"x":1990,"y":0.00112},{"x":1991,"y":0.00088},{"x":1992,"y":0.00078},{"x":1993,"y":0.0006},{"x":1994,"y":0.00055},{"x":1995,"y":0.00041},{"x":1996,"y":0.00036},{"x":1997,"y":0.00033},{"x":1998,"y":0.00029},{"x":1999,"y":0.00077},{"x":2000,"y":0.0012},{"x":2001,"y":0.00083},{"x":2002,"y":0.00068},{"x":2003,"y":0.00048},{"x":2004,"y":0.00045},{"x":2005,"y":0.00035},{"x":2006,"y":0.00032},{"x":2007,"y":0.00025},{"x":2008,"y":0.00021},{"x":2009,"y":0.00019},{"x":2010,"y":0.00015},{"x":2011,"y":0.00015},{"x":2012,"y":0.00015},{"x":2013,"y":0.00016},{"x":2014,"y":0.00011},{"x":2015,"y":0.0001},{"x":2016,"y":8e-005},{"x":2017,"y":7e-005}],"type":"spline","zones":[{"value":1968.5,"color":"#420A6812"},{"value":1969.5,"color":"#470B6A0D"},{"value":1970.5,"color":"#4C0C6B0F"},{"value":1971.5,"color":"#510E6C12"},{"value":1972.5,"color":"#560F6D17"},{"value":1973.5,"color":"#5B126E1A"},{"value":1974.5,"color":"#65156E1C"},{"value":1975.5,"color":"#65156E1C"},{"value":1976.5,"color":"#6A176E24"},{"value":1977.5,"color":"#6F196E26"},{"value":1978.5,"color":"#741A6E26"},{"value":1979.5,"color":"#781C6D33"},{"value":1980.5,"color":"#7D1E6C38"},{"value":1981.5,"color":"#87216A3D"},{"value":1982.5,"color":"#87216A45"},{"value":1983.5,"color":"#8C23694D"},{"value":1984.5,"color":"#91256759"},{"value":1985.5,"color":"#9627667A"},{"value":1986.5,"color":"#9B296496"},{"value":1987.5,"color":"#A02A629E"},{"value":1988.5,"color":"#A52C60B3"},{"value":1989.5,"color":"#AA2E5EBF"},{"value":1990.5,"color":"#AF305BB5"},{"value":1991.5,"color":"#B33259A1"},{"value":1992.5,"color":"#B8355696"},{"value":1993.5,"color":"#BD385285"},{"value":1994.5,"color":"#C13A4F80"},{"value":1995.5,"color":"#CA40496E"},{"value":1996.5,"color":"#CA404969"},{"value":1997.5,"color":"#CE434661"},{"value":1998.5,"color":"#D246435E"},{"value":1999.5,"color":"#D64A3F96"},{"value":2000.5,"color":"#D94E3CBA"},{"value":2001.5,"color":"#DE51379C"},{"value":2002.5,"color":"#E155348C"},{"value":2003.5,"color":"#E45A3078"},{"value":2004.5,"color":"#E75F2D73"},{"value":2005.5,"color":"#EA632966"},{"value":2006.5,"color":"#EC682561"},{"value":2007.5,"color":"#EF6D2157"},{"value":2008.5,"color":"#F1721D4F"},{"value":2009.5,"color":"#F377194D"},{"value":2010.5,"color":"#F57C1542"},{"value":2011.5,"color":"#F6821142"},{"value":2012.5,"color":"#F8870D42"},{"value":2013.5,"color":"#F98C0945"},{"value":2014.5,"color":"#FA92073B"},{"value":2015.5,"color":"#FB980636"},{"value":2016.5,"color":"#FB9E0633"},{"value":2017.5,"color":"#FCA50A30"}],"lineWidth":4,"id":"serie"}],"xAxis":{"lineColor":"transparent","tickLength":0,"tickInterval":1,"labels":{"style":{"color":"gray"},"useHTML":true,"formatter":"function(){  var v = (this.value % 5 == 0) ? '<span>&#9679<\/span>' : '•';  return v; }"}}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":["hc_opts.xAxis.labels.formatter"],"jsHooks":[]}</script>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>
