@@ -32,7 +32,7 @@ library(babynames)
 library(dplyr)
 library(highcharter)
 
-NAMES <- "Ariel"
+NAMES <- "Whitney"
 # c("Anna",  "Britney", "Whitney")
 
 data <- babynames::babynames %>% 
@@ -45,14 +45,18 @@ data <- babynames::babynames %>%
 data
 ```
 
-Color is given by the year -not the y value- so:
+Color is given by the year -not the y value- so we'll create a function
+to map colors from year values.
 
 ```{r}
+pal <- col_numeric(viridisLite::inferno(100, begin = 0.2, end = 0.8), domain = NULL)
+
+scales::show_col(pal(1:10))
+
 data <- data %>% 
   mutate(
-    # color = colorize(y, colors = viridisLite::inferno(100, begin = 0.2, end = 0.8)),
-    color = colorize(x, colors = viridisLite::inferno(100, begin = 0.2, end = 0.8)),
-    alpha = scales::rescale(sqrt(y), to = c(0.05, .75)),
+    color = pal(x),
+    alpha = scales::rescale(sqrt(y), to = c(0.10, .75)),
     alpha = round(alpha, 2),
     color = purrr::map2_chr(color, alpha, shades::opacity)
   )
@@ -61,13 +65,15 @@ data
 
 zns <- data %>% 
   select(value = x, color) %>% 
+  # this will be needed when we have more years (more names)
   distinct(value, .keep_all = TRUE) %>% 
-  mutate(value = value + 0.5) %>% 
   list_parse()
 
 data <- data %>% 
   select(x, y) %>% 
   mutate_all(round, 5)
+
+data
 ```
 
 
@@ -103,7 +109,8 @@ highchart() %>%
     hcaes(x, y),
     zones = zns,
     lineWidth = 4,
-    id = "serie"
+    id = "serie",
+    name = NAMES
   ) %>%
   hc_plotOptions(
     series = list(

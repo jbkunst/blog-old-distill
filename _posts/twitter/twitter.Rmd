@@ -1,0 +1,240 @@
+---
+title: "twitter"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 02-05-2021
+output:
+  distill::distill_article:
+    self_contained: true
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Distill is a publication format for scientific and technical writing, native to the web.
+
+Learn more about using Distill at <https://rstudio.github.io/distill>.
+
+
+
+```{r}
+library(tidyverse)
+library(rtweet)
+library(lubridate)
+library(highcharter)
+```
+
+
+```{r, echo=FALSE}
+# I know this is unsercure but hey, what's the worst that can happen?
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "JXG4ZCzx4oDpbSGh6bU1OwZFa",
+  consumer_secret = "JpOOkA44d9EHd2gvznG0yxSywR4yzQzbsxKlIDe2soS8Kd8KwU",
+  access_token = "7220752-P9Qvy2u2pqY2NAsmVs3j8AebkuL0zuN2zvBlc5BAcz",
+  access_secret = "zhzaTJqQBYGORWEcysi3oojbp4WkYH9TupJrNPUBQ4S3l"
+)
+```
+For download tweets I followed the instructions from https://cran.r-project.org/web/packages/rtweet/vignettes/auth.html
+
+```{r, eval=FALSE}
+token <- create_token(
+  app = "jbktests",
+  consumer_key = "consumerkey",
+  consumer_secret = "consumer_secret",
+  access_token = "accesstokena98ds087",
+  access_secret = "accesssecreta98ds087"
+)
+```
+
+After get the tweets we filter the data and make some transformations. Then
+we'll get the top tweets in terms of the favorite count to make the annotations
+in our chart.
+
+
+```{r}
+# in interactive mode you can avoid/remove the token argument
+tweets_rstats_path <- here::here("data/rstats-tweets/tweets_rstats.rds")
+
+if(!file.exists(tweets_rstats_path)) {
+  
+  tweets_rstats <- rtweet::search_tweets(
+    q = "#rstats -#javascript -#python -#bigdata -#rbloggers -#datascience",
+    n = 18000, 
+    retryonratelimit = TRUE,
+    include_rts = FALSE
+    )
+  
+  saveRDS(tweets_rstats, tweets_rstats_path)
+  
+} else {
+  
+   tweets_rstats <- readRDS(tweets_rstats_path)
+   
+}
+
+tweets_rstats
+```
+
+
+Order the user using favorite_count
+
+```{r}
+users <- tweets_rstats %>% 
+  group_by(user = screen_name, user_id) %>% 
+  summarise(
+    favorite_count = sum(favorite_count),
+    retweet_count = sum(retweet_count),
+    .groups = "drop"
+  ) %>% 
+  arrange(desc(favorite_count), desc(retweet_count)) %>% 
+  mutate(rank = row_number()) %>% 
+  select(rank, everything())
+
+users
+```
+
+
+```{r}
+progress_sleep <- function(time, ...) {
+  
+  time <- round(time) + 1
+  
+  pb <-  progress::progress_bar$new(total = time, ...)
+  # format = "  waiting [:bar] :percent eta: :eta"
+  
+  for (i in 1:time) {
+    pb$tick()
+    Sys.sleep(1)
+  }
+  
+}
+
+get_friends_rl <- function(name = "CNN"){
+  
+  message(name)
+  
+  rl <- rtweet::rate_limit(query = "get_friends", token = token)
+  
+  if(rl$remaining == 0) {
+    
+    stringr::str_glue(
+      "Waiting until { reset_at } (~{mins} mins)",
+      reset_at = rl$reset_at,
+      mins     = round(as.numeric(rl$reset, units = "mins") + 5/60, 2)
+      ) %>% 
+      message()
+    
+    as.numeric(rl$reset, units = "secs") %>% 
+      ceiling() %>% 
+      magrittr::add(5) %>% 
+      progress_sleep(format = "[:bar] :percent eta: :eta")
+    }
+  
+  rtweet::get_friends(users = name, retryonratelimit = TRUE, token = token)
+
+}
+
+get_friends_rl("jbkunst")
+get_friends_rl("juliasilge")
+
+```
+
+
+```{r}
+TOP <- nrow(users)
+
+users_friends_path <- here::here("data/rstats-tweets/tweets_users_friends.rds")
+
+if(!file.exists(users_friends_path)) {
+  
+  users_friends <- users %>% 
+    slice_head(n = TOP) %>% 
+    pull(user) %>% 
+    map_df(get_friends_rl)
+
+  saveRDS(users_friends, users_friends_path)
+  
+} else {
+  
+   users_friends <- readRDS(users_friends_path)
+   
+}
+
+users_friends
+users_friends %>% count(user)
+users_friends %>% count(user_id)
+
+users
+```
+
+
+```{r}
+users2 <- users_friends %>% 
+  count(user_id, sort = TRUE) 
+
+users2
+
+users2 <- users2 %>% 
+  anti_join(users %>% slice_head(n = TOP), by = c("user_id")) %>% 
+  slice_head(n = TOP) 
+
+users2 <- users2 %>% 
+  pull(user_id) %>% 
+  rtweet::lookup_users() %>% 
+  select(user_id, user = screen_name) %>% 
+  left_join(users2, by = "user_id")
+
+
+
+inner_join(users, users2)
+
+bind_rows(users, users2) %>% 
+  filter(str_detect(user, "had"))
+```
+
+
+```{r}
+users_friends2_path <- here::here("data/rstats-tweets/tweets_users_friends2.rds")
+
+if(!file.exists(users_friends2_path)) {
+  
+  users_friends2 <- users2 %>% 
+    slice_head(n = TOP) %>% 
+    pull(user) %>% 
+    map_df(get_friends_rl)
+
+  saveRDS(users_friends2, users_friends2_path)
+  
+} else {
+  
+   users_friends2 <- readRDS(users_friends2_path)
+   
+}
+
+users_friends2
+```
+
+```{r}
+users_friends  %>% count(user)
+users_friends2 %>% count(user)
+
+users_friends  %>% count(user_id)
+users_friends2 %>% count(user_id)
+
+bind_rows(users_friends, users_friends2) %>% 
+  distinct(user) %>% 
+  filter(str_detect(user, ""))
+
+```
+
+
+

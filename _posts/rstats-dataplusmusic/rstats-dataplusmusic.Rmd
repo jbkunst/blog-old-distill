@@ -1,0 +1,616 @@
+---
+title: "#rstats & #DataPlusMusic"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 01-18-2021
+output:
+  distill::distill_article:
+    self_contained: true
+draft: true
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Getting the raw data
+
+Fist, test the API:
+
+```{r}
+library(tidyverse)
+library(httr)
+
+# https://public.tableau.com/es-es/s/blog/2019/07/visualize-your-listening-habits-lastfm-and-spotify-data
+```
+
+```{r, eval=FALSE}
+API_KEY	<- "your_api_key_from_https://www.last.fm/api"
+USER    <- "jbkunst"
+```
+
+```{r, echo=FALSE}
+API_KEY	<- "a233e0cd55ac3ec2dc558221bde3794d"
+USER    <- "jbkunst"
+```
+
+
+```{r}
+audioscrobbler <- handle("http://ws.audioscrobbler.com/")
+
+req <- GET(
+  handle = audioscrobbler, 
+  path = "2.0",
+  query = list(
+    api_key = API_KEY,
+    user = USER,
+    method = "user.getrecenttracks",
+    format = "json",
+    limit = 200
+  )
+)
+
+req <- content(req, "parsed")
+
+info <- req$recenttracks$`@attr`
+
+info
+
+glimpse(req$recenttracks$track[[1]])
+
+```
+
+
+Everything looks good.
+
+
+```{r}
+music_last_fm_path <- here::here("data/music/music_last_fm.rds")
+
+if(!file.exists(music_last_fm_path)) {
+  
+  library(progress)
+
+  pb <- progress_bar$new(total = info$totalPages)
+
+  data <- 1:info$totalPages %>% 
+    map_df(function(page){
+      
+      pb$tick()
+      
+      req <- GET(
+        handle = audioscrobbler, 
+        path = "2.0",
+        query = list(
+          api_key = API_KEY,
+          method = "user.getrecenttracks",
+          user = "jbkunst",
+          format = "json",
+          limit = 200,
+          page = page
+          )
+        )
+      
+      content <- content(req, "parsed") 
+      
+      content$recenttracks$track %>% 
+        map_df(function(x){
+          tibble(
+            song_name = x$name,
+            song_mbid = x$mbid,
+            # date_uts = x$date$uts,
+            date = if_else(is.null(x$date$`#text`), "", x$date$`#text`),
+            artist_mbid = x$artist$mbid,
+            artist_name = x$artist$`#text`,
+            album_mbid = x$album$mbid,
+            album_name = x$album$`#text`
+            )
+          })
+      })
+  
+  saveRDS(data, music_last_fm_path)
+  
+} else {
+  
+  data <- readRDS(music_last_fm_path)
+  
+}
+
+glimpse(data)
+```
+
+## Cleaning and completing the data
+
+```{r}
+data <- data %>% 
+  separate(date, c("date", "time"), ", ")
+
+data <- data %>% 
+  mutate(
+    date = lubridate::dmy(date),
+    time = lubridate::hm(time),
+    date_week  = lubridate::round_date(date, "week"),
+    date_month = lubridate::round_date(date, "month"),
+    date_quarter  = lubridate::round_date(date, "quarter"),
+    date_year  = lubridate::round_date(date, "year"),
+  )
+
+data %>% 
+  arrange(date, time)
+
+data %>% 
+  arrange(desc(date), time)
+
+glimpse(data)
+```
+
+
+
+I noticed the `mbid` is not always given  by Last.fm:
+
+```{r}
+data %>% 
+  count(artist_name, artist_mbid, sort = TRUE) %>% 
+  filter(artist_mbid == "") 
+
+data %>%
+  count(artist_name, artist_mbid, sort = TRUE) %>% 
+  filter(artist_mbid == "") %>% 
+  filter(str_detect(artist_name, "Joe Hisa"))
+
+```
+
+So we'll use the `{musicbrainz}` package to get the correct id.
+
+```{r}
+# devtools::install_github("dmi3kno/musicbrainz")
+library(musicbrainz)
+
+musicbrainz::search_artists("Joe Hisaishi") %>% 
+  glimpse()
+
+musicbrainz::search_artists("Joe Hisashi") %>% 
+  glimpse()
+
+data %>% 
+  filter(artist_name == "Joe Hisashi") %>% 
+  distinct(song_name)
+```
+
+```{r}
+music_artist_mbid_path <- here::here("data/music/music_artist_mbid.rds")
+music_genres_path      <- here::here("data/music/music_genres.rds")
+
+if(!file.exists(music_artist_mbid_path)) {
+  
+  artists <- data %>% 
+    count(artist_name, artist_mbid, sort = TRUE) %>% 
+    # filter(artist_mbid == "")  %>% 
+    pull(artist_name)
+  
+  library(progress)
+  
+  pb <- progress_bar$new(total = length(artists))
+  
+  artists_mbid_genres <- artists %>% 
+    map(function(artist = "Santana"){
+      
+      message(artist)
+      
+      pb$tick()
+      
+      d <- musicbrainz::search_artists(artist, strict = TRUE) %>% 
+        rename(artist_mbid = mbid) %>% 
+        mutate(artist_name = artist) %>% 
+        head(1)
+      
+      if(nrow(d) == 0) return(list(tibble(), tibble()))
+      
+      url <- str_glue(
+        "http://musicbrainz.org/ws/2/artist/?query=mbid:{ mbid }&fmt=json", 
+        mbid = d$artist_mbid
+        )
+      
+      req <- GET(url)
+      
+      content <- content(req, "parsed")
+      
+      if(is.null(content$artists[[1]]$tags)) {
+        
+        d2 <- tibble()
+        
+      } else {
+        
+        d2 <- content$artists[[1]]$tags %>% 
+          map_df(as_tibble) %>% 
+          mutate(artist_mbid = d$artist_mbid) %>% 
+          arrange(desc(count))
+        
+      }
+      
+      Sys.sleep(1)
+      
+      list(d, d2)
+      
+    })
+  
+  artist_genres <- artists_mbid_genres %>% 
+    map(nth, 2) %>% 
+    bind_rows()
+  
+  artists_mbid <- artists_mbid_genres %>% 
+    map(nth, 1) %>% 
+    map(mutate_if, is.logical, as.character) %>% 
+    bind_rows()
+
+  saveRDS(artists_mbid, music_artist_mbid_path)
+  saveRDS(artist_genres, music_genres_path)
+  
+} else {
+  
+  artists_mbid  <- readRDS(music_artist_mbid_path)
+  artist_genres <- readRDS(music_genres_path)
+  
+}
+
+glimpse(artists_mbid)
+glimpse(artist_genres)
+```
+
+
+```{r}
+data <- left_join(
+  data %>% select(-artist_mbid), 
+  artists_mbid %>% select(artist_mbid, artist_name),
+  by = "artist_name"
+  ) 
+
+data %>% 
+  count(artist_name, artist_mbid, sort = TRUE) %>% 
+  filter(is.na(artist_mbid))
+
+data %>% 
+  count(artist_name, artist_mbid, sort = TRUE) %>% 
+  filter(is.na(artist_mbid)) %>% 
+  summarise(sum(n))
+
+glimpse(data)  
+```
+
+Put the main genre.
+
+```{r}
+artist_genres_main <- artist_genres %>% 
+  group_by(artist_mbid) %>% 
+  filter(row_number() == 1) %>% 
+  ungroup() %>% 
+  select(artist_mbid, genre = name)
+
+data <- data %>% 
+  left_join(artist_genres_main, by = "artist_mbid")
+
+data %>% 
+  count(genre, sort = TRUE) %>% 
+  mutate(p = n/sum(n))
+
+data %>% 
+  count(artist_name, artist_mbid, genre, sort = TRUE) %>% 
+  filter(is.na(genre))
+```
+
+
+```{r}
+music_genres_lastfm_path <- here::here("data/music/music_genres_lastfm.rds")
+
+if(!file.exists(music_genres_lastfm_path)) {
+  
+  artists_mbid <- data %>% 
+    count(artist_name, artist_mbid, genre, sort = TRUE) %>% 
+    filter(is.na(genre)) %>% 
+    pull(artist_mbid) 
+  
+  library(furrr)
+  
+  plan(multisession(workers = 10))
+
+  artist_genres_lastfm <- artists_mbid %>% 
+    furrr::future_map(function(mbid = "4855207b-0853-4ed3-b835-2b6726bd1ef8"){
+      
+      req <- GET(
+        handle =  handle("http://ws.audioscrobbler.com/"),
+        path = "2.0",
+        query = list(
+          api_key = API_KEY,
+          user = USER,
+          method = "artist.getInfo",
+          mbid = mbid,
+          format = "json"
+          )
+        )
+      
+      content <- content(req, "parsed")
+      
+      content$artist$tags$tag %>%
+        map_chr(pluck, "name") %>%
+        tibble(artist_mbid = mbid, genre = .)
+      
+      }, .progress = TRUE)
+  
+  artist_genres_lastfm <- bind_rows(artist_genres_lastfm) 
+  
+  saveRDS(artist_genres_lastfm, music_genres_lastfm_path)
+
+} else {
+  
+  artist_genres_lastfm <- readRDS(music_genres_lastfm_path)
+  
+}
+
+glimpse(artist_genres_lastfm)
+```
+
+
+```{r}
+inner_join(artist_genres, artist_genres_lastfm)
+
+artist_genres_main_1 <- artist_genres %>% 
+  group_by(artist_mbid) %>% 
+  filter(row_number() == 1) %>% 
+  ungroup() %>% 
+  select(artist_mbid, genre = name)
+
+artist_genres_main_2 <- artist_genres_lastfm %>% 
+  group_by(artist_mbid) %>% 
+  filter(row_number() == 1) %>% 
+  ungroup() %>% 
+  select(artist_mbid, genre)
+
+artist_genres_main <- bind_rows(artist_genres_main_1, artist_genres_main_2)
+
+data <- data %>% 
+  select(-genre) %>% 
+  left_join(artist_genres_main, by = "artist_mbid")
+
+data <- data %>% 
+  mutate(genre = str_to_title(genre))
+
+data %>% 
+  count(genre, sort = TRUE) %>% 
+  mutate(p = n/sum(n))
+
+data %>% 
+  count(artist_name, artist_mbid, genre, sort = TRUE) %>% 
+  filter(is.na(genre))
+
+data <- data %>% 
+  mutate(
+    genre = case_when(
+      artist_name %in% c("Joe Hisashi", "Justin Hurwitz",
+                         "Ricardo Silva")                 ~ "Soundtrack",
+      artist_name %in% c("Tom Jobim")                     ~ "Bossa Nova",
+      artist_name %in% c("Lee Fields & The Expressions")  ~ "Soul",
+      artist_name %in% c("Chet Faker")                    ~ "Trip-Hop",
+      TRUE                                                ~ genre
+    )
+  )
+
+data %>% 
+  count(artist_name, artist_mbid, genre, sort = TRUE) %>% 
+  filter(is.na(genre)) %>% 
+  summarise(sum(n))
+
+data <- data %>% 
+  mutate(
+    genre = str_replace_all(genre, "Hip Hop", "Hip-hop" )
+  )
+
+
+main_genres <- c(
+  "Indie",
+  "Metal",
+  "Electro",
+  "Soul",
+  "Soundtrack",
+  "Alternative",
+  "New Wave",
+  "House",
+  "Synth",
+  "Acoustic",
+  "Disco",
+  "R&B",
+  "Funk",
+  "Dance",
+  "Bossa Nova",
+  "Latin",
+  "Guitar",
+
+  "Blues",
+  "Classical",
+  "Country",
+  "Electronic",
+  "Folk",
+  "Hip-hop",
+  "Jazz",
+  "New age",
+  "Reggae",
+  "Rock",
+  
+  "Pop"
+  )
+
+data <- mutate(data, genre_fundamental = NA)
+
+walk(main_genres, function(g = "Blues"){
+  
+  message(g)
+  
+  data <<- data %>%
+    mutate(
+      genre_fundamental = ifelse(
+        str_detect(
+          str_to_lower(genre),
+          str_to_lower(g)
+          ),
+        g,
+        genre_fundamental
+        )
+      )
+  
+})
+
+data %>% 
+  count(genre_fundamental, sort = TRUE) %>% 
+  mutate(p = n/sum(n))
+
+data %>% 
+  count(genre_fundamental, genre, sort = TRUE) %>% 
+  filter(is.na(genre_fundamental)) %>% 
+  mutate(p = n/sum(n))
+```
+
+```{r}
+data <- data %>% 
+  filter(!is.na(date))
+```
+
+
+## Explore the data!
+
+```{r}
+library(highcharter)
+
+glimpse(data)
+```
+
+```{r}
+scrobblings <- data %>% 
+  mutate(hour = lubridate::hour(time)) %>% 
+  mutate(date = date_year) %>% 
+  # mutate(date = lubridate::ceiling_date(date, "month")) %>% 
+  select(date, hour) %>% 
+  count(date, hour) 
+
+scrobblings
+
+hc1 <- hchart(
+  scrobblings,
+  "heatmap",
+  hcaes(datetime_to_timestamp(date), hour, value = n),
+  colsize =  36e5 * 24 * 365  # 1 hour * 24 = 1 day
+  ) 
+
+hc1
+
+hc1 %>%
+  # hc_title(text = "Temperaturas del aeropuerto Knock") %>%
+  # hc_subtitle(text = "Datos obtenidos del paquete {aimsir17}.") %>%
+  hc_plotOptions(
+    series = list(
+      # pointStart = Date.UTC(2015, 0, 1),
+      pointIntervalUnit = 'month'
+      )
+    ) %>% 
+  hc_chart(zoomType = "x") %>%
+  hc_xAxis(
+    type = "datetime",
+    title = list(text = FALSE),
+    showLastLabel = FALSE
+  ) %>%
+  hc_yAxis(
+    minPadding = 0,
+    maxPadding = 0,
+    startOnTick = FALSE,
+    endOnTick = FALSE,
+    tickPositions = list(0, 6, 12, 18, 24),
+    tickWidth = 1,
+    min = 0,
+    max = 23,
+    reversed = TRUE,
+    labels = list(format = "{value}:00"),
+    title = list(text = FALSE)
+  ) %>%
+  hc_tooltip(
+    headerFormat = "Temperatura<br/>",
+    pointFormat =  "{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} </b>") %>%
+  hc_colorAxis(
+    stops = color_stops(10, colors = scales::viridis_pal(option = "B", direction = -1, end = 0.8)(10))
+    # fuerza a utilzar mejor el espectro de colores para que HJS no amplie el
+    # eje para tener numero "redondos
+    # startOnTick = FALSE,
+    # endOnTick =  FALSE
+  ) %>%
+  hc_legend(
+    align = "right",
+    layout = "vertical",
+    verticalAlign = "top"
+  )
+```
+
+```{r}
+scrobblings <- data %>% 
+  mutate(
+    genre_fundamental = fct_explicit_na(genre_fundamental),
+    genre_fundamental = fct_lump_n(genre_fundamental, n = 7),
+    genre_fundamental = fct_infreq(genre_fundamental),
+    genre_fundamental = fct_relevel(genre_fundamental, "Other", after = Inf),
+    genre_fundamental = fct_relevel(genre_fundamental, "(Missing)", after = Inf)
+    ) %>% 
+  mutate(date = date_month) %>% 
+  select(genre_fundamental, date) %>% 
+  count(genre_fundamental, date)
+  
+scrobblings <- scrobblings %>% 
+  complete(genre_fundamental, date, fill = list(n = 0)) %>% 
+  arrange(date, genre_fundamental)
+
+scrobblings %>% 
+  spread(genre_fundamental, n)
+
+hc2 <- hchart(
+  scrobblings, 
+  "streamgraph",
+  hcaes(date, n, group = genre_fundamental)
+  )
+
+hc2
+
+ng <- nrow(distinct(scrobblings, genre_fundamental))
+
+colors_genre <- viridis::viridis_pal(option = "B", end = 0.8, direction = -1)(ng)
+
+hc2 %>%
+  hc_yAxis(visible = FALSE) %>% # no tiene mucho sentido el
+  hc_colors(colors_genre) %>%
+  hc_tooltip(table = TRUE, sort = TRUE) %>% 
+  #  hc_xAxis(
+  #   plotLines = list_parse(data_plotLine)
+  # ) %>% 
+  hc_title(
+    text = "Cantidad de películas por Género"
+  ) %>% 
+  hc_caption(
+    text = "Datos provenientes de <b>IMDB</b> a través del paquete ggplot2movies.<br>
+    La Mayoria de eventos fueron obtenidos a partir de lectura flash en <b>Wikipedia</b>."
+  ) %>% 
+  # https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/verticalalign/
+  hc_chart(
+    marginRight = 120
+  ) %>% 
+  hc_legend(
+    align = "right",
+    verticalAlign = "top",
+    layout = "vertical",
+    itemMarginBottom = 10,
+    x = 0,
+    y = 150
+  )
+```
+
+
