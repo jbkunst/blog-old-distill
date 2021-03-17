@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Time ago we make some _really nice but complex_ tooltips showing charts from
 the selected points using `{highcharter}` package (and highcharts)
-in the [using tooltips in unexpected ways](/../2019-02-04-using-tooltips-in-unexpected-ways/) 
+in the [using tooltips in unexpected ways](../2019-02-04-using-tooltips-in-unexpected-ways/) 
 post. But sometimes we need less: a tiny toolip, maybe for have few available space,
 or maybe requirements.
 
