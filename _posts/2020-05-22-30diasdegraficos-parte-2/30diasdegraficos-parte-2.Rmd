@@ -474,7 +474,7 @@ hc14 %>%
   hc_size(height = 800)
 ```
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, eval=FALSE}
 hc14 %>% 
   htmlwidgets::saveWidget(
     file = here::here("docs/htmlwidgets/treemap-pkmn.html"), 
@@ -880,7 +880,7 @@ hc18 %>%
   hc_size(height = 800)
 ```
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, eval=FALSE}
 hc18 %>% 
   htmlwidgets::saveWidget(
     file = here::here("docs/htmlwidgets/covid-19.html"), 
@@ -989,8 +989,9 @@ data(world_trade_avg_1998_to_2000)
 
 glimpse(world_trade_avg_1998_to_2000)
 
-world_trade_avg_1998_to_2000 <-world_trade_avg_1998_to_2000 %>% 
-  filter(!country %in% c("ant", "rom", "scg", "fsm", "umi"))
+world_trade_avg_1998_to_2000 <- world_trade_avg_1998_to_2000 %>% 
+  ungroup() %>%
+  filter(!(country %in% c("ant", "rom", "scg", "fsm", "umi")))
 
 bi <- balassa_index(world_trade_avg_1998_to_2000)
 
@@ -1198,7 +1199,7 @@ hc20
 ```
 
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, eval=FALSE}
 hc20 %>% 
   htmlwidgets::saveWidget(
     file = here::here("docs/htmlwidgets/complexity-network.html"), 
