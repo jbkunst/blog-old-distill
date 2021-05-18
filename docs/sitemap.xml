@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
   <url>
     <loc>http://jkunst.com/blog/</loc>
-    <lastmod>2021-03-15T10:25:11-03:00</lastmod>
+    <lastmod>2021-03-24T14:09:40-03:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2021-01-10-using-emoji-with-highcharterhighcharts/</loc>
@@ -34,7 +34,7 @@
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2020-05-12-30diasdegraficos-parte-1/</loc>
-    <lastmod>2021-01-05T23:22:35-03:00</lastmod>
+    <lastmod>2021-05-18T19:36:28-04:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2019-04-23-got-animating-the-shifting-of-affiliations/</loc>
@@ -82,7 +82,7 @@
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2015-10-07-rchess-a-chess-package-for-r/</loc>
-    <lastmod>2021-01-05T23:29:20-03:00</lastmod>
+    <lastmod>2021-05-18T19:37:41-04:00</lastmod>
   </url>
   <url>
     <loc>http://jkunst.com/blog/posts/2015-09-25-visualizing-sort-algorithms-with-ggplot2/</loc>
