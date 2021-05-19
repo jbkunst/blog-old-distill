@@ -65,7 +65,7 @@ map$features <- map(map$features, function(x) {
   x
 })
 
-data <- read_csv("data/thematic-interactive-map/avg_age_15.csv")
+data <- read_csv(here::here("data", "thematic-interactive-map", "avg_age_15.csv"))
 data <- select(data, -X1)
 data <- rename(data, value = avg_age_15)
 
