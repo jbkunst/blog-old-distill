@@ -394,7 +394,7 @@ hcft %>%
 ```
 
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, eval=FALSE}
 fout <- "docs/htmlwidgets/ft-stream-stacked-column.html"
 
 try(fs::file_delete(here::here(fout)))
