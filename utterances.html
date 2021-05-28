@@ -3,16 +3,18 @@
     if (!/posts/.test(location.pathname)) {
       return;
     }
+
     var script = document.createElement("script");
     script.src = "https://utteranc.es/client.js";
-    script.setAttribute("repo", "your-github/your-repo");
-    script.setAttribute("issue-term", "og:title");
+    script.setAttribute("repo", "jbkunst/blog");
+    script.setAttribute("issue-term", "title");
     script.setAttribute("crossorigin", "anonymous");
-    script.setAttribute("label", "comment_thread");
+    script.setAttribute("label", "comments 💬");
+    script.setAttribute("theme", "github-light");
 
     /* wait for article to load, append script to article element */
     var observer = new MutationObserver(function (mutations, observer) {
-      var article = document.querySelector("d-appendix");
+      var article = document.querySelector("d-article");
       if (article) {
         observer.disconnect();
         /* HACK: article scroll */
@@ -20,5 +22,7 @@
         article.appendChild(script);
       }
     });
+
     observer.observe(document.body, { childList: true });
   });
+</script>

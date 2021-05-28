@@ -47,9 +47,9 @@ collections:
   posts:
     feed_items_max: 10
     # subscribe: _subscribe.html
-    disqus:
-      shortname: jkunst
-      hidden: true
+    # disqus:
+    #   shortname: jkunst
+    #   hidden: true
     share: [twitter, linkedin]
     citations: true
 
