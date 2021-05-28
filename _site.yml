@@ -28,9 +28,16 @@ navbar:
     - icon: fa fa-user-astronaut
       href: http://www.jkunst.com
       
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/      
+      
 output: 
   distill::distill_article:
+    self_contained: true
     css: styles.css
+    includes:
+      in_header: utterances.html
 
 citation_url: http://jkunst.com/blog/
 
@@ -42,7 +49,7 @@ collections:
     # subscribe: _subscribe.html
     disqus:
       shortname: jkunst
-      hidden: false
+      hidden: true
     share: [twitter, linkedin]
     citations: true
 

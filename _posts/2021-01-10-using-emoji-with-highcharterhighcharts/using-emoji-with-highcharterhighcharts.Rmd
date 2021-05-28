@@ -26,6 +26,12 @@ knitr::opts_chunk$set(echo = FALSE)
 source(here::here("_R/blog_setup.R"))
 ```
 
+```{r, echo=FALSE}
+invisible(Sys.setlocale("LC_TIME", "English"))
+```
+
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
 Let`s try using emoji symbols in highcharter/highcharts.
 
 Fist's some data:
