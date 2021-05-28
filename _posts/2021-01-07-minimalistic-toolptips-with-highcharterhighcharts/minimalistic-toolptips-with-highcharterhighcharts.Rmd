@@ -19,9 +19,9 @@ editor_options:
 preview: images/preview.jpeg
 ---
 
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
 ```
 
 Time ago we make some _really nice but complex_ tooltips showing charts from
