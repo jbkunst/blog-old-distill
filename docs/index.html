@@ -2032,7 +2032,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </script>
 
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2042,6 +2042,34 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <script src="site_libs/webcomponents-2.0.0/webcomponents.js"></script>
   <script src="site_libs/distill-2.2.21/template.v2.js"></script>
   <!--radix_placeholder_site_in_header-->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (!/posts/.test(location.pathname)) {
+        return;
+      }
+
+      var script = document.createElement("script");
+      script.src = "https://utteranc.es/client.js";
+      script.setAttribute("repo", "jbkunst/blog");
+      script.setAttribute("issue-term", "title");
+      script.setAttribute("crossorigin", "anonymous");
+      script.setAttribute("label", "comments ðŸ’¬");
+      script.setAttribute("theme", "github-light");
+
+      /* wait for article to load, append script to article element */
+      var observer = new MutationObserver(function (mutations, observer) {
+        var article = document.querySelector("d-article");
+        if (article) {
+          observer.disconnect();
+          /* HACK: article scroll */
+          article.setAttribute("style", "overflow-y: hidden");
+          article.appendChild(script);
+        }
+      });
+
+      observer.observe(document.body, { childList: true });
+    });
+  </script>
   <script type="text/javascript" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-17670833-5"></script>
   <script type="text/javascript" cookie-consent="tracking">
   window.dataLayer = window.dataLayer || [];
@@ -2854,7 +2882,7 @@ can it do.</p>
 <a href="#">More articles &raquo;</a>
 </div>
 </div>
-<!--/radix_placeholder_article_listing-->
+<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
 <h1>Data, Code and Visualization</h1>

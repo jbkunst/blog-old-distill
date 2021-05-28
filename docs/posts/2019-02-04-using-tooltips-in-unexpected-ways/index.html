@@ -6735,6 +6735,34 @@ distill-header .nav a {
 }
 </script>
   <!--radix_placeholder_site_in_header-->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!/posts/.test(location.pathname)) {
+      return;
+    }
+
+    var script = document.createElement("script");
+    script.src = "https://utteranc.es/client.js";
+    script.setAttribute("repo", "jbkunst/blog");
+    script.setAttribute("issue-term", "title");
+    script.setAttribute("crossorigin", "anonymous");
+    script.setAttribute("label", "comments ðŸ’¬");
+    script.setAttribute("theme", "github-light");
+
+    /* wait for article to load, append script to article element */
+    var observer = new MutationObserver(function (mutations, observer) {
+      var article = document.querySelector("d-article");
+      if (article) {
+        observer.disconnect();
+        /* HACK: article scroll */
+        article.setAttribute("style", "overflow-y: hidden");
+        article.appendChild(script);
+      }
+    });
+
+    observer.observe(document.body, { childList: true });
+  });
+</script>
 <script type="text/javascript" cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=UA-17670833-5"></script>
 <script type="text/javascript" cookie-consent="tracking">
 window.dataLayer = window.dataLayer || [];
@@ -7021,11 +7049,6 @@ d-article iframe {
 <!--radix_placeholder_article_footer-->
 <div class="article-footer">
   <p class="social_footer">
-    <span class="disqus-comments">
-      <i class="fas fa-comments"></i>
-      &nbsp;
-      <span class="disqus-comment-count" data-disqus-identifier="posts/2019-02-04-using-tooltips-in-unexpected-ways/">Comment on this article</span>
-    </span>
     <span class="article-sharing">
       Share: &nbsp;
       <a href="https://twitter.com/share?text=Using%20tooltips%20in%20unexpected%20ways&amp;url=http%3A%2F%2Fjkunst.com%2Fblog%2Fposts%2F2019-02-04-using-tooltips-in-unexpected-ways%2F">
@@ -7036,20 +7059,6 @@ d-article iframe {
       </a>
     </span>
   </p>
-  <script id="dsq-count-scr" src="https://jkunst.disqus.com/count.js" async></script>
-  <div id="disqus_thread"></div>
-  <script type="text/javascript" cookie-consent="functionality">
-var disqus_config = function () {
-  this.page.url = 'http://jkunst.com/blog/posts/2019-02-04-using-tooltips-in-unexpected-ways/';
-  this.page.identifier = 'posts/2019-02-04-using-tooltips-in-unexpected-ways/';
-};
-(function() {
-  var d = document, s = d.createElement('script');
-  s.src = 'https://jkunst.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
-})();
-</script>
 </div>
 <!--/radix_placeholder_article_footer-->
 </div>
