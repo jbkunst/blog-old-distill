@@ -15,18 +15,18 @@ navbar:
   right:
     - text: "Home"
       href: index.html
-    # - icon: fas fa-search
-    #   href: search.html
-    - icon: fab fa-linkedin-in
-      href: https://www.linkedin.com/in/joshuakunst
     - icon: fab fa-twitter
       href: https://twitter.com/jbkunst
-    - icon: fab fa-github-alt
+    - icon: fas fa-code
       href: https://github.com/jbkunst/blog
-    - icon: fa fa-rss
-      href: index.xml
-    - icon: fa fa-user-astronaut
+    - icon: fas fa-user-secret
       href: http://www.jkunst.com
+    # - icon: fab fa-linkedin-in
+    #   href: https://www.linkedin.com/in/joshuakunst      
+    # - icon: fas fa-search
+    #   href: search.html      
+    # - icon: fa fa-rss
+    #   href: index.xml      
       
 author:
   - name: Joshua Kunst
