@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 _Source_: https://stats.stackexchange.com/questions/59047/how-are-regression-the-t-test-and-the-anova-all-versions-of-the-general-linear
 
 I Always fail in remember the code to show how this models are related, so I
-will put here for my future me. The importan thing is check the p-values.
+will put here for my future me. An important thing to do is check the p-values.
 
 The data, according `help(sleep)`:
 
