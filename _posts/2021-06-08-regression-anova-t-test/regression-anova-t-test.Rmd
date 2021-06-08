@@ -1,0 +1,74 @@
+---
+title: "Regression, ANOVA, t-test are related..."
+description: |
+  In a new episode of things I forgot to find.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 06-08-2021
+output:
+  distill::distill_article:
+    self_contained: true
+categories:
+  - minipost
+  - stats
+preview: images/preview.png  
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+_Source_: https://stats.stackexchange.com/questions/59047/how-are-regression-the-t-test-and-the-anova-all-versions-of-the-general-linear
+
+I Always fail in remember the code to show how this models are related, so I
+will put here for my future me.
+
+The data, according `help(sleep)`:
+
+> Data which show the effect of two soporific drugs (increase in hours of sleep compared to control) on 10 patients -Scheffé, Henry (1959) The Analysis of Variance. New York, NY: Wiley.
+
+Now, load packages and data.
+
+```{r}
+library(tibble)
+library(broom)
+
+data("sleep")
+
+sleep <- as_tibble(sleep)
+
+glimpse(sleep)
+```
+
+## Regression
+
+```{r}
+linear_model <- lm(extra ~ group, data = sleep)
+
+summary(linear_model)
+
+tidy(linear_model)
+```
+
+## ANOVA
+
+```{r}
+anova <- aov(extra ~ group, data = sleep)
+
+summary(anova)
+
+tidy(anova)
+```
+
+## $t$-test
+
+```{r}
+t_test <- t.test(extra ~ group, var.equal=TRUE, data = sleep) 
+
+t_test
+
+tidy(t_test)
+```
