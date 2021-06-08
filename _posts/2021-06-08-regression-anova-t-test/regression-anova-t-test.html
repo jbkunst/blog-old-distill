@@ -1482,7 +1482,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-article">
 <p><em>Source</em>: <a href="https://stats.stackexchange.com/questions/59047/how-are-regression-the-t-test-and-the-anova-all-versions-of-the-general-linear" class="uri">https://stats.stackexchange.com/questions/59047/how-are-regression-the-t-test-and-the-anova-all-versions-of-the-general-linear</a></p>
-<p>I Always fail in remember the code to show how this models are related, so I will put here for my future me.</p>
+<p>I Always fail in remember the code to show how this models are related, so I will put here for my future me. The importan thing is check the p-values.</p>
 <p>The data, according <code>help(sleep)</code>:</p>
 <blockquote>
 <p>Data which show the effect of two soporific drugs (increase in hours of sleep compared to control) on 10 patients -Scheffé, Henry (1959) The Analysis of Variance. New York, NY: Wiley.</p>
@@ -1568,7 +1568,7 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <h2 id="t-test"><span class="math inline">\(t\)</span>-test</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class="va">t_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">extra</span> <span class="op">~</span> <span class="va">group</span>, var.equal<span class="op">=</span><span class="cn">TRUE</span>, data <span class="op">=</span> <span class="va">sleep</span><span class="op">)</span> 
+<pre class="sourceCode r"><code class="sourceCode r"><span class="va">t_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html">t.test</a></span><span class="op">(</span><span class="va">extra</span> <span class="op">~</span> <span class="va">group</span>, var.equal <span class="op">=</span> <span class="cn">TRUE</span>, data <span class="op">=</span> <span class="va">sleep</span><span class="op">)</span> 
 
 <span class="va">t_test</span>
 </code></pre>
