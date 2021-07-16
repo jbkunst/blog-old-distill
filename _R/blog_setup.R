@@ -44,8 +44,9 @@ options(
         ),
       title = list(style = list(fontFamily = fntfmly)),
       subtitle = list(style = list(fontFamily = fntfmly)),
-      credits = list(style = list(fontFamily = fntfmly))
-      )
+      credits = list(style = list(fontFamily = fntfmly)),
+      legend = list(itemStyle = list(fontWeight = "normal",color = "#A2A39C"))
+    )
   )
 
 hc_opts <- getOption("highcharter.chart")

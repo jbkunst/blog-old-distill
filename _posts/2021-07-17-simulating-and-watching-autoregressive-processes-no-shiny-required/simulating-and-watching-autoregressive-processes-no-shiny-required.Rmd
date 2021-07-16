@@ -1,0 +1,456 @@
+---
+title: "Simulating and watching autoregressive processes (no {shiny} required)"
+description: |
+  Always love time series when I studied statistics. This is a post to honor the time series.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 06-18-2021
+output:
+  distill::distill_article:
+    self_contained: true
+    toc: true
+categories:
+  - minipost
+  - stats
+  - highcharts
+  - highcharter
+  - time-series
+  - data-visualization
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.gif
+---
+
+```{r setup, include=FALSE}
+source(here::here("_R/blog_setup.R"))
+```
+
+# The model
+
+An autoregressive model of order $p$, $AR(p)$, is defined as:
+
+$${\displaystyle X_{t}=c+\sum _{i=1}^{p}\varphi _{i}X_{t-i}+\varepsilon _{t}\,}$$
+
+Where $\varepsilon_t$ is a _White Noise_, $c$, $\varphi_i$ parameters of the model. 
+The structure of this model is easy of understand: The next value $X_t$ is a linear combination of the past values plus a random noise -or innovation-.
+
+In R we can simulate this model with `stats::arima.sim` function for example,
+if we want simulate an $AR(1)$ with $\varphi _{1} = \varphi = 0.9$  with $0$ mean:
+
+$${\displaystyle X_{t}= \varphi X_{t-i} + \varepsilon _{t} = 0.9 \times X_{t-i} + \varepsilon _{t}\,}$$
+We code:
+
+```{r}
+ar_model <-  list(ar = c(0.9))
+
+arima.sim(model = ar_model, n = 20)
+```
+
+# Interactivity
+
+There is a popular example in highcharts: _Dynamic Update_ where each second
+a random value is added to the line series https://www.highcharts.com/demo/dynamic-update.
+
+The key part of this example is the next function which every second generate a 
+random value and then is added to the series.
+
+```{js, eval=FALSE}
+// This is Javascript code :) :/ :S XD
+function () {
+    // set up the updating of the chart each second
+    var series = this.series[0];
+    setInterval(function () {
+        var x = (new Date()).getTime(), // current time
+            y = Math.random();
+        series.addPoint([x, y], true, true);
+    }, 1000);
+}
+```
+
+We'll take the example as a template and change to store the last values
+of the process and generate the random noise and the new value. To
+get the linear combination between the past values and the autoregressive 
+parameter we used the dot product. For the generation of a normal random
+number we can use the the Box-Muller transform.
+
+<aside>
+_Dot product of two arrays in Javascript_
+https://stackoverflow.com/a/64816824/829971
+
+_Generating random normal number in Javascript_
+https://stackoverflow.com/a/36481059/829971
+
+</aside>
+
+Let's create some
+
+```{r}
+library(highcharter)
+library(stringr)
+
+# model
+ar <-  c(0.85, -0.1, 0.2)
+
+# time to update the chart in seconds
+time <- 1
+
+# the first values of the model
+ts <- as.vector(arima.sim(model = list(ar = ar), n = 10))
+ts <- round(ts, 3)
+ts
+```
+
+The function would be something like this:
+
+
+```{r}
+load_fn <- "function () {{
+
+	dot = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
+  function randn_bm() {{
+  	var u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+   }}
+  
+	var dat = [{ data }];
+  var ar = [{ ar }];
+  dat = dat.slice(-ar.length);
+  
+  // set up the updating of the chart each second
+  var series = this.series[0];
+  
+  setInterval(function () {{
+      
+      console.log(dat);
+      var new_value = dot(dat, ar) + randn_bm();
+      new_value = Math.round(1000 * new_value)/1000
+      console.log(new_value)
+      dat.shift(); 
+      dat.push(new_value);
+      series.addPoint([new_value]);  
+      
+      //if (series.data.length < 500) {{
+      //  series.addPoint([new_value], true, false);
+      //}} else {{
+      //  series.addPoint([new_value], true, true);
+      //}}
+      
+  }}, { time });
+  
+}}"
+
+load_fn_glued <- str_glue(
+  load_fn,
+  data = str_c(ts, collapse = ","),
+  ar = str_c(ar, collapse = ","),
+  time = time * 1000
+)
+
+load_fn_glued
+```
+
+
+```{r}
+highchart() %>% 
+  hc_add_series(data = ts) %>% 
+  hc_chart(
+    events = list(load = JS(load_fn_glued)), 
+    animation = list(duration = time*1000/2)
+    )
+```
+
+And it works perfectly in the first try! Nah! This take me some time in the 
+[jsfiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/dynamic-update).
+
+> All according to keikaku.
+
+# Improving it
+
+We can improve the chart doing for example:
+
+- Make a `plotLine` in y axis at the value 0 to show as reference.
+
+- Make a second yAxis to the right showing the last generated value, this 
+can be done using the next function in the `tickPositioner`argument.
+
+```{r}
+tick_post_fn <- "function(min,max){        
+  var data = this.chart.yAxis[0].series[0].processedYData;
+  //last point
+  return [Math.round(1000 * data[data.length-1])/1000]; 
+}"
+```
+
+- Enable the navigator panel `hc_navigator(enabled = TRUE)`.
+
+- We can put an informative title showing the specification of the simulated
+model.
+
+```{r}
+formula <- purrr::map2(ar, seq_along(ar), function(par, t){
+  
+  if(par > 0 & t > 1) {
+    par <- str_c("+ ", par)
+  }
+  
+  stringr::str_glue("{ par } \\times X_{{ t - { i } }}", i = t)
+  
+  }) 
+  
+formula <- purrr::reduce(formula, str_c, sep = " ")
+
+formula <- str_c("$$ X_t = ", formula, " + \\epsilon_t$$")
+```
+
+```{r, results='asis'}
+cat(formula)
+```
+
+Alternatively, formula using subscript and superscript tags.
+
+```{r}
+formula <- purrr::map2(ar, seq_along(ar), function(par, t){
+  
+  if(par > 0 & t > 1) {
+    par <- str_c("+ ", par)
+  }
+  
+  htmltools::tagList(par, "×", "X", tags$sub(stringr::str_glue("t - { i }", i = t)))
+  
+}) 
+
+formula <- purrr::reduce(formula, htmltools::tagList)
+
+formula <- str_c("X", tags$sub("t") %>% as.character(), " = ",formula %>% as.character(), " + &epsilon;",  tags$sub("t") %>% as.character())
+```
+
+```{r, results='asis'}
+cat(formula)
+```
+
+- Helper button to remove last values.
+
+```{r}
+rm_poinst_fn <- "function () {
+  for (var i = 1; i <= 500; i++) {
+    if (this.series[0].data.length) {
+      this.series[0].data[0].remove();
+    }
+  }
+}"
+```
+
+- And others tweaks.
+
+```{r}
+highchart() %>% 
+  hc_add_series(data = ts, name = "Process") %>% 
+  hc_chart(
+    events = list(load = JS(load_fn_glued)), 
+    animation = list(duration = time*1000/2)
+    ) %>% 
+  hc_title(text = "Autoregressive process") %>%
+  hc_subtitle(text = as.character(formula), useHTML = TRUE) %>% 
+  hc_plotOptions(series = list(marker = list(enabled = FALSE))) %>% 
+  hc_tooltip(valueDecimals = 3) %>% 
+  hc_xAxis(width = "95%") %>% 
+  hc_exporting(
+    enabled = TRUE,
+    buttons = list(
+      list(
+        text =  "Remove last 500 values",
+        onclick = JS(rm_poinst_fn),
+        theme = list(stroke = 'silver')
+        )
+      )
+    ) %>% 
+  hc_yAxis_multiples(
+    # default axis
+    list(
+      title = list(text = ""),
+      plotLines = list(
+        list(value = 0, width = 2, color = "#AAA", zIndex = 1)
+        )
+      ),
+    # opposite axis
+    list(
+      title = list(text = ""),
+      linkedTo = 0,
+      opposite = TRUE,
+      gridLineWidth = 0,
+      tickPositioner = JS(tick_post_fn)
+    )
+  ) %>% 
+  hc_navigator(
+    enabled = TRUE, 
+    series = list(type = "line"),
+    xAxis = list(labels = list(enabled = FALSE), width = "95%")
+  ) 
+```
+
+# Extending it
+
+We can encapsulate all this code into a function:
+
+```{r}
+library(highcharter)
+library(stringr)
+
+sim_ar_hc <- function(ar = c(0.3, 0.2), time = 1){
+  
+   # the first values of the model
+  ts <- as.vector(arima.sim(model = list(ar = ar), n = 10))
+  ts <- round(ts, 3)
+  ts
+  
+load_fn <- "function () {{
+
+	dot = (a, b) => a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
+  function randn_bm() {{
+  	var u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+   }}
+  
+	var dat = [{ data }];
+  var ar = [{ ar }];
+  dat = dat.slice(-ar.length);
+  
+  // set up the updating of the chart each second
+  var series = this.series[0];
+  
+  setInterval(function () {{
+      
+      console.log(dat);
+      var new_value = dot(dat, ar) + randn_bm();
+      new_value = Math.round(1000 * new_value)/1000
+      console.log(new_value)
+      dat.shift(); 
+      dat.push(new_value);
+      series.addPoint([new_value]);  
+      
+      //if (series.data.length < 500) {{
+      //  series.addPoint([new_value], true, false);
+      //}} else {{
+      //  series.addPoint([new_value], true, true);
+      //}}
+      
+  }}, { time });
+  
+}}"
+  
+  load_fn_glued <- str_glue(
+    load_fn,
+    data = str_c(ts, collapse = ","),
+    ar = str_c(ar, collapse = ","),
+    time = time * 1000
+  )
+  
+  tick_post_fn <- "function(min,max){        
+    var data = this.chart.yAxis[0].series[0].processedYData;
+    //last point
+    return [Math.round(1000 * data[data.length-1])/1000]; 
+  }"
+  
+  rm_poinst_fn <- "function () {
+    for (var i = 1; i <= 500; i++) {
+      if (this.series[0].data.length) {
+        this.series[0].data[0].remove();
+      }
+    }
+  }"
+    
+  formula <- purrr::map2(ar, seq_along(ar), function(par, t){
+    
+    if(par > 0 & t > 1) {
+      par <- str_c("+ ", par)
+    }
+    
+    htmltools::tagList(par, "×", "X", tags$sub(stringr::str_glue("t - { i }", i = t)))
+    
+  }) 
+  
+  formula <- purrr::reduce(formula, htmltools::tagList)
+  
+  formula <- str_c("X", tags$sub("t") %>% as.character(), " = ",formula %>% as.character(), " + &epsilon;",  tags$sub("t") %>% as.character())
+  
+  hc <- highchart() %>% 
+    hc_add_series(data = ts, name = "Process") %>% 
+    hc_chart(
+      events = list(load = JS(load_fn_glued)), 
+      animation = list(duration = time*1000/2)
+      ) %>%
+    hc_title(text = "Autoregressive process") %>%
+    hc_subtitle(text = formula, useHTML = TRUE) %>%
+    hc_plotOptions(series = list(marker = list(enabled = FALSE))) %>%
+    hc_tooltip(valueDecimals = 3) %>%
+    hc_xAxis(width = "95%") %>%
+    hc_exporting(
+      enabled = TRUE,
+      buttons = list(
+        list(
+          text =  "Remove last 500 values",
+          onclick = JS(rm_poinst_fn),
+          theme = list(stroke = 'silver')
+          )
+        )
+      ) %>%
+    hc_yAxis_multiples(
+      # default axis
+      list(
+        title = list(text = ""),
+        plotLines = list(
+          list(value = 0, width = 2, color = "#AAA", zIndex = 1)
+          )
+        ),
+      # opposite axis
+      list(
+        title = list(text = ""),
+        linkedTo = 0,
+        opposite = TRUE,
+        gridLineWidth = 0,
+        tickPositioner = JS(tick_post_fn)
+      )
+    ) %>%
+    hc_navigator(
+      enabled = TRUE,
+      series = list(type = "line"),
+      xAxis = list(labels = list(enabled = FALSE), width = "95%")
+    )
+  
+  hc
+  
+}
+```
+
+White Noise:
+
+```{r}
+sim_ar_hc(ar = c(0))
+```
+
+
+Some traditional AR model:
+
+```{r}
+sim_ar_hc(ar = c(.8, .1))
+```
+
+# Let it shine (with {shiny} package)
+
+In this case we can update the highcharts using the new set of proxy functions. 
+You can check the code of the shiny app in https://github.com/jbkunst/highcharter-shiny/blob/master/05-arma/app.R and the 
+app is in https://jbkunst.shinyapps.io/05-arma/?showcase=0
+
+<iframe src="https://jbkunst.shinyapps.io/05-arma/?showcase=0" class="l-page" height="750px"></iframe>
+
+# References
+
+-https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/dynamic-update
+- https://jsfiddle.net/BlackLabel/evypfr1L/
+- http://jsfiddle.net/upt4cbqj/
+- http://www.java2s.com/Tutorials/highcharts/Example/Series_Data/Remove_first_data_item_from_series.htm
