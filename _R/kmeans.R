@@ -1,4 +1,6 @@
 library(tidyverse)
+library(gganimate) # install.packages("transformr")
+
 
 Posdef <- function (n, ev = runif(n, 0, 10)) {
   # https://stat.ethz.ch/pipermail/r-help/2008-February/153708
@@ -50,10 +52,15 @@ data_gen <- function(n = 1000, groups = 3) {
 ggplot(data_gen(), aes(x, y)) +
   geom_point(aes(color = factor(group)))
 
-
 set.seed(12345) # buena!! 
 
-set.seed(12) # muy perfecto 
+data <- data_gen()
+
+ggplot(data, aes(x, y)) +
+  geom_point(aes(color = factor(group)))
+
+
+set.seed(124) # muy perfecto 
 
 data <- data_gen()
 
@@ -63,7 +70,7 @@ ggplot(data, aes(x, y)) +
 
 # adapted from
 # https://theanlim.rbind.io/post/clustering-k-means-k-means-and-gganimate/#k-means-clustering-1
-kmeans_iterations <- function (data, k = 3, tolerance = 10e-6, seed = 1001){
+kmeans_iterations <- function (data, k = 3, tolerance = 10e-6, seed = 123, iterations = 15){
   
   set.seed(seed)
   
@@ -80,9 +87,11 @@ kmeans_iterations <- function (data, k = 3, tolerance = 10e-6, seed = 1001){
   center_hist <- list(dcenters)
   data_hist   <- list(daux)
   
+  iteration <- 1
+  
   while(TRUE){
     
-    message("hey")
+    message(iteration)
     
     daux <- crossing(
       daux |> select(id, group, x, y),  
@@ -116,7 +125,9 @@ kmeans_iterations <- function (data, k = 3, tolerance = 10e-6, seed = 1001){
     c1 <- last(center_hist) |> select(cx, cy) |> as.matrix()
     c2 <- nth(center_hist, -2) |> select(cx, cy) |> as.matrix()
     
-    if(mean((c1 - c2)^2) < tolerance) break
+    # if(mean((c1 - c2)^2) < tolerance) break
+    iteration <- iteration + 1
+    if(iteration == iterations) break
     
   }
   
@@ -133,105 +144,103 @@ kmeans_iterations <- function (data, k = 3, tolerance = 10e-6, seed = 1001){
  
 }
 
-res <- kmeans_iterations(data, k = 3)
+kmi <- kmeans_iterations(data, k = 3)
 
-data_hist   <- res$data_hist
-center_hist <- res$center_hist 
-
-library(gganimate) # install.packages("transformr")
-library(ggforce) # install.packages("transformr")
-
-ggplot(center_hist, aes(cx, cy)) +
-  geom_point() +
-  geom_path(aes(group = cluster))
-
-ggplot() +
-  geom_point(data = data_hist, aes(x, y, group = id, color = as.character(cluster)), size = 3, alpha = 0.1) +
-  geom_point(data = center_hist, aes(cx, cy, group = cluster, color = as.character(cluster)), size = 5) +
-  geom_voronoi_segment(data = center_hist, aes(cx, cy, color = as.character(cluster)), size = 5) +
-  facet_wrap(vars(iteration))
-
-
-
-data <- data.frame(
-  x = runif(6),
-  y = runif(6),
-  state = rep(c('a', 'b'), 3)
-)
-
-ggplot(data, aes(x =x, y = y)) + 
-  geom_voronoi_tile(fill = 'grey', colour = 'black', bound = c(0, 1, 0, 1)) + 
-  geom_point() + 
-  facet_wrap(~state)
-
-ggplot(center_hist, aes(x =cx, y = cy)) + 
-  geom_voronoi_tile(fill = 'grey', colour = 'black', bound = c(-10, 10, -10, 10)) +
-  geom_point() + 
-  facet_wrap(~iteration)
-
-ggplot(center_hist, aes(x =cx, y = cy)) + 
-  geom_voronoi_tile(fill = 'grey', colour = 'black', bound = c(-10, 10, -10, 10)) +
-  geom_point() + 
-  transition_states(iteration, transition_length = 2, state_length = 1)
-
-
-data <- split(center_hist, center_hist$iteration)
-
-data <- tweenr::tween_state(data[[1]], data[[2]], 'cubic-in-out', 40) %>% 
-  tweenr::keep_state(3) %>% 
-  tweenr::tween_state(data[[1]],'cubic-in-out', 40) %>% 
-  tweenr::keep_state(3) |>
-  as_tibble()
-
-data
-data$.frame <- round(scales::rescale(data$.frame , to = c(1, 100)))
-
-ggplot(data, aes(x = cx, y = cy)) + 
-  geom_voronoi_tile(fill = 'grey', colour = 'black', bound = c(-10, 10, -10, 10)) + 
-  geom_point() + 
-  transition_manual(.frame)
-
-
-
-
-
-
-
-
-
-
-
-ggplot(data, aes(x = x, y = y)) + 
-  geom_voronoi_tile(fill = 'grey', colour = 'black', bound = c(0, 1, 0, 1),
-                    by.group = TRUE) + 
-  geom_point() + 
-  transition_states(state, transition_length = 3, state_length = 1) + 
-  ease_aes('cubic-in-out')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-ggplot() +
+animtate_kmeans <- function(kmi){
   
-  transition_states(iteration, transition_length = 2, state_length = 1)
+  data_hist <- kmi$data_hist |> 
+    mutate(
+      cluster = factor(cluster),
+      cluster = fct_recode(cluster, "Start" = "0" ),
+      group = factor(group)
+      )
+  
+  data_hist |> count(cluster)
+  
+  center_hist <- kmi$center_hist |> 
+    mutate(cluster = factor(cluster))
+  
+  k <- center_hist |> 
+    count(cluster) |> 
+    nrow()
+  
+  # ggplot(center_hist, aes(cx, cy)) +
+  #   geom_point() +
+  #   geom_path(aes(group = cluster))
+  
+  colors <- viridisLite::viridis(k, begin = 0.1, end = .9)
+  
+  colors <- set_names(colors, seq_len(k))
+  
+  colors <- c("Start" = "gray70", colors)
+  
+   # scales::show_col(colors)
+  
+  p <- ggplot() +
+    geom_point(
+      data = data_hist, 
+      aes(x, y, group = id, color = cluster, shape = group),
+      size = 3,
+      alpha = 0.5
+      ) +
+    # kunstomverse::geom_point2
+    geom_point(
+      data = center_hist, 
+      aes(cx, cy, group = cluster, fill = cluster),
+      size = 6,
+      alpha = 1,
+      shape = 21,
+      ) +
+    labs(shape = "(Original) Group") +
+    scale_color_manual(values = colors, name = "(Assigned) Cluster") +
+    scale_fill_manual(values = colors, name = "(Assigned) Cluster") +
+    facet_wrap(vars(iteration)) +
+    theme_minimal() +
+    theme(legend.position = "bottom")
+  
+  p
+  
+  pa <- p +
+    # remove facet
+    facet_null() +
+    # then animate
+    labs(
+      title = "Iteration {closest_state}",
+      caption = "Frame {frame} of {nframes}"
+      ) +
+    ease_aes("cubic-in-out") +
+    # shadow_wake(wake_length = 0.2, alpha = 0.1) +
+    transition_states(iteration, transition_length = 2, state_length = 1)
+  
+  
+  # https://stackoverflow.com/questions/60254655/gganimate-package-argument-fps-must-be-a-factor-of-100
+  # Finally I figure this out: I remove the package: magick that is installed before,
+  # and reinstall gganimate, and also the package gifski
+  animate(pa, fps = 30, duration = 10, width = 1000, height = 800, start_pause = 20, end_pause = 20)
+  
+}
+
+an <- animtate_kmeans(kmi)
+an
+
+an2 <- animtate_kmeans(kmeans_iterations(data, k = 3, seed = 12))
+an2
 
 
-ggplot() +
-  
-  geom_point(data = data_hist, aes(x, y, group = id, color = factor(cluster)), size = 3, alpha = 0.2) +
-  
-  geom_point(data = center_hist, aes(cx, cy, group = cluster, color = factor(cluster)), size = 5) +
-  
-  transition_states(iteration, transition_length = 2, state_length = 1)
+str(an)
+
+library(magick)
+
+a_mgif <- image_read(an)
+b_mgif <- image_read(an2)
+
+new_gif <- image_append(c(a_mgif[1], b_mgif[1]))
+
+for(i in 2:length(a_mgif)){
+  combined <- image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif <- c(new_gif, combined)
+}
+
+new_gif
+
 
