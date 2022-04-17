@@ -1,0 +1,386 @@
+---
+title: Otra mirada a las guaguas
+description: |
+  ASD
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: '2021-07-18'
+output:
+  distill::distill_article:
+    always_allow_html: true
+    self_contained: true
+    toc: true
+draft: true
+categories: 
+  - spanish
+  - package
+  - data-visualization
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
+
+message("this delete the images created in interactive mode (project's root)")
+# try(fs::dir_delete("images"))
+```
+
+```{r, echo=FALSE}
+invisible(Sys.setlocale("LC_TIME", "Spanish"))
+```
+
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
+## Introducción
+
+Todo parte con...
+
+```{r, echo=FALSE, layout='l-body'}
+# devtools::install_github("gadenbuie/tweetrmd")
+tweetrmd::tweet_screenshot("https://twitter.com/rivaquiroga/status/1413517770063503362")
+```
+
+... Y su majestuoso hilo con visualizaciones muy interesantes y entretenidas
+`r  emo::ji("smile")`. Dentro del hilo aparecen los 
+[ya famososos](https://twitter.com/menospalabras/status/1414757674059767815) gráficos 
+en donde se visualiza que ciertos nombres se ponen de moda, como el caso de BSB o Romané. 
+
+La idea entonces es, cómo encontrar otros nombres que poseen un comportamiento
+similar, es decir que en cierto instante de tiempo poseen un _peak_ y luego
+dejan de ser populares. Intentaremos usar distintas técnicas con el fin 
+de encontrarlos!
+
+## Datos
+
+<aside>
+```{r, echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/rivaquiroga/guaguas/master/man/figures/guaguas-hex.png")
+```
+Pocos paquetes llegan a la portada de los medios, no?.
+</aside>
+
+Necesitaremos _obviamente_ el paquete `{guaguas}`.
+
+```{r}
+library(guaguas)
+library(tidyverse)
+
+guaguas
+```
+
+Los datos los agruparemos para evitar algunas duplicidades y removeremos
+el sexo como variable. Por lo que, por ejemplo, sumaremos los conteos de 
+Ariel para el caso femenino y masculino.
+
+```{r}
+guaguas <- guaguas::guaguas %>% 
+  group_by(nombre, anio) %>%
+  summarise(
+    proporcion = sum(proporcion),
+    n = sum(n),
+    .groups = "drop"
+    )
+
+guaguas <- guaguas %>% 
+  tidyr::expand(nombre, anio) %>% 
+  left_join(guaguas, by = c("nombre", "anio")) %>% 
+  mutate_if(is.numeric, replace_na, 0)
+```
+
+Para simplificar el análisis consideraremos los nombres que alguna año tuvieron
+más de 50 registros.
+
+```{r}
+guaguas_frecuentes <- guaguas %>% 
+  group_by(nombre) %>%
+  filter(any(n > 50)) %>% 
+  ungroup()
+```
+
+## Análisis via distribución Beta
+
+La distribución Beta es una distribución con soporte $(0, 1)$ que depende de 
+dos parámetros usualmente llamados $\alpha$ y $\beta$ -ambos positivos-.
+Una característica de esta distribución es que es flexible en el sentido 
+que puede tomar distintas  formas dependiendo de los parámetros:
+
+```{r}
+alpha <- c(0.1, 0.5, 1, 5, 10)
+beta <- alpha
+
+dbeta <- crossing(alpha, beta) %>% 
+  pmap_df(function(alpha, beta) {
+    
+    tibble(
+      alpha, 
+      beta, 
+      x = 0:100/100,
+      densidad = dbeta(x, shape1 = alpha, shape2 = beta)
+      # x = seq(0, 500, by = 0.1),
+      # densidad = dgamma(x, shape = alpha, rate = beta)
+      )
+    })
+
+dbeta <- dbeta %>% 
+  mutate(parametros = str_glue("alpha = { alpha } beta = { beta }"))
+
+ggplot(dbeta %>% filter(densidad > 0.01)) +
+  geom_line(aes(x, densidad)) +
+  facet_wrap(vars(parametros), nrow = length(alpha), scales = "free") 
+```
+
+Es muy probable que existan nombres que presenten más de un peak y
+que la distribución Beta no refleje o ajuste de buena manera dado que la
+forma. Asumamos esa posiblidad de que no es lo mejor, pero eventualmente 
+podríamos flexibilizar/complejizar con una mezcla de distribuciones.
+
+Asumiendo la posibilidad anterior, la idea es la siguiente:
+
+1. Hacer que el periodo de 1920 a 2020 sea equivalente representado 
+por el intervalo $(0,1)$.
+1. Suavizar la curva de $n$ con un __loess__, esto con el fin de eliminar ruido
+y representar mejor la tendencia del comportamiento de los registros.
+1. Luego con este $n_{suavizado}$ de cada nombre, lo utilizaremos para ajustar 
+la distribución Beta obteniendo así dos parámetros $(\alpha_{nombre}, \beta_{nombre})$, 
+los cuales __representarán__ el comportamiento del nombre.
+1. Lo repetiremos para todos los nombres, para luego graficar cada 
+modelamiento y analizar el resultado ¿Vale? La idea
+es que si por ejemplo 2 nombres poseen parámetros parecido es por que
+la forma de su serie a lo largo del tiempo también lo es.
+
+<aside>
+El último punto de la lista está inspirado en 
+[Hadley Wickham: Managing many models with R](https://www.youtube.com/watch?v=rz3_FDVt9eg&t=2129s&ab_channel=PsychologyattheUniversityofEdinburgh).
+</aside>
+ 
+Como es usual, relicemos el procedimiento para un nombre en particular. El
+caso de prueba que utilizaremos será el más famosillo de los BSB $x = "Kevin"$.
+
+<aside>
+Función para reescalar al intervalo $(0, 1)$
+```{r}
+rescale01 <- function(x) {
+ (x - min(x)) / (max(x) - min(x))  
+}
+```
+</aside>
+
+Seleccionamos los datos y realizamos el reescalamiento
+
+```{r}
+x <- "Kevin"
+# x <- "Zunilda"
+
+dx <- guaguas %>% 
+  filter(nombre == x) %>% 
+  mutate(x = rescale01(anio))
+
+dx
+```
+
+Ahora el suavizamiento, y validamos _visualmente_.
+
+```{r}
+suavizamiento <- loess(n ~ x, data = dx, span = 0.15)
+
+dx <- dx %>% 
+  mutate(
+    n_suavizado = round(predict(suavizamiento)),
+    n_suavizado = ifelse(n_suavizado < 0, 0, n_suavizado)
+    )
+
+ggplot(dx, aes(x)) +
+  geom_line(aes(y = n, color = "N"), size = 1.2) +
+  geom_line(aes(y = n_suavizado, color = "Suavizamiento"), size = 1.2) +
+  scale_color_viridis_d(begin = .2, end = .8)
+```
+
+Todo bien hasta ahora. Procederemos a crear un vector auxiliar para a ajustar
+la la distribución beta.
+
+<aside>
+Pregunta/respuesta de stackoverflow donde aparece información para 
+ajustar distribuciones beta:
+https://stats.stackexchange.com/a/376638/59417
+</aside>
+
+```{r, warning=FALSE}
+library(fitdistrplus)
+
+vaux <- rep(dx$x, times = dx$n_suavizado)
+
+fit <- fitdist(vaux, "gamma", method =  "mge")
+
+alpha <- fit$estimate[["shape1"]]
+beta  <- fit$estimate[["shape2"]]
+
+# alpha <- fit$estimate[["shape"]]
+# beta  <- fit$estimate[["rate"]]
+
+ggplot() +
+  labs(
+    title = x,
+    subtitle = str_glue("alpha = { round(alpha, 2) }, beta = { round(beta, 2) }")
+  ) +
+  scale_x_continuous(limits = c(0, 1)) +
+  geom_histogram(
+    aes(x = x, y = ..density..), 
+    data = tibble(x = vaux),
+    binwidth = 0.01,
+    color = "gray70",
+    fill = "gray70"
+    ) +
+  geom_line(
+    aes(x = x, y = density),
+    color = "gray50",
+    size = 1.2,
+    data = tibble(
+      x = 1:100/100,
+      density = dbeta(x, fit$estimate[["shape1"]], fit$estimate[["shape2"]])
+      # density = dgamma(x, fit$estimate[["shape"]], fit$estimate[["rate"]])
+      )
+    )
+```
+
+Bueno, al parecer nos es el mejor ajuste pero tiene el _espíritu_!. 
+Veamos que sucede al aplicar esta metodología a todo los nombres.
+
+```{r}
+guaguas_frecuentes <- guaguas_frecuentes %>% 
+  mutate(x = rescale01(anio)) %>% 
+  group_by(nombre) %>%
+  nest()
+
+guaguas_frecuentes <- guaguas_frecuentes %>% 
+  mutate(
+    suavizamiento  = map(data, ~ loess(n ~ x, data = .x, span = 0.1)),
+    n_suavizado = map(suavizamiento, predict),
+    n_suavizado = map(n_suavizado, round),
+    n_suavizado = map(n_suavizado, ~ ifelse(.x < 0, 0, .x))
+    )
+  
+fitdist2 <- function(...) {
+  invisible(capture.output(y <- fitdist(...)))
+  y
+}
+
+guaguas_frecuentes <- guaguas_frecuentes  %>% 
+  mutate(
+    x    = map(data, pull, x),
+    vaux = map2(x, n_suavizado, ~ rep(.x, time = .y)),
+    fit  = map(vaux, fitdist2, distr = "beta", method =  "mge")
+    # fit  = map(vaux, fitdist2, distr = "gamma", method =  "mge")
+  )
+
+guaguas_frecuentes <- guaguas_frecuentes %>% 
+  mutate(
+    alpha = map_dbl(fit, ~ .x$estimate[["shape1"]]),
+    beta = map_dbl(fit, ~ .x$estimate[["shape2"]])
+  )
+
+guaguas_frecuentes %>% 
+  ggplot() +
+  geom_point(aes(alpha, beta, name = nombre), alpha = 0.5) +
+  scale_y_log10() + 
+  scale_x_log10()
+
+plotly::ggplotly()
+```
+
+
+```{r}
+
+```
+
+<!-- ## Reducción de Dimeansionalidad -->
+
+<!-- Lo primero que me imaginé es utilizar el algoritmo UMAP con el fin de que al reducir -->
+<!-- la dimensionalidad de los datos -usando años como columnas-. Pienso que el -->
+<!-- resultadó será una gran masa de puntos que serán los nombres que no sufren -->
+<!-- mucho cambio de comportamiento dentro del tiempo y los que se alejen -->
+<!-- de ellos sean los _interesantes_. Bueno, esto no es más que algo hipotético, así que -->
+<!-- vamos al código. -->
+
+<!-- Utilizaremos la funcion `spread` para pasar a un data frame ancho en -->
+<!-- donde cada fila representará un nombre y las columnas serán las proporciones -->
+<!-- en cada uno de los años. -->
+
+<!-- ```{r} -->
+<!-- # library(tidyverse) -->
+
+<!-- guaguas_ancho <- guaguas_frecuentes %>% -->
+<!--   dplyr::select(nombre, sexo, anio, proporcion) %>% -->
+<!--   spread(anio, proporcion) %>% -->
+<!--   mutate_if(is.numeric, replace_na, 0) -->
+
+<!-- guaguas_ancho -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- library(uwot) -->
+
+<!-- set.seed(123) -->
+
+<!-- um <- umap( -->
+<!--   guaguas_ancho %>% select_if(is.numeric), -->
+<!--   verbose = TRUE, -->
+<!--   n_threads = 8 -->
+<!--   ) -->
+
+<!-- guguas_umap <- guaguas_ancho %>% -->
+<!--   select_if(negate(is.numeric)) %>% -->
+<!--   bind_cols(as.data.frame(um)) -->
+
+<!-- guguas_umap -->
+
+<!-- ggplot(guguas_umap) + -->
+<!--   geom_point(aes(V1, V2, color = sexo)) + -->
+<!--   scale_color_viridis_d(begin = .2, end = .8) -->
+<!-- ``` -->
+
+<!-- La verdad... nada a lo que me hubiera imaginado `r emo::ji("grinning")`. -->
+<!-- No hay mucho que poder conocer falto la existencia de etiquetas. Hay ciertos -->
+<!-- grupos de puntos que pueden llamar la atención que exploraremos debidamente. -->
+
+<!-- Para mejorar la experiencia de exploración utilizaremos el recurso de utilizar -->
+<!-- gráficos en el tooltip que revisamos hace tiempo en  [using tooltips in unexpected ways](../2019-02-04-using-tooltips-in-unexpected-ways/). Para esto -->
+<!-- necesitaremos agregar a `guguas_umap` una columna con la serie de información -->
+<!-- en el tiempo: -->
+
+
+<!-- ```{r} -->
+<!-- guagua_data <- guaguas_frecuentes %>% -->
+<!--   dplyr::select(nombre, sexo, x = anio, y = proporcion) %>% -->
+<!--   group_by(nombre, sexo) %>% -->
+<!--   nest() %>% -->
+<!--   mutate(data = map(data, list_parse)) %>% -->
+<!--   rename(ttdata = data) -->
+
+<!-- guguas_umap <- left_join(guguas_umap, guagua_data, by = c("nombre", "sexo")) -->
+
+<!-- hchart( -->
+<!--   guguas_umap, -->
+<!--   "point", -->
+<!--   hcaes( -->
+<!--     V1, V2, -->
+<!--     name = nombre, -->
+<!--     # size = pop, -->
+<!--     # group = sexo -->
+<!--     ) -->
+<!--   ) %>% -->
+<!--   hc_chart(zoomType = "xy") %>% -->
+<!--   hc_tooltip( -->
+<!--     useHTML = TRUE, -->
+<!--     headerFormat = "<b>{point.key}</b>", -->
+<!--     pointFormatter = tooltip_chart(accesor = "ttdata") -->
+<!--     ) %>% -->
+<!--   hc_plotOptions(series = list(opacity = 1)) -->
+<!-- ``` -->
+
+
+
+

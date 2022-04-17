@@ -3,15 +3,15 @@ knitr::opts_chunk$set(
   layout = "l-page",
   fig.path = "images/",
   cache.path = "cache/",
-  dpi = 72*2,
+  # dpi = 72*2,
+  dev = "svg",
   fig.align = "center",
   echo = TRUE
 )
 
 
-# copy rss ----------------------------------------------------------------
-# try(fs::file_copy("docs/index.xml", "docs/category/r/rss/index.xml", overwrite = TRUE))
-
+# some packages -----------------------------------------------------------
+library(emo)
 
 # ggplot2 -----------------------------------------------------------------
 library(ggplot2)
@@ -22,7 +22,7 @@ library(extrafont)
 suppressMessages(suppressWarnings(loadfonts()))
 
 theme_set(
-  theme_minimal(base_family = "Segoe UI", base_size = 7) +
+  theme_minimal(base_family = "Segoe UI", base_size = 8) +
     theme(
       strip.background = element_rect(fill = "gray90", colour = NA),
       legend.position = "bottom"

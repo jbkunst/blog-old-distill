@@ -1,0 +1,82 @@
+---
+title: "#30DayMapChallenge 2021"
+description: |
+  A short description of the post.
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: 2021-11-06
+output:
+  distill::distill_article:
+    self_contained: false
+editor_options: 
+  chunk_output_type: console
+draft: true  
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
+```
+
+```{r, echo=FALSE}
+invisible(Sys.setlocale("LC_TIME", "English"))
+```
+
+_Post updated on `r format(Sys.time(), '%b %d, %Y')`_
+
+## Introduction
+
+```{r}
+knitr::include_graphics("imgs/30dmpc_2021.png")
+```
+
+
+## Setup
+
+```{r}
+library(tidyverse)
+library(highcharter)
+```
+
+
+## 01 Points
+
+```{r}
+airports <- read.csv(
+  "https://raw.githubusercontent.com/ajdapretnar/datasets/master/data/global_airports.csv",
+  stringsAsFactors = FALSE
+  )
+
+south_america_countries <- c(
+    "Brazil", "Ecuador", "Venezuela",
+    "Chile", "Argentina", "Peru",
+    "Uruguay", "Paraguay", "Bolivia", 
+    "Suriname", "Guyana", "Colombia"
+  ) 
+
+airports <- airports %>%
+  filter(country %in% south_america_countries) %>%
+  rename(lat = latitude, lon = longitude) %>%
+  filter(lon < -30)
+
+hcmap(
+  "custom/south-america",
+  name = "South America",
+  showInLegend = FALSE
+) %>%
+  hc_add_series(
+    data = airports,
+    type = "mappoint",
+    name = "Airports",
+    color = hex_to_rgba("darkred", alpha = 0.3),
+    maxSize = "10",
+    tooltip = list(
+      pointFormat = "{point.name}: {point.altitude:,.0f} feets <br>
+      ({point.lat:,.2f}, {point.lon:,.2f})"
+    )
+  ) %>%
+  hc_chart(zoomType = "xy")
+```
+

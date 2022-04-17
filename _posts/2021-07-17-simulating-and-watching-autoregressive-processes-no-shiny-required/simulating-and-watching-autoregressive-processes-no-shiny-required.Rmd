@@ -446,11 +446,15 @@ In this case we can update the highcharts using the new set of proxy functions.
 You can check the code of the shiny app in https://github.com/jbkunst/highcharter-shiny/blob/master/05-arma/app.R and the 
 app is in https://jbkunst.shinyapps.io/05-arma/?showcase=0
 
-<iframe src="https://jbkunst.shinyapps.io/05-arma/?showcase=0" class="l-page" height="750px"></iframe>
+<!-- <iframe src="https://jbkunst.shinyapps.io/05-arma/?showcase=0" class="l-page" height="750px"></iframe> -->
+
+```{r, class.source = "l-page", echo=FALSE}
+knitr::include_app("https://jbkunst.shinyapps.io/05-arma/?showcase=0", height = "750px")
+```
 
 # References
 
--https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/dynamic-update
+- https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/dynamic-update
 - https://jsfiddle.net/BlackLabel/evypfr1L/
 - http://jsfiddle.net/upt4cbqj/
 - http://www.java2s.com/Tutorials/highcharts/Example/Series_Data/Remove_first_data_item_from_series.htm

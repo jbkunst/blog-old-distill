@@ -1,0 +1,63 @@
+---
+title: The Adevnture on Shiny Server, Rasperry Pi and possibly Arduino (part 1/n)
+description: |
+  .
+author:
+  - name: Joshua Kunst
+    url: http://jkunst.com/
+date: '2021-07-21'
+output:
+  distill::distill_article:
+    always_allow_html: true
+    self_contained: true
+    toc: true
+draft: true
+categories: 
+  - shiny
+  - shiny-server
+  - rasperry-pi
+  - dont-forget
+editor_options: 
+  chunk_output_type: console
+preview: images/preview.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source(here::here("_R/blog_setup.R"))
+
+message("this delete the images created in interactive mode (project's root)")
+# try(fs::dir_delete("images"))
+```
+
+```{r, echo=FALSE}
+invisible(Sys.setlocale("LC_TIME", "English"))
+```
+
+## Why? Tell me why!
+
+Time ago I see the post from Antonio Vazquez Brust [Code live from RStudio, and share it with the World in real time](https://bitsandbricks.github.io/post/compartiendo-c%C3%B3digo-en-vivo-con-el-mundo-desde-rstudio/)
+who uses the {livecode} package and the https://ngrok.com/ service to _expose_
+a script a file to the internet.
+
+So I think: instead of share a script, you/we can share an Shiny app `r emo::ji("smile")`,
+using a RasperryPi as server and to make it funnier we can track data and show 
+historic and real time data from sensors using arduino.
+
+Why a Rasperry-Pi? I've used https://www.digitalocean.com/ and https://www.shinyapps.io/
+to serve shiny apps and have relative similar to Rasperry-Pi in terms of hardware. Obviously all these options
+have pros and cons, and not are the same service but I think is a good chance
+to explore options and get some comparision:
+
+```{r, echo=FALSE, layout='l-page', fig.cap="Prices at Julyu 2021."}
+tibble::tibble(
+  `Category`   = c("RAM", "CPU", "Memory", "Price", "Purpose", "Deploy"),
+  `Digital Ocean (basic)` = c("1GB", "Shared", "25GB", "72 USD/year", "General", "Via terminal"),
+  `shinyapps.io (starter)` = c("", "", "", "100 USD/year", "Only Shinyapps", "One click from rstudio"),
+  `Rasperry PI` = c("8GB", "1.4 Quadcore", "32GB", "From 35USD to 100USD (w/ accesories) one time", "General", "Via terminal")
+) %>% 
+  knitr::kable() %>% 
+  kableExtra::column_spec(column = 1, bold = TRUE) 
+```
+
+
