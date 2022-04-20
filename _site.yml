@@ -34,6 +34,8 @@ author:
       
 output: 
   distill::distill_article:
+    toc: true
+    toc_float: true
     self_contained: true
     css: styles.css
     includes:
